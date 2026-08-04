@@ -1,0 +1,7 @@
+[
+  {"name": "경기지방고용노동청 수원지청", "lat": 37.2636, "lng": 127.0286, "categories": ["wage"]},
+  {"name": "수원시비정규직노동자복지센터", "lat": 37.2751, "lng": 127.0097, "categories": ["wage", "accident", "general"]},
+  {"name": "대한법률구조공단 수원지부", "lat": 37.2894, "lng": 127.0159, "categories": ["wage"]},
+  {"name": "근로복지공단 수원지사", "lat": 37.2617, "lng": 127.0435, "categories": ["accident"]},
+  {"name": "안전보건공단 경기지역본부", "lat": 37.4008, "lng": 127.2495, "categories": ["accident"]}
+]
