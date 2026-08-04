@@ -9,4 +9,6 @@
     - flutter로 작성
 - backend
     - GCP에서 에이전트 빌드 후 사용
+    - Cloud run에서 API 빌드 후 사용
+- DB
     - firebase 사용 예정
