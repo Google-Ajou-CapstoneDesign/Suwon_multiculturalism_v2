@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'common/widgets/web_centered_frame.dart';
 import 'navigation/main_shell.dart';
 import 'theme/app_theme.dart';
 
@@ -13,6 +14,8 @@ class LocalBridgeApp extends StatelessWidget {
       title: 'Local Bridge',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      // 웹처럼 뷰포트가 넓을 때 모바일 UI를 가운데 정렬해 보여준다.
+      builder: (context, child) => WebCenteredFrame(child: child ?? const SizedBox.shrink()),
       home: const MainShell(),
     );
   }

@@ -1,119 +1,110 @@
 import 'package:flutter/material.dart';
-import '../../../theme/app_colors.dart';
+import '../controllers/encyclopedia_controller.dart';
 import '../models/category_item.dart';
-import '../widgets/category_icon_chip.dart';
-import 'category_detail_arc_screen.dart';
-import 'category_detail_telecom_screen.dart';
-import 'category_placeholder_screen.dart';
+import '../widgets/book_cover.dart';
+import '../widgets/book_page_switcher.dart';
+import '../widgets/category_toc_page.dart';
+import '../widgets/group_bookmark_rail.dart';
+import '../widgets/language_sheet.dart';
+import 'category_detail_screen.dart';
+import 'favorites_screen.dart';
 
-/// Tab 1 · 백과사전 홈. 검색창, 비자 D-day 배너, 그룹A~D 카테고리 목록.
-/// TODO(backend): visaExpiryDate는 users 컬렉션에서, categories는 content_categories 컬렉션에서 로드.
-class EncyclopediaHomeScreen extends StatelessWidget {
+/// Tab 1 · 백과사전. "책 표지 + 세로 북마크" 컨셉(프론트엔드_구상.html 기반).
+/// 표지(닫힌 책)를 기본으로 보여주고, 우측 세로 북마크(A/B/C)를 탭하면 해당
+/// 그룹의 목차로 전환된다. 상세·즐겨찾기는 별도 화면으로 push한다.
+class EncyclopediaHomeScreen extends StatefulWidget {
   const EncyclopediaHomeScreen({super.key});
 
-  // TODO(backend): 로그인한 사용자의 비자 만료일로 교체.
-  static const _mockDDay = 42;
+  @override
+  State<EncyclopediaHomeScreen> createState() => _EncyclopediaHomeScreenState();
+}
 
-  void _openCategory(BuildContext context, CategoryItem item) {
-    Widget screen;
-    switch (item.detailType) {
-      case CategoryDetailType.arcDemo:
-        screen = const CategoryDetailArcScreen();
-        break;
-      case CategoryDetailType.telecomDemo:
-        screen = const CategoryDetailTelecomScreen();
-        break;
-      case CategoryDetailType.placeholder:
-        screen = CategoryPlaceholderScreen(title: item.title);
-        break;
-    }
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
+  final _controller = EncyclopediaController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _openDetail(int id) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CategoryDetailScreen(
+          categoryId: id,
+          language: _controller.language,
+          starred: _controller.isItemStarred(id),
+          onToggleStar: () => _controller.toggleItemStar(id),
+        ),
+      ),
+    );
+  }
+
+  void _openFavorites() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => FavoritesScreen(controller: _controller)));
   }
 
   @override
   Widget build(BuildContext context) {
-    final groups = CategoryGroup.values;
+    return ListenableBuilder(
+      listenable: _controller,
+      builder: (context, _) {
+        final lang = _controller.language;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Local Bridge', style: TextStyle(fontWeight: FontWeight.w700)),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Center(child: Text('KOR', style: TextStyle(color: AppColors.textSecondary))),
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-        children: [
-          // 검색창 (TODO: 카테고리 실시간 필터링)
-          TextField(
-            decoration: InputDecoration(
-              hintText: '필요한 정보를 검색하세요',
-              prefixIcon: const Icon(Icons.search, size: 20),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(vertical: 0),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.border),
+        return PopScope(
+          canPop: _controller.isCoverShowing,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) return;
+            _controller.closeToCover();
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Local Bridge', style: TextStyle(fontWeight: FontWeight.w700)),
+              leading: IconButton(
+                tooltip: 'Favorites',
+                onPressed: _openFavorites,
+                icon: const Icon(Icons.star_border),
               ),
+              actions: [
+                TextButton.icon(
+                  onPressed: () => showLanguageSheet(context, current: lang, onSelect: _controller.setLanguage),
+                  icon: const Icon(Icons.language, size: 16),
+                  label: Text(lang.code),
+                ),
+                const SizedBox(width: 4),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-
-          // 비자 만료 D-day 배너
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppColors.amberBg,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.amberBorder),
-            ),
-            child: Row(
+            body: Stack(
               children: [
-                const Icon(Icons.event_note, color: AppColors.amberText),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '체류기간 만료 D-$_mockDDay',
-                        style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.amberText),
-                      ),
-                      const Text(
-                        'E-9 비자 · 연장 절차 확인하기',
-                        style: TextStyle(fontSize: 12, color: AppColors.amberText),
-                      ),
-                    ],
+                Positioned.fill(
+                  child: BookPageSwitcher(
+                    pageKey: _controller.isCoverShowing ? 'cover' : 'toc-${_controller.openGroup}',
+                    child: _controller.isCoverShowing
+                        ? DecoratedBox(
+                            decoration: BookCover.background,
+                            child: SingleChildScrollView(
+                              child: BookCover(language: lang, onOpenItem: _openDetail),
+                            ),
+                          )
+                        : ColoredBox(
+                            color: Colors.white,
+                            child: CategoryTocPage(
+                              group: categoryGroups[_controller.openGroup]!,
+                              language: lang,
+                              isStarred: _controller.isItemStarred,
+                              onToggleStar: _controller.toggleItemStar,
+                              onOpenItem: _openDetail,
+                            ),
+                          ),
                   ),
                 ),
+                Positioned(right: 0, top: 24, child: GroupBookmarkRail(controller: _controller)),
               ],
             ),
           ),
-          const SizedBox(height: 20),
-
-          for (final group in groups) ...[
-            Text(
-              group.label,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: mockCategories
-                  .where((c) => c.group == group)
-                  .map((c) => CategoryIconChip(item: c, onTap: () => _openCategory(context, c)))
-                  .toList(),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ],
-      ),
+        );
+      },
     );
   }
 }

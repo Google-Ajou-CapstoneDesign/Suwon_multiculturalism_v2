@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../../common/models/org.dart';
+import '../../../core/api_config.dart';
 import '../../../theme/app_colors.dart';
 import '../../worklog/screens/accident_navigator_screen.dart';
 import '../../worklog/screens/wage_navigator_screen.dart';
 import '../models/ai_response.dart';
 import '../models/chat_message.dart';
+import '../services/chat_api_service.dart';
 import '../widgets/ai_response_card.dart';
 
 /// Tab 2 · AI 가이드 챗봇. 라이트 라우팅 기반 안내 화면.
-/// TODO(backend): 메시지 전송 시 POST /chat 호출, 규칙 기반 에이전트 응답을 AiResponse로 렌더링.
-/// 지금은 UI 시안(UI3.png)과 동일한 데모 대화를 정적 목데이터로 보여준다.
+/// 최초 노출되는 대화 한 쌍은 UI 시안(UI3.png)을 보여주기 위한 고정 예시이고,
+/// 이후 사용자가 보내는 메시지는 실제 백엔드(POST /api/chat)를 호출한다.
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
@@ -20,6 +22,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
+  final _chatApi = ChatApiService();
+  bool _isSending = false;
 
   final List<ChatMessage> _messages = [
     const ChatMessage.user('임금 못받은지 3주됐어요 어떻게 해요?'),
@@ -50,23 +54,36 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _send() {
+  Future<void> _send() async {
     final text = _controller.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty || _isSending) return;
 
     setState(() {
       _messages.add(ChatMessage.user(text));
-      // TODO(backend): 실제 에이전트 응답으로 교체. 지금은 데모용 고정 응답.
-      _messages.add(
-        const ChatMessage.bot(
-          AiResponse(
-            factAnswer: '관련 정보를 정리해 뒀어요 — 백과사전 탭에서 자세히 확인할 수 있어요.',
-            recommendedOrgs: [Org(name: '수원시비정규직노동자복지센터', distanceKm: 1.1)],
-          ),
-        ),
-      );
+      _isSending = true;
     });
     _controller.clear();
+    _scrollToBottom();
+
+    try {
+      final response = await _chatApi.send(text);
+      setState(() => _messages.add(ChatMessage.bot(response)));
+    } catch (e) {
+      // ApiConfig.baseUrl(디버그 콘솔에 출력)이 의도한 배포 주소가 맞는지부터 확인할 것 —
+      // dart-define 없이 실행하면 로컬 기본값(localhost:8080)으로 떨어져 항상 여기로 온다.
+      debugPrint('POST /api/chat 실패 (baseUrl=${ApiConfig.baseUrl}): $e');
+      setState(() => _messages.add(
+            const ChatMessage.bot(
+              AiResponse(riskNotice: '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.'),
+            ),
+          ));
+    } finally {
+      setState(() => _isSending = false);
+      _scrollToBottom();
+    }
+  }
+
+  void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -107,7 +124,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-          _ChatInputBar(controller: _controller, onSend: _send),
+          _ChatInputBar(controller: _controller, onSend: _send, isSending: _isSending),
         ],
       ),
     );
@@ -141,9 +158,10 @@ class _UserBubble extends StatelessWidget {
 }
 
 class _ChatInputBar extends StatelessWidget {
-  const _ChatInputBar({required this.controller, required this.onSend});
+  const _ChatInputBar({required this.controller, required this.onSend, required this.isSending});
   final TextEditingController controller;
   final VoidCallback onSend;
+  final bool isSending;
 
   @override
   Widget build(BuildContext context) {
@@ -161,15 +179,22 @@ class _ChatInputBar extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: controller,
+                  enabled: !isSending,
                   decoration: const InputDecoration(hintText: '메시지를 입력하세요'),
                   onSubmitted: (_) => onSend(),
                 ),
               ),
               const SizedBox(width: 8),
               IconButton.filled(
-                onPressed: onSend,
+                onPressed: isSending ? null : onSend,
                 style: IconButton.styleFrom(backgroundColor: AppColors.primary),
-                icon: const Icon(Icons.send, size: 18),
+                icon: isSending
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Icon(Icons.send, size: 18),
               ),
             ],
           ),
