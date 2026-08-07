@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "frontend (prod API)",
+      "request": "launch",
+      "type": "dart",
+      "program": "frontend/lib/main.dart",
+      "cwd": "frontend",
+      "args": ["--dart-define-from-file=env/prod.json"]
+    },
+    {
+      "name": "frontend (local API)",
+      "request": "launch",
+      "type": "dart",
+      "program": "frontend/lib/main.dart",
+      "cwd": "frontend",
+      "args": ["--dart-define-from-file=env/local.json"]
+    }
+  ]
+}

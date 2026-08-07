@@ -9,11 +9,15 @@ import '../models/chat_message.dart';
 import '../services/chat_api_service.dart';
 import '../widgets/ai_response_card.dart';
 
-/// Tab 2 · AI 가이드 챗봇. 라이트 라우팅 기반 안내 화면.
+/// AI 가이드 챗봇. 라이트 라우팅 기반 안내 화면.
+/// 하단 탭이 아니라 우측 하단 AI 버블 → 슬라이드업 시트로 진입한다(AiChatSheet).
 /// 최초 노출되는 대화 한 쌍은 UI 시안(UI3.png)을 보여주기 위한 고정 예시이고,
 /// 이후 사용자가 보내는 메시지는 실제 백엔드(POST /api/chat)를 호출한다.
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({super.key, this.onClose});
+
+  /// 시트로 띄워졌을 때 닫기 버튼에 연결한다. null이면 닫기 버튼을 숨긴다.
+  final VoidCallback? onClose;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -105,7 +109,14 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('AI 가이드')),
+      appBar: AppBar(
+        title: const Text('AI 가이드'),
+        automaticallyImplyLeading: false,
+        actions: [
+          if (widget.onClose != null)
+            IconButton(onPressed: widget.onClose, icon: const Icon(Icons.close), tooltip: '닫기'),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
