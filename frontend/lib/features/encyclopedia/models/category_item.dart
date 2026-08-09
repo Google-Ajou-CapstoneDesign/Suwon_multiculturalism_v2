@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_language.dart';
+import '../../../core/app_language.dart';
 
 enum CategoryGroupId { a, b, c }
 
@@ -59,12 +59,12 @@ const Map<int, CategoryItem> categoryById = {
   ),
   2: CategoryItem(
     id: 2,
-    icon: Icons.fingerprint,
+    icon: Icons.assignment_ind_outlined,
     group: CategoryGroupId.a,
     name: L10nText(
-      ko: '본인인증 앱 (PASS·카카오톡)',
-      en: 'Identity apps (PASS, KakaoTalk)',
-      vi: 'Ứng dụng xác thực (PASS, KakaoTalk)',
+      ko: '비자 관리 & 체류 연장',
+      en: 'Visa management & extension of stay',
+      vi: 'Quản lý visa & gia hạn cư trú',
     ),
   ),
   3: CategoryItem(

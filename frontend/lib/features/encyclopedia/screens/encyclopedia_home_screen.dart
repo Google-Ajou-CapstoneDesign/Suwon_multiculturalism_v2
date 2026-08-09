@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/user_profile_controller.dart';
 import '../controllers/encyclopedia_controller.dart';
 import '../models/category_item.dart';
 import '../widgets/book_cover.dart';
@@ -20,7 +21,19 @@ class EncyclopediaHomeScreen extends StatefulWidget {
 }
 
 class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
-  final _controller = EncyclopediaController();
+  late final EncyclopediaController _controller;
+  bool _controllerReady = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 온보딩에서 고른 언어를 시작값으로만 물려받는다(최초 1회) — 이후 이 탭 안에서
+    // 언어를 바꿔도 전역 프로필까지 되돌리지는 않는다.
+    if (!_controllerReady) {
+      _controller = EncyclopediaController(initialLanguage: UserProfileScope.of(context).language);
+      _controllerReady = true;
+    }
+  }
 
   @override
   void dispose() {

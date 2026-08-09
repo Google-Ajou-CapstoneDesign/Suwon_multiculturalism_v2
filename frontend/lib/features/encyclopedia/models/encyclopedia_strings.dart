@@ -1,4 +1,4 @@
-import 'app_language.dart';
+import '../../../core/app_language.dart';
 
 /// 백과사전 탭 UI 문구(콘텐츠가 아니라 버튼·안내문). 콘텐츠 문구(카테고리명·
 /// 상세 설명)와 분리해서 관리한다 — 콘텐츠만 노무사 감수 대상이기 때문.
@@ -17,6 +17,12 @@ class EncyclopediaStrings {
     en: 'E-9 Non-professional',
     vi: 'E-9 Lao động phổ thông',
   );
+  static const visaNotSet = L10nText(
+    ko: '체류자격 미설정 — 설정에서 등록하세요',
+    en: 'Visa status not set — register it in Settings',
+    vi: 'Chưa đặt tư cách lưu trú — hãy đăng ký trong Cài đặt',
+  );
+  static const subDocumentsTitle = L10nText(ko: '하위 문서', en: 'Related documents', vi: 'Tài liệu liên quan');
   static const visaNote = L10nText(
     ko: '연장 절차 확인하기 →',
     en: 'Check renewal steps →',

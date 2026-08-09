@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_colors.dart';
-import '../models/app_language.dart';
+import '../../../core/app_language.dart';
 import '../models/encyclopedia_strings.dart';
 
 /// 언어 선택 바텀시트. 어떤 언어를 고르든 한국어 표기(subLabel)를 함께 보여준다.

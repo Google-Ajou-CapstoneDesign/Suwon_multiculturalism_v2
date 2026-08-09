@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/app_language.dart';
+import '../../../core/app_language.dart';
+import '../../../core/user_profile_controller.dart';
 import '../models/category_item.dart';
 import '../models/encyclopedia_strings.dart';
 
@@ -25,6 +26,7 @@ class BookCover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final visaStatus = UserProfileScope.of(context).visaStatus;
     return Padding(
       padding: const EdgeInsets.fromLTRB(22, 28, 22, 20),
       child: Column(
@@ -78,7 +80,7 @@ class BookCover extends StatelessWidget {
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            EncyclopediaStrings.visaValue.of(language),
+                            visaStatus?.fullLabel ?? EncyclopediaStrings.visaNotSet.of(language),
                             style: const TextStyle(color: Color(0xFFEDF3FB), fontSize: 14, fontWeight: FontWeight.w700),
                           ),
                         ],

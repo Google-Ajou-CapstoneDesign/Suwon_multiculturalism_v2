@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
-import '../models/app_language.dart';
+import '../../../core/app_language.dart';
 import '../models/category_item.dart';
 
 /// 백과사전 탭 하나가 공유하는 상태: 언어, 즐겨찾기, 현재 열려 있는 그룹(표지/목차 전환).
-/// 앱 전역이 아니라 이 탭 범위로만 스코프한다 — 다른 탭에는 다국어를 아직 적용하지 않는다.
+/// 언어의 시작값은 온보딩에서 고른 UserProfileController.language를 물려받지만,
+/// 이후 이 탭 안에서 바꾸는 건 이 탭 범위로만 스코프한다(다른 탭까지 되돌리지 않음).
 class EncyclopediaController extends ChangeNotifier {
-  AppLanguage _language = AppLanguage.ko;
+  EncyclopediaController({AppLanguage initialLanguage = AppLanguage.ko}) : _language = initialLanguage;
+
+  AppLanguage _language;
   AppLanguage get language => _language;
 
   CategoryGroupId? _openGroup;

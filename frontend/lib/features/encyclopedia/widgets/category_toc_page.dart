@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_colors.dart';
-import '../models/app_language.dart';
+import '../../../core/app_language.dart';
 import '../models/category_item.dart';
 import '../models/encyclopedia_strings.dart';
 

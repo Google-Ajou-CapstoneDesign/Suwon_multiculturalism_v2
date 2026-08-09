@@ -1,4 +1,4 @@
-import 'app_language.dart';
+import '../../../core/app_language.dart';
 
 /// 5단 카드 템플릿의 캡션(①~⑤) 인덱스(0~4)와 본문.
 class DetailStep {
@@ -8,17 +8,40 @@ class DetailStep {
   final L10nText text;
 }
 
-/// 카테고리 상세 콘텐츠. 검수를 마친 3개 카테고리(ARC 발급·계약서 체크리스트·
-/// 권리구제 지원제도)만 채워져 있고, 나머지는 categoryDetailById에 키가 없어
-/// "이 항목은 2차 단계에서 채웁니다" 안내로 대체된다.
+/// 하위 문서 1개(예: 비자 관리 카테고리의 "하이코리아 회원가입" 문서).
+/// 카테고리 하나가 여러 하위 문서로 쪼개질 때만 쓴다(subDocuments 참고).
+class SubDocument {
+  const SubDocument({required this.title, required this.description, required this.body, required this.checklist});
+
+  final L10nText title;
+  final L10nText description;
+
+  /// 문단 단위 본문(순서대로 렌더링).
+  final List<L10nText> body;
+  final List<L10nText> checklist;
+}
+
+/// 카테고리 상세 콘텐츠. 검수를 마친 카테고리만 채워져 있고, 나머지는
+/// categoryDetailById에 키가 없어 "이 항목은 2차 단계에서 채웁니다" 안내로 대체된다.
 class CategoryDetail {
-  const CategoryDetail({required this.steps, this.hasGuidePhotos = false, required this.checklist});
+  const CategoryDetail({
+    required this.steps,
+    this.hasGuidePhotos = false,
+    this.checklist = const [],
+    this.subDocuments = const [],
+  });
 
   final List<DetailStep> steps;
 
   /// true면 ⑤ 단계별 가이드(화면 캡처 자리)를 추가로 보여준다.
   final bool hasGuidePhotos;
+
+  /// 카테고리 전체에 걸리는 단일 체크리스트. subDocuments가 있으면 보통 비워둔다
+  /// (체크리스트는 하위 문서마다 따로 있기 때문).
   final List<L10nText> checklist;
+
+  /// 이 카테고리가 여러 하위 문서로 나뉘어 있으면 채운다(예: 비자 관리 & 체류 연장).
+  final List<SubDocument> subDocuments;
 }
 
 const Map<int, CategoryDetail> categoryDetailById = {
@@ -63,6 +86,199 @@ const Map<int, CategoryDetail> categoryDetailById = {
       L10nText(ko: '표준규격 사진 1매', en: 'One standard ID photo', vi: 'Một ảnh thẻ tiêu chuẩn'),
       L10nText(ko: '수수료 3만원', en: 'Fee: 30,000 KRW', vi: 'Lệ phí: 30.000 KRW'),
       L10nText(ko: '체류지 입증 서류', en: 'Proof of address', vi: 'Giấy tờ chứng minh nơi ở'),
+    ],
+  ),
+  2: CategoryDetail(
+    steps: [
+      DetailStep(
+        captionIndex: 1,
+        text: L10nText(
+          ko: '하이코리아 전자민원 또는 관할 출입국·외국인청',
+          en: 'HiKorea e-Application, or your local immigration office',
+          vi: 'Dịch vụ điện tử HiKorea hoặc văn phòng xuất nhập cảnh',
+        ),
+      ),
+      DetailStep(
+        captionIndex: 2,
+        text: L10nText(
+          ko: "체류자격(비자)은 '한국에서 무엇을 해도 되는지'를 정한 것이고, 체류기간은 '언제까지 있어도 되는지'입니다. 두 가지는 별개로 관리해야 합니다.",
+          en: 'Your status of stay defines what you may do in Korea; your period of stay defines how long you may remain. They are managed separately.',
+          vi: 'Tư cách lưu trú quy định bạn được làm gì; thời hạn lưu trú quy định bạn được ở đến bao giờ. Hai thứ quản lý riêng.',
+        ),
+      ),
+      DetailStep(
+        captionIndex: 3,
+        text: L10nText(
+          ko: '체류만료일 4개월 전부터 만료일까지 신청할 수 있습니다. 하루라도 넘기면 불법체류가 되고 범칙금이 붙습니다.',
+          en: 'You can apply from four months before expiry up to the expiry date. Even one day over means unlawful stay and a fine.',
+          vi: 'Có thể nộp từ 4 tháng trước hạn đến ngày hết hạn. Quá một ngày là cư trú bất hợp pháp và bị phạt.',
+        ),
+      ),
+    ],
+    subDocuments: [
+      SubDocument(
+        title: L10nText(
+          ko: '하이코리아 회원가입 & 비밀번호 찾기',
+          en: 'HiKorea sign-up & password recovery',
+          vi: 'Đăng ký HiKorea & lấy lại mật khẩu',
+        ),
+        description: L10nText(
+          ko: '외국인등록번호가 있어야 가입됩니다',
+          en: 'You need your ARC number to sign up',
+          vi: 'Cần số thẻ đăng ký người nước ngoài để đăng ký',
+        ),
+        body: [
+          L10nText(
+            ko: '① hikorea.go.kr → [회원가입] → 외국인 회원을 선택합니다. 외국인등록번호와 여권번호가 모두 필요합니다.',
+            en: '① hikorea.go.kr → [Sign up] → choose foreign member. You need both your ARC number and passport number.',
+            vi: '① hikorea.go.kr → [Đăng ký] → chọn thành viên nước ngoài. Cần cả số ARC và số hộ chiếu.',
+          ),
+          L10nText(
+            ko: '② 아이디는 영문+숫자 조합이며 나중에 바꿀 수 없습니다. 적어두고 프로필 보관함에 저장해두세요.',
+            en: '② Your ID is letters + numbers and cannot be changed later. Write it down and keep it in your profile vault.',
+            vi: '② ID gồm chữ và số, sau này không đổi được. Hãy ghi lại và lưu vào kho hồ sơ.',
+          ),
+          L10nText(
+            ko: '③ 비밀번호를 잊었다면 [비밀번호 찾기]에서 외국인등록번호와 가입 시 등록한 휴대폰 번호로 본인확인을 합니다. 번호가 바뀌었다면 관서 방문이 필요합니다.',
+            en: '③ If you forget your password, use [Find password] with your ARC number and the phone number you registered. If that number changed, you must visit the office in person.',
+            vi: '③ Quên mật khẩu thì dùng [Tìm mật khẩu] với số ARC và số điện thoại đã đăng ký. Nếu đổi số, phải đến văn phòng.',
+          ),
+          L10nText(
+            ko: "④ 전자민원으로 처리 가능한 것과 반드시 방문해야 하는 것이 나뉩니다. 신청 화면에서 '온라인 신청 가능' 표시를 먼저 확인하세요.",
+            en: "④ Some applications can be done online, others require a visit. Check the 'online available' mark on the application screen first.",
+            vi: "④ Một số việc làm được trực tuyến, số khác phải đến trực tiếp. Hãy kiểm tra dấu 'có thể nộp trực tuyến' trước.",
+          ),
+        ],
+        checklist: [
+          L10nText(
+            ko: '아이디·비밀번호를 안전하게 기록했는가',
+            en: 'Did you record your ID and password safely?',
+            vi: 'Đã ghi lại ID và mật khẩu an toàn chưa?',
+          ),
+          L10nText(
+            ko: '가입에 쓴 휴대폰 번호가 지금 쓰는 번호인가',
+            en: 'Is the registered phone number the one you use now?',
+            vi: 'Số điện thoại đã đăng ký có phải số đang dùng không?',
+          ),
+        ],
+      ),
+      SubDocument(
+        title: L10nText(
+          ko: '체류기간 연장 신청 절차 (D-2·E-9·E-7)',
+          en: 'Extending your stay (D-2 · E-9 · E-7)',
+          vi: 'Gia hạn thời gian lưu trú (D-2 · E-9 · E-7)',
+        ),
+        description: L10nText(
+          ko: '자격마다 요구 서류가 다릅니다. 공통 서류부터 챙기세요',
+          en: 'Required documents differ by status. Start with the common ones',
+          vi: 'Giấy tờ khác nhau theo tư cách. Hãy bắt đầu từ giấy tờ chung',
+        ),
+        body: [
+          L10nText(
+            ko: '① 공통 서류: 여권, 외국인등록증, 통합신청서, 수수료, 체류지 입증 서류. 이 다섯 가지는 어떤 자격이든 들어갑니다.',
+            en: '① Common documents: passport, ARC, integrated application form, fee, proof of address. These five apply to every status.',
+            vi: '① Giấy tờ chung: hộ chiếu, ARC, đơn tích hợp, lệ phí, chứng minh nơi ở. Năm thứ này áp dụng cho mọi tư cách.',
+          ),
+          L10nText(
+            ko: '② D-2(유학): 재학증명서, 성적증명서, 등록금 납입증명, 잔고증명이 추가됩니다. 출석률과 성적이 기준에 못 미치면 연장이 제한될 수 있습니다.',
+            en: '② D-2 (student): add enrolment certificate, transcript, tuition receipt and proof of funds. Low attendance or grades can restrict extension.',
+            vi: '② D-2 (du học): thêm giấy xác nhận đang học, bảng điểm, biên lai học phí, chứng minh tài chính. Điểm hoặc chuyên cần thấp có thể bị hạn chế.',
+          ),
+          L10nText(
+            ko: '③ E-9(비전문취업): 사업주가 신청 주체가 되는 절차가 많습니다. 고용허가서, 근로계약서, 사업자등록증 사본이 필요하며 사업주 협조가 필수입니다.',
+            en: '③ E-9 (non-professional): the employer often initiates. You need the employment permit, contract and business registration copy — employer cooperation is essential.',
+            vi: '③ E-9 (lao động phổ thông): chủ sử dụng thường là bên nộp. Cần giấy phép tuyển dụng, hợp đồng, bản sao đăng ký kinh doanh — cần chủ hợp tác.',
+          ),
+          L10nText(
+            ko: '④ E-7(특정활동): 고용계약서, 사업자등록증, 학위·경력 증빙, 사업체 재정 자료가 들어갑니다. 임금 요건이 붙는 자격이라 계약 임금액을 미리 확인하세요.',
+            en: '④ E-7 (specific activity): employment contract, business registration, degree or career evidence, and company financials. There is a wage requirement — check your contracted pay first.',
+            vi: '④ E-7 (hoạt động đặc định): hợp đồng lao động, đăng ký kinh doanh, bằng cấp/kinh nghiệm, tài chính công ty. Có yêu cầu về lương — hãy kiểm tra mức lương hợp đồng.',
+          ),
+          L10nText(
+            ko: '⑤ 사업주가 연장 서류를 안 해준다면 그것 자체가 문제 상황입니다. 권리구제 가이드와 AI 가이드로 연결됩니다.',
+            en: '⑤ If your employer refuses to help with extension paperwork, that is itself a problem. This links to the rights guide and the AI guide.',
+            vi: '⑤ Nếu chủ không hỗ trợ giấy tờ gia hạn, bản thân đó đã là vấn đề. Sẽ liên kết tới hướng dẫn quyền lợi và AI.',
+          ),
+        ],
+        checklist: [
+          L10nText(
+            ko: '체류만료일 4개월 전부터 신청 가능함을 알고 있는가',
+            en: 'Do you know you can apply from four months before expiry?',
+            vi: 'Bạn biết có thể nộp từ 4 tháng trước hạn chứ?',
+          ),
+          L10nText(
+            ko: '공통 서류 5종을 모두 준비했는가',
+            en: 'Do you have all five common documents?',
+            vi: 'Đã chuẩn bị đủ 5 loại giấy tờ chung chưa?',
+          ),
+          L10nText(
+            ko: '자격별 추가 서류를 확인했는가',
+            en: 'Did you check the extra documents for your status?',
+            vi: 'Đã kiểm tra giấy tờ bổ sung theo tư cách chưa?',
+          ),
+          L10nText(
+            ko: '만료일 전에 예약이 잡혀 있는가',
+            en: 'Is your appointment before the expiry date?',
+            vi: 'Lịch hẹn có trước ngày hết hạn không?',
+          ),
+        ],
+      ),
+      SubDocument(
+        title: L10nText(
+          ko: '체류자격 변경 (D-2→E-7, E-9→E-7-4)',
+          en: 'Changing status (D-2→E-7, E-9→E-7-4)',
+          vi: 'Đổi tư cách lưu trú (D-2→E-7, E-9→E-7-4)',
+        ),
+        description: L10nText(
+          ko: '요약 안내입니다. 요건이 자주 바뀌므로 반드시 원문을 확인하세요',
+          en: 'A summary. Requirements change often — always check the official notice',
+          vi: 'Đây là tóm tắt. Điều kiện thay đổi thường xuyên, hãy kiểm tra văn bản gốc',
+        ),
+        body: [
+          L10nText(
+            ko: '① D-2 → E-7 (유학생 취업): 국내 대학 졸업(예정) 후 전공과 관련된 직무로 취업할 때 신청합니다. 학위, 전공-직무 연관성, 고용계약, 임금 요건이 함께 심사됩니다.',
+            en: '① D-2 → E-7 (student to work): apply when you take a job related to your major after graduating from a Korean university. Degree, major-job relevance, contract and wage are reviewed together.',
+            vi: '① D-2 → E-7 (du học sinh đi làm): nộp khi làm công việc liên quan chuyên ngành sau khi tốt nghiệp đại học tại Hàn. Bằng cấp, độ liên quan, hợp đồng và lương được xét cùng lúc.',
+          ),
+          L10nText(
+            ko: '② E-9 → E-7-4 (숙련기능인력): 일정 기간 이상 성실히 근무한 E-9 근로자가 장기 체류로 전환하는 제도입니다. 근무 기간, 소득, 한국어 능력, 사업주 추천이 평가 요소입니다.',
+            en: '② E-9 → E-7-4 (skilled worker): a route for E-9 workers with a solid work record to move to long-term stay. Length of service, income, Korean ability and employer recommendation are assessed.',
+            vi: '② E-9 → E-7-4 (lao động lành nghề): lộ trình cho lao động E-9 có quá trình làm việc tốt chuyển sang lưu trú dài hạn. Thời gian làm việc, thu nhập, tiếng Hàn và thư giới thiệu được đánh giá.',
+          ),
+          L10nText(
+            ko: '③ 두 경로 모두 점수제·쿼터제가 걸려 있고 요건이 자주 바뀝니다. 이 화면의 내용은 방향만 잡는 요약이고, 실제 신청 전에는 반드시 하이코리아 공지 원문과 대조하세요.',
+            en: '③ Both routes involve points and quotas, and requirements change often. This screen is orientation only — always cross-check the official HiKorea notice before applying.',
+            vi: '③ Cả hai đều theo hệ điểm và hạn ngạch, điều kiện thay đổi thường xuyên. Màn hình này chỉ định hướng — hãy đối chiếu thông báo chính thức của HiKorea trước khi nộp.',
+          ),
+          L10nText(
+            ko: '④ 소득 요건은 계약서상 금액이 아니라 실제 지급된 금액으로 확인되는 경우가 많습니다. 임금명세서와 통장 내역을 계속 모아두세요.',
+            en: '④ Income requirements are often verified by what was actually paid, not what the contract says. Keep collecting payslips and bank records.',
+            vi: '④ Yêu cầu thu nhập thường được xác minh bằng số tiền thực nhận, không phải theo hợp đồng. Hãy tiếp tục lưu phiếu lương và sao kê.',
+          ),
+        ],
+        checklist: [
+          L10nText(
+            ko: '졸업(또는 근무) 요건 충족 시점을 확인했는가',
+            en: 'Did you check when you meet the graduation or service requirement?',
+            vi: 'Đã xác định thời điểm đủ điều kiện tốt nghiệp hoặc thâm niên chưa?',
+          ),
+          L10nText(
+            ko: '전공-직무 연관성 또는 숙련도 요건을 확인했는가',
+            en: 'Did you check major-job relevance or skill requirements?',
+            vi: 'Đã kiểm tra độ liên quan chuyên ngành hoặc yêu cầu tay nghề chưa?',
+          ),
+          L10nText(
+            ko: '임금명세서와 통장 내역을 보관하고 있는가',
+            en: 'Are you keeping payslips and bank records?',
+            vi: 'Bạn có giữ phiếu lương và sao kê không?',
+          ),
+          L10nText(
+            ko: '하이코리아 최신 공지 원문을 확인했는가',
+            en: 'Did you check the latest official HiKorea notice?',
+            vi: 'Đã xem thông báo mới nhất của HiKorea chưa?',
+          ),
+        ],
+      ),
     ],
   ),
   11: CategoryDetail(

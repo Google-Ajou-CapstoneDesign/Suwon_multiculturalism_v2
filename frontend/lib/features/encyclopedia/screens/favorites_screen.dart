@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../common/widgets/app_card.dart';
 import '../../../theme/app_colors.dart';
 import '../controllers/encyclopedia_controller.dart';
-import '../models/app_language.dart';
+import '../../../core/app_language.dart';
 import '../models/category_item.dart';
 import '../models/encyclopedia_strings.dart';
 import 'category_detail_screen.dart';

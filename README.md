@@ -29,3 +29,5 @@ Suwon_multiculturalism_v2'
 - AI 가이드 챗봇 화면을 `POST /api/chat` 실제 호출로 전환(전송 중 로딩, 실패 시 폴백 메시지 처리)
 - Android `INTERNET` 권한 추가
 - 남은 일: 임금체불/업로드 등 인증이 필요한 엔드포인트는 Firebase Auth 로그인 플로우 구현 후 연결 예정
+
+## 2026-08-07 
