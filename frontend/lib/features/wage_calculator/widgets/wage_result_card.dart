@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_colors.dart';
 import '../models/wage_diagnosis.dart';
+import 'wage_form_widgets.dart';
+import 'wage_help.dart';
 
-/// 계산 결과 카드. 프론트엔드_계산기.html의 calcAndRender() 결과 렌더링을 그대로 옮겼다.
+/// 계산 결과 카드. 프론트엔드_계산기_최종.html(v6)의 resultHTML()을 그대로 옮겼다.
 class WageResultCard extends StatelessWidget {
   const WageResultCard({
     super.key,
@@ -12,150 +14,372 @@ class WageResultCard extends StatelessWidget {
     required this.onFindNearbyOrgs,
   });
 
-  final WageDiagnosisInput input;
-  final WageDiagnosisResult result;
+  final WageCalcInput input;
+  final WageCalcResult result;
   final VoidCallback onOpenWageNavigator;
   final VoidCallback onFindNearbyOrgs;
 
-  bool get _isWeek => input.checkPeriod == CheckPeriod.thisPeriod && input.monthScope == MonthScope.week;
+  void _openHelp(BuildContext context, String key) {
+    final entry = buildHelpDict()[key];
+    if (entry == null) return;
+    showWageHelp(context, entry.title, entry.body(context));
+  }
+
+  void _openAiDiagnosis(BuildContext context) {
+    showWageHelp(
+      context,
+      '🤖 AI 맞춤 진단',
+      RichNote(
+        explainGap(input, result),
+        style: const TextStyle(
+          fontSize: 11.5,
+          color: AppColors.textSecondary,
+          height: 1.7,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final eduTips = <String>[
-      if (!result.weeklyIncludedInBase && result.weeklyHolidayPay > 0)
-        '💡 주휴수당 받는 거 아셨나요? 1주 15시간 이상 일하고 결근이 없으면, 쉬는 날에도 하루치 임금을 추가로 받을 수 있어요. (근로기준법 제55조)',
-      if (result.overtimePay > 0) '💡 연장수당 받는 거 아셨나요? 하루 8시간이나 주 40시간을 넘겨 일하면, 초과한 시간은 시급의 1.5배(5인 이상 사업장)를 받을 수 있어요. (근로기준법 제56조)',
-      if (result.nightPay > 0) '💡 야간수당 받는 거 아셨나요? 밤 10시부터 새벽 6시 사이에 일하면, 그 시간만큼 시급의 50%를 추가로 받을 수 있어요. (근로기준법 제56조)',
-      if (result.holidayPay > 0) '💡 휴일수당 받는 거 아셨나요? 주휴일이나 정해진 휴일에 일하면 시급의 1.5배(8시간을 넘는 부분은 2배)를 받을 수 있어요. (근로기준법 제56조)',
-      if (result.severanceEligible)
-        '💡 퇴직금 받을 수 있는 거 아셨나요? 한 사업장에서 1년 이상, 주 평균 15시간 이상 일했다면 그만둘 때 퇴직금을 받을 권리가 있어요. (근로자퇴직급여 보장법 제8조)',
-    ];
-
-    final mainNet = input.taxType == TaxType.unknown ? result.netOf(result.taxScenarios['ssi']!) : result.netOf(result.taxScenarios['main']!);
-
-    late final Widget gapSection;
-    late final bool isPos;
-    if (input.checkPeriod == CheckPeriod.unpaidLong) {
-      final months = input.unpaidMonths > 0 ? input.unpaidMonths : 1.0;
-      final believed = input.believedTotalAmount;
-      final receivedTotal = input.receivedTotalAmount;
-      final legalTotal = mainNet * months;
-      final gap = legalTotal - receivedTotal;
-      isPos = gap > 10000;
-      gapSection = _ArrearsGapSection(months: months, legalTotal: legalTotal, believed: believed, receivedTotal: receivedTotal, gap: gap, isPos: isPos);
-    } else {
-      final received = input.receivedAmount;
-      final gap = mainNet - received;
-      final kind = gap.abs() < 10000 ? _GapKind.zero : (gap > 0 ? _GapKind.pos : _GapKind.neg);
-      isPos = kind == _GapKind.pos;
-      gapSection = _SinglePeriodGapSection(legalNet: mainNet, received: received, gap: gap, kind: kind);
-    }
+    final r = result;
+    final gapVal = r.gapValue;
+    final isZero = gapVal.abs() < 10000;
+    final isPos = !isZero && gapVal > 0;
+    final isNeg = !isZero && gapVal < 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. 항목별 산출 내역
-        _SectionBox(
-          title: _isWeek ? '📊 이번 주 항목별 산출 내역' : '📊 이번 달 항목별 산출 내역',
+        // 데모 워터마크
+        Container(
+          margin: const EdgeInsets.only(bottom: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFEF3E2),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Text(
+            '⚠ 입력값 기준 추정치',
+            style: TextStyle(
+              fontSize: 9.5,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFFB45309),
+            ),
+          ),
+        ),
+
+        // 항목별 산출 내역 (짙은 네이비 카드)
+        Container(
+          padding: const EdgeInsets.all(15),
+          margin: const EdgeInsets.only(bottom: 11),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F2947),
+            borderRadius: BorderRadius.circular(13),
+          ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _ResultRow(
-                label: '기본급',
-                value: formatWon(result.basePay),
-                sub: input.contractType == ContractType.hourly
-                    ? '${formatWon(result.hourlyRate)} × ${result.monthlyStandardHours.toStringAsFixed(1)}h'
-                    : null,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      '계산 결과 (${input.periodLabel()})',
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFE8C88A),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '$wageCalcYear년 고시',
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Color(0xFF8FA9CC),
+                    ),
+                  ),
+                ],
               ),
-              if (result.weeklyIncludedInBase)
-                const _ResultRow(label: '주휴수당', value: '월급에 포함됨')
-              else if (!result.over15HoursPerWeek)
-                const _ResultRow(label: '주휴수당', value: '0원', sub: '주 15시간 미만')
-              else if (input.absentThisMonth)
-                const _ResultRow(label: '주휴수당', value: '0원', sub: '이번 달 결근이 있어요')
-              else
-                _ResultRow(label: '주휴수당', value: formatWon(result.weeklyHolidayPay)),
-              if (result.overtimeHours > 0)
-                _ResultRow(label: '연장근로수당', value: formatWon(result.overtimePay), sub: '${result.over5 ? "1.5×" : "1.0×"} · ${result.overtimeHours}h'),
-              if (result.nightHours > 0)
-                _ResultRow(label: '야간근로 가산', value: formatWon(result.nightPay), sub: '${result.over5 ? "+0.5×" : "+0×"} · ${result.nightHours}h'),
-              if (result.holidayHours > 0)
-                _ResultRow(label: '휴일근로수당', value: formatWon(result.holidayPay), sub: '${result.over5 ? "1.5~2.0×" : "1.0×"} · ${result.holidayHours}h'),
-              const Divider(height: 18),
-              _ResultRow(label: '세전 총액', value: formatWon(result.grossTotal), bold: true),
+              const Divider(height: 18, color: Color(0x17FFFFFF)),
+              _ResRow(
+                label: '기본급',
+                value: formatWon(r.baseTotal),
+                onHelp: () => _openHelp(context, 'logic_base'),
+              ),
+              if (!r.weeklyIncluded)
+                _ResRow(
+                  label: '주휴수당',
+                  value: r.weeklyPayTotal > 0
+                      ? formatWon(r.weeklyPayTotal)
+                      : '해당없음',
+                  zero: r.weeklyPayTotal <= 0,
+                  onHelp: () => _openHelp(context, 'logic_week'),
+                ),
+              _ResRow(
+                label: '연장근로수당',
+                value: r.otPay > 0 ? formatWon(r.otPay) : '0원',
+                zero: r.otPay <= 0,
+                onHelp: () => _openHelp(context, 'ot_info'),
+              ),
+              _ResRow(
+                label: '야간근로수당',
+                value: r.ntPay > 0 ? formatWon(r.ntPay) : '0원',
+                zero: r.ntPay <= 0,
+                onHelp: () => _openHelp(context, 'nt_info'),
+              ),
+              if (r.holPay > 0)
+                _ResRow(
+                  label: '휴일근로수당',
+                  value: formatWon(r.holPay),
+                  onHelp: () => _openHelp(context, 'hol_info'),
+                ),
+
+              Container(
+                margin: const EdgeInsets.only(top: 10, bottom: 8),
+                padding: const EdgeInsets.only(top: 10),
+                decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: Color(0x59E8C88A))),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Row(
+                      children: [
+                        const Text(
+                          '세전 총액',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFFE8C88A),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        _DarkQMark(
+                          onTap: () => _openHelp(context, 'logic_gross'),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      formatWon(r.gross),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              if (input.tax == TaxMethod.unknown) ...[
+                const _SubHead('🛡 4대보험으로 공제된다면'),
+                _ResRow(
+                  label: taxLabelOf(TaxMethod.four, insuranceRate()),
+                  value: '− ${formatWon(r.taxAmtFour!)}',
+                  onHelp: () => _openHelp(context, 'tax_info'),
+                ),
+                if (input.roomOn)
+                  _ResRow(
+                    label: '숙식비 공제',
+                    value: '− ${formatWon(r.roomAmtTotal)}',
+                  ),
+                _NetRow(label: '예상 실수령액', value: formatWon(r.netFour!)),
+                const _SubHead('🧾 3.3% 사업소득으로 공제된다면'),
+                _ResRow(
+                  label: '세금 공제 (사업소득세 3.3%)',
+                  value: '− ${formatWon(r.taxAmtBiz!)}',
+                ),
+                if (input.roomOn)
+                  _ResRow(
+                    label: '숙식비 공제',
+                    value: '− ${formatWon(r.roomAmtTotal)}',
+                  ),
+                _NetRow(label: '예상 실수령액', value: formatWon(r.netBiz!)),
+              ] else ...[
+                _ResRow(
+                  label: taxLabelOf(input.tax, r.taxRate),
+                  value: r.taxAmt! > 0 ? '− ${formatWon(r.taxAmt!)}' : '0원',
+                  zero: r.taxAmt! <= 0,
+                  onHelp: () => _openHelp(context, 'tax_info'),
+                ),
+                _ResRow(
+                  label: '숙식비 공제',
+                  value: r.roomAmtTotal > 0
+                      ? '− ${formatWon(r.roomAmtTotal)}'
+                      : '0원',
+                  zero: r.roomAmtTotal <= 0,
+                ),
+                _NetRow(
+                  label: '예상 실수령액',
+                  value: formatWon(r.net!),
+                  onHelp: () => _openHelp(context, 'logic_net'),
+                ),
+              ],
             ],
           ),
         ),
 
-        // 2. 교육 팁
-        for (final tip in eduTips) _EduTip(text: tip),
-
-        // 3. 최저임금 경고
-        if (result.isBelowMinWage)
-          _WarningBox(
-            title: '⚠ 계약된 시급이 최저임금보다 낮아요 (${formatWon(result.hourlyRate)} < ${formatWon(minimumWage)})',
-            body: '최저임금에 못 미치는 부분은 무효이고 차액을 청구할 수 있습니다.',
-          ),
-        if (result.isBelowMinWageAfterRoom)
-          _WarningBox(
-            title: '⚠ 숙식비를 뺀 뒤 최저임금 아래로 내려가요 (${formatWon(result.hourlyAfterRoomDeduction)} < ${formatWon(minimumWage)})',
-            body: '숙식비 공제 근거와 금액을 사업주에게 서면으로 요청해 확인해보세요.',
+        if (r.payBelowMin)
+          RedNotice(
+            title: '⚠ 최저임금보다 낮습니다',
+            body:
+                '적용 통상시급 ${formatWon(r.hourly)}이 $wageCalcYear년 최저임금 ${formatWon(minWage().$1)}에 미달합니다.',
           ),
 
-        // 4. 세금/실수령액
-        _SectionBox(
-          title: input.taxType == TaxType.unknown ? '💳 공제 방식을 몰라서 두 가지로 계산했어요' : '💳 공제 후 예상 실수령액',
-          child: input.taxType == TaxType.unknown
-              ? Column(
-                  children: [
-                    _ResultRow(label: '4대보험(약 9.7%) 가정', value: formatWon(result.netOf(result.taxScenarios['ssi']!))),
-                    _ResultRow(label: '3.3% 사업소득세 가정', value: formatWon(result.netOf(result.taxScenarios['biz']!))),
-                  ],
-                )
-              : Column(
-                  children: [
-                    _ResultRow(
-                      label: '세금 공제',
-                      value: result.taxScenarios['main']!.amount > 0 ? '− ${formatWon(result.taxScenarios['main']!.amount)}' : '0원',
-                      sub: '${(result.taxScenarios['main']!.rate * 100).toStringAsFixed(2)}%',
-                    ),
-                    if (result.roomAmount > 0) _ResultRow(label: '숙식비 공제', value: '− ${formatWon(result.roomAmount)}'),
-                    const Divider(height: 18),
-                    _ResultRow(label: '예상 실수령액', value: formatWon(result.netOf(result.taxScenarios['main']!)), bold: true, valueColor: AppColors.primary, big: true),
-                  ],
+        // 차액 카드 + AI 진단
+        Container(
+          margin: const EdgeInsets.only(bottom: 11),
+          padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(
+            color: isZero
+                ? const Color(0xFFEAF7F5)
+                : isNeg
+                ? const Color(0xFFF0F5FF)
+                : const Color(0xFFFEF2F2),
+            border: Border.all(
+              color: isZero
+                  ? const Color(0xFFB4E0D9)
+                  : isNeg
+                  ? const Color(0xFFC9DBFA)
+                  : const Color(0xFFF6C9C9),
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isZero
+                    ? '입금액이 계산 결과와 비슷합니다'
+                    : (isPos ? '받아야 할 금액보다 적게 들어왔습니다' : '계산 결과보다 많이 들어왔습니다'),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: isZero
+                      ? const Color(0xFF0B7267)
+                      : isNeg
+                      ? const Color(0xFF1E3A8A)
+                      : const Color(0xFF991B1B),
                 ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    '차액',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  Text(
+                    isZero
+                        ? '±0원'
+                        : '${gapVal > 0 ? '+' : '−'}${formatWon(gapVal.abs())}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isZero
+                          ? const Color(0xFF0B7267)
+                          : isNeg
+                          ? const Color(0xFF1E3A8A)
+                          : const Color(0xFF991B1B),
+                    ),
+                  ),
+                ],
+              ),
+              if (!isZero) ...[
+                const SizedBox(height: 9),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => _openAiDiagnosis(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white.withValues(alpha: 0.7),
+                      foregroundColor: isNeg
+                          ? const Color(0xFF1E3A8A)
+                          : const Color(0xFF991B1B),
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                    ),
+                    child: Text(
+                      isPos
+                          ? '🤖 왜 더 받아야 하는지 AI 진단 보기'
+                          : '🤖 왜 차이가 나는지 AI 진단 보기',
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
 
-        // 5. 체불 괴리 분석
-        gapSection,
+        // 체불 의심일 때만 다음 행동 유도(이 앱은 진정 내비게이터·기관 조회가 실제로
+        // 연동되어 있어, v6 원본의 "연동 예정" 비활성 버튼 대신 바로 동작하게 한다).
         if (isPos) ...[
-          const SizedBox(height: 9),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: onOpenWageNavigator,
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 11)),
-                  child: const Text('📄 진정서에 내 기록 자동 매핑하기', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                  ),
+                  child: const Text(
+                    '📄 진정서에 내 기록 자동 매핑하기',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton(
                   onPressed: onFindNearbyOrgs,
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.secondary, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 11)),
-                  child: const Text('📍 내 근처 관할 기관 찾기', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                  ),
+                  child: const Text(
+                    '📍 내 근처 관할 기관 찾기',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 11),
         ],
 
-        // 6. 퇴직금
-        if (result.severanceEligible) ...[
-          const SizedBox(height: 12),
+        // 퇴직금
+        if (r.eligible) ...[
           Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(color: AppColors.blueBg, border: Border.all(color: AppColors.blueBorder), borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(13),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEAF7F5),
+              border: Border.all(color: const Color(0xFFB4E0D9)),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -163,69 +387,122 @@ class WageResultCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Text('예상 퇴직금 · ${result.tenureDays.round()}일 재직', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.primary)),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              '🏆 예상 퇴직금 (별도) · ${r.days}일 재직',
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF0B7267),
+                              ),
+                            ),
+                          ),
+                          QMark(
+                            onTap: () => _openHelp(context, 'severance_intro'),
+                          ),
+                        ],
+                      ),
                     ),
-                    Text(formatWon(result.severancePay), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.primary)),
+                    Text(
+                      formatWon(r.severance),
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF0B7267),
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                const Text('평균임금과 통상임금 중 큰 값을 적용한 참고용 추정치예요.', style: TextStyle(fontSize: 10.5, color: AppColors.textMuted)),
+                const SizedBox(height: 6),
+                const Text(
+                  '임금과 별개로, 퇴직할 때 한 번 받는 돈입니다.',
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    color: Color(0xFF0F766E),
+                    height: 1.55,
+                  ),
+                ),
               ],
             ),
           ),
+          MoreBox(
+            title: '💬 퇴직금, 왜 그리고 얼마나 받아야 하는지 보기',
+            child: RichNote(severanceNarrative(input, result)),
+          ),
+        ] else if (input.hireDate != null) ...[
+          MoreBox(
+            title: '예상 퇴직금 (현재는 요건 미충족)',
+            child: RichNote(severanceNarrative(input, result)),
+          ),
         ],
 
-        // 7. 소멸시효 안내
-        if (isPos) ...[
-          const SizedBox(height: 12),
-          Builder(builder: (context) {
-            final today = DateTime.now();
-            final cutoff = DateTime(today.year - 3, today.month, today.day);
-            String fmt(DateTime d) => '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-            return Container(
-              padding: const EdgeInsets.all(13),
-              decoration: BoxDecoration(color: const Color(0xFFFFF8EC), border: Border.all(color: const Color(0xFFFCD9A8)), borderRadius: BorderRadius.circular(12)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('⏳ 임금채권 소멸시효', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF92400E))),
-                  const SizedBox(height: 5),
-                  Text.rich(
-                    TextSpan(
-                      style: const TextStyle(fontSize: 11.5, color: Color(0xFF92400E), height: 1.6),
-                      children: [
-                        const TextSpan(text: '임금채권의 소멸시효는 근로기준법 제49조에 따라 3년입니다. 오늘('),
-                        TextSpan(text: fmt(today)),
-                        const TextSpan(text: ') 기준으로, '),
-                        TextSpan(text: fmt(cutoff), style: const TextStyle(fontWeight: FontWeight.w800)),
-                        const TextSpan(text: ' 이전에 발생한 임금은 시효가 지나 청구가 어려울 수 있고, 그 이후분만 청구할 수 있습니다.'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-
-        // 8. 법적 안전 고지
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(13),
-          decoration: BoxDecoration(color: AppColors.background, border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(12)),
-          child: const Text.rich(
-            TextSpan(
-              style: TextStyle(fontSize: 10.5, color: AppColors.textMuted, height: 1.6),
-              children: [
-                TextSpan(text: '⚠️ '),
-                TextSpan(text: '[법적 안전 고지] ', style: TextStyle(fontWeight: FontWeight.w700)),
-                TextSpan(
-                  text: '이 결과는 입력하신 사실관계를 바탕으로 근로기준법 기본 공식을 적용한 참고용 추정치이며, 확정된 임금액이나 법적 승소를 보장하지 않습니다. '
-                      '정확한 체불액은 고용노동부 조사 과정에서 확정됩니다.',
+        // 법률 수식 상세
+        MoreBox(
+          title: '📐 법률 수식 상세보기',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '• 통상시급: (월급/연봉) ÷ 월 유급시간(주 40시간 기준 209시간 등)',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
                 ),
-              ],
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                '• 주휴수당: (주 소정근로시간 ÷ 40) × 8h × 통상시급 × 4.345주',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                '• 가산수당: 5인 이상 사업장 연장 1.5배 · 야간 0.5배(가산분) · 휴일 1.5배',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '• 세금: 4대보험 근로자부담 약 ${(insuranceRate() * 100).toStringAsFixed(2)}% 또는 사업소득세 3.3%',
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                '• 퇴직금: 1일 평균임금 × 30일 × (재직일수 ÷ 365), 평균임금이 통상임금보다 낮으면 통상임금 적용',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // 법적 고지
+        MoreBox(
+          title: '⚠ 이 금액은 참고용 예상액입니다 (법적 고지)',
+          child: const Text(
+            '본 계산기는 근로기준법 표준 공식을 적용한 추정치입니다. 사업장의 특수 근로조건에 따라 차이가 발생할 수 있으며, 법적 확정 효력을 갖지 않습니다. '
+            '정확한 체불액은 근로감독관 조사에서 산정됩니다.',
+            style: TextStyle(
+              fontSize: 11,
+              color: AppColors.textSecondary,
+              height: 1.6,
             ),
-            textAlign: TextAlign.center,
           ),
         ),
       ],
@@ -233,160 +510,67 @@ class WageResultCard extends StatelessWidget {
   }
 }
 
-enum _GapKind { pos, neg, zero }
-
-class _SinglePeriodGapSection extends StatelessWidget {
-  const _SinglePeriodGapSection({required this.legalNet, required this.received, required this.gap, required this.kind});
-  final double legalNet;
-  final double received;
-  final double gap;
-  final _GapKind kind;
-
-  @override
-  Widget build(BuildContext context) {
-    final (bg, border, diffColor) = switch (kind) {
-      _GapKind.pos => (const Color(0xFFFEF2F2), const Color(0xFFFECACA), const Color(0xFFDC2626)),
-      _GapKind.neg => (const Color(0xFFEFF6FF), const Color(0xFFBFDBFE), AppColors.primary),
-      _GapKind.zero => (AppColors.blueBg.withValues(alpha: 0.4), AppColors.border, AppColors.textSecondary),
-    };
-    final note = switch (kind) {
-      _GapKind.pos => '계산된 예상 수령액보다 실제로 적게 받으셨어요. 근로기준법 제43조(임금 전액 지급 원칙)에 비추어 확인이 필요할 수 있습니다.',
-      _GapKind.neg => '이 경우는 체불이 아니라 계산 방식의 차이일 가능성이 높아요. 포괄임금제로 수당이 미리 합산되어 있거나, 상여금·식대·교통비가 함께 지급되었을 수 있어요. 임금명세서의 항목 구성을 확인해보세요.',
-      _GapKind.zero => '계산 결과와 실제 입금액이 거의 같아요.',
-    };
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: bg, border: Border.all(color: border), borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(alignment: Alignment.centerLeft, child: _GapBadge(kind: kind)),
-          const SizedBox(height: 8),
-          _ResultRow(label: '법정 예상 실수령액', value: formatWon(legalNet)),
-          _ResultRow(label: '실제 입금액', value: formatWon(received)),
-          const Divider(height: 18),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('차액', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary)),
-              Text('${gap >= 0 ? '+' : '−'}${formatWon(gap.abs())}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: diffColor)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(note, style: const TextStyle(fontSize: 11, color: Color(0xFF334155), height: 1.6)),
-        ],
-      ),
-    );
-  }
-}
-
-class _ArrearsGapSection extends StatelessWidget {
-  const _ArrearsGapSection({required this.months, required this.legalTotal, required this.believed, required this.receivedTotal, required this.gap, required this.isPos});
-  final double months;
-  final double legalTotal;
-  final double believed;
-  final double receivedTotal;
-  final double gap;
-  final bool isPos;
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = isPos ? const Color(0xFFFEF2F2) : AppColors.blueBg.withValues(alpha: 0.4);
-    final border = isPos ? const Color(0xFFFECACA) : AppColors.border;
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: bg, border: Border.all(color: border), borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _GapBadge(kind: isPos ? _GapKind.pos : _GapKind.zero),
-              Text('${months.toStringAsFixed(0)}개월 누적 · 근사치', style: const TextStyle(fontSize: 10.5, color: AppColors.textMuted)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          _ResultRow(label: '법정 예상 총액', value: formatWon(legalTotal)),
-          _ResultRow(label: '본인이 알던 총액', value: formatWon(believed)),
-          _ResultRow(label: '실제 받은 총액', value: formatWon(receivedTotal)),
-          const Divider(height: 18),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('법정 총액 − 실제 받은 총액', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary)),
-              Text('${gap >= 0 ? '+' : ''}${formatWon(gap)}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFFDC2626))),
-            ],
-          ),
-          if (isPos) ...[
-            const SizedBox(height: 8),
-            const Text(
-              '법정 기준 예상 수령액과 실제 받은 금액 사이에 차이가 있어요. 정확한 체불액은 근로감독관 조사에서 산정되니, 아래 버튼으로 사실관계부터 정리해보세요.',
-              style: TextStyle(fontSize: 11, color: Color(0xFF92400E), height: 1.6),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _GapBadge extends StatelessWidget {
-  const _GapBadge({required this.kind});
-  final _GapKind kind;
-
-  @override
-  Widget build(BuildContext context) {
-    final isBad = kind == _GapKind.pos;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
-      decoration: BoxDecoration(color: isBad ? const Color(0xFFDC2626) : AppColors.secondary, borderRadius: BorderRadius.circular(20)),
-      child: Text(
-        isBad ? '🚨 임금체불(괴리) 의심' : '정상 지급 범위',
-        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
-      ),
-    );
-  }
-}
-
-class _SectionBox extends StatelessWidget {
-  const _SectionBox({required this.title, required this.child});
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 9),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: AppColors.background, border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-          const SizedBox(height: 6),
-          child,
-        ],
-      ),
-    );
-  }
-}
-
-class _ResultRow extends StatelessWidget {
-  const _ResultRow({required this.label, required this.value, this.sub, this.bold = false, this.valueColor, this.big = false});
+class _ResRow extends StatelessWidget {
+  const _ResRow({
+    required this.label,
+    required this.value,
+    this.zero = false,
+    this.onHelp,
+  });
   final String label;
   final String value;
-  final String? sub;
-  final bool bold;
-  final Color? valueColor;
-  final bool big;
+  final bool zero;
+  final VoidCallback? onHelp;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  color: Color(0xFFA8BEDC),
+                ),
+              ),
+              if (onHelp != null) _DarkQMark(onTap: onHelp!),
+            ],
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: zero ? 11 : 12.5,
+              fontWeight: zero ? FontWeight.w600 : FontWeight.w700,
+              color: zero ? const Color(0xFF6D86AC) : const Color(0xFFF1F6FC),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NetRow extends StatelessWidget {
+  const _NetRow({required this.label, required this.value, this.onHelp});
+  final String label;
+  final String value;
+  final VoidCallback? onHelp;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 4, bottom: 2),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: const BoxDecoration(
+        border: Border(
+          top: BorderSide(color: Color(0x59E8C88A), style: BorderStyle.solid),
+        ),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -394,16 +578,23 @@ class _ResultRow extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(label, style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary)),
-              if (sub != null) ...[const SizedBox(width: 5), Text(sub!, style: const TextStyle(fontSize: 10, color: AppColors.textMuted))],
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFFE8C88A),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (onHelp != null) _DarkQMark(onTap: onHelp!),
             ],
           ),
           Text(
             value,
-            style: TextStyle(
-              fontSize: big ? 17 : 13,
-              fontWeight: bold ? FontWeight.w800 : FontWeight.w600,
-              color: valueColor ?? AppColors.textPrimary,
+            style: const TextStyle(
+              fontSize: 16.5,
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
             ),
           ),
         ],
@@ -412,39 +603,55 @@ class _ResultRow extends StatelessWidget {
   }
 }
 
-class _EduTip extends StatelessWidget {
-  const _EduTip({required this.text});
+class _SubHead extends StatelessWidget {
+  const _SubHead(this.text);
   final String text;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: const BoxDecoration(color: AppColors.blueBg, border: Border(left: BorderSide(color: AppColors.primary, width: 3))),
-      child: Text(text, style: const TextStyle(fontSize: 11.5, color: Color(0xFF1E3A8A), height: 1.6)),
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 2),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 10.5,
+          fontWeight: FontWeight.w800,
+          color: Color(0xFFE8C88A),
+          letterSpacing: 0.2,
+        ),
+      ),
     );
   }
 }
 
-class _WarningBox extends StatelessWidget {
-  const _WarningBox({required this.title, required this.body});
-  final String title;
-  final String body;
+class _DarkQMark extends StatelessWidget {
+  const _DarkQMark({required this.onTap});
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 9),
-      padding: const EdgeInsets.all(13),
-      decoration: BoxDecoration(color: const Color(0xFFFEF2F2), border: Border.all(color: const Color(0xFFFECACA)), borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFF991B1B))),
-          const SizedBox(height: 4),
-          Text(body, style: const TextStyle(fontSize: 11, color: Color(0xFF991B1B), height: 1.6)),
-        ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 5),
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: Container(
+          width: 15,
+          height: 15,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: Color(0x26FFFFFF),
+            shape: BoxShape.circle,
+          ),
+          child: const Text(
+            '?',
+            style: TextStyle(
+              fontSize: 8.5,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFFA8BEDC),
+            ),
+          ),
+        ),
       ),
     );
   }
