@@ -25,6 +25,48 @@ class _WorkLogSheetState extends State<WorkLogSheet> {
     super.dispose();
   }
 
+  void _openDayRecord(DateTime day) {
+    _controller.selectDay(day);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.72,
+          minChildSize: 0.4,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) {
+            return Material(
+              color: AppColors.background,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(18),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: ListenableBuilder(
+                listenable: _controller,
+                builder: (context, _) {
+                  return Column(
+                    children: [
+                      const _Grabber(),
+                      Expanded(
+                        child: _DailyHookBody(
+                          controller: _controller,
+                          scrollController: scrollController,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
@@ -44,13 +86,59 @@ class _WorkLogSheetState extends State<WorkLogSheet> {
                   children: [
                     const _Grabber(),
                     _Header(onClose: widget.onClose),
-                    _CalendarBlock(controller: _controller),
-                    Expanded(child: _DailyHookBody(controller: _controller)),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            _CalendarBlock(
+                              controller: _controller,
+                              onDayTap: _openDayRecord,
+                            ),
+                            const _TapHint(),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 );
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TapHint extends StatelessWidget {
+  const _TapHint();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15, 16, 15, 24),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(13),
+        ),
+        child: const Row(
+          children: [
+            Text('👆', style: TextStyle(fontSize: 18)),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                '날짜를 탭하면 그날의 출퇴근 기록을 확인하고 수정할 수 있어요',
+                style: TextStyle(
+                  fontSize: 11.5,
+                  color: AppColors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -66,7 +154,10 @@ class _Grabber extends StatelessWidget {
       width: 38,
       height: 4,
       margin: const EdgeInsets.only(top: 8, bottom: 2),
-      decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(4)),
+      decoration: BoxDecoration(
+        color: AppColors.border,
+        borderRadius: BorderRadius.circular(4),
+      ),
     );
   }
 }
@@ -89,9 +180,15 @@ class _Header extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('근무기록장', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                const Text(
+                  '근무기록장',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                ),
                 const SizedBox(height: 3),
-                const Text('매일의 기록이 가장 확실한 증거가 됩니다', style: TextStyle(fontSize: 10.5, color: AppColors.textMuted)),
+                const Text(
+                  '매일의 기록이 가장 확실한 증거가 됩니다',
+                  style: TextStyle(fontSize: 10.5, color: AppColors.textMuted),
+                ),
               ],
             ),
           ),
@@ -101,9 +198,14 @@ class _Header extends StatelessWidget {
               backgroundColor: const Color(0xFFF1F5F9),
               foregroundColor: AppColors.textSecondary,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
-            child: const Text('닫기', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+            child: const Text(
+              '닫기',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -112,8 +214,9 @@ class _Header extends StatelessWidget {
 }
 
 class _CalendarBlock extends StatelessWidget {
-  const _CalendarBlock({required this.controller});
+  const _CalendarBlock({required this.controller, required this.onDayTap});
   final WorkLogController controller;
+  final ValueChanged<DateTime> onDayTap;
 
   static const _weekdayLabels = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -136,7 +239,11 @@ class _CalendarBlock extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: controller.goToPreviousMonth,
-                icon: const Icon(Icons.chevron_left, size: 18, color: AppColors.textMuted),
+                icon: const Icon(
+                  Icons.chevron_left,
+                  size: 18,
+                  color: AppColors.textMuted,
+                ),
                 constraints: const BoxConstraints(),
                 padding: const EdgeInsets.all(8),
               ),
@@ -145,12 +252,19 @@ class _CalendarBlock extends StatelessWidget {
                 child: Text(
                   '${month.year}년 ${month.month}월',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800),
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
               IconButton(
                 onPressed: controller.goToNextMonth,
-                icon: const Icon(Icons.chevron_right, size: 18, color: AppColors.textMuted),
+                icon: const Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: AppColors.textMuted,
+                ),
                 constraints: const BoxConstraints(),
                 padding: const EdgeInsets.all(8),
               ),
@@ -162,13 +276,17 @@ class _CalendarBlock extends StatelessWidget {
               final color = i == 0
                   ? const Color(0xFFE06060)
                   : i == 6
-                      ? const Color(0xFF5B8DEF)
-                      : AppColors.textMuted;
+                  ? const Color(0xFF5B8DEF)
+                  : AppColors.textMuted;
               return Expanded(
                 child: Text(
                   _weekdayLabels[i],
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w600, color: color),
+                  style: TextStyle(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
                 ),
               );
             }),
@@ -177,12 +295,23 @@ class _CalendarBlock extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.only(top: 2),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7, childAspectRatio: 0.92),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              childAspectRatio: 0.92,
+            ),
             itemCount: leadingBlanks + daysInMonth,
             itemBuilder: (context, index) {
               if (index < leadingBlanks) return const SizedBox.shrink();
-              final day = DateTime(month.year, month.month, index - leadingBlanks + 1);
-              return _DayCell(day: day, controller: controller);
+              final day = DateTime(
+                month.year,
+                month.month,
+                index - leadingBlanks + 1,
+              );
+              return _DayCell(
+                day: day,
+                controller: controller,
+                onTap: onDayTap,
+              );
             },
           ),
           const SizedBox(height: 6),
@@ -203,9 +332,14 @@ class _CalendarBlock extends StatelessWidget {
 }
 
 class _DayCell extends StatelessWidget {
-  const _DayCell({required this.day, required this.controller});
+  const _DayCell({
+    required this.day,
+    required this.controller,
+    required this.onTap,
+  });
   final DateTime day;
   final WorkLogController controller;
+  final ValueChanged<DateTime> onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -219,13 +353,13 @@ class _DayCell extends StatelessWidget {
     final textColor = isToday
         ? Colors.white
         : weekday == 0
-            ? const Color(0xFFE06060)
-            : weekday == 6
-                ? const Color(0xFF5B8DEF)
-                : AppColors.textPrimary;
+        ? const Color(0xFFE06060)
+        : weekday == 6
+        ? const Color(0xFF5B8DEF)
+        : AppColors.textPrimary;
 
     return InkWell(
-      onTap: () => controller.selectDay(day),
+      onTap: () => onTap(day),
       borderRadius: BorderRadius.circular(8),
       child: Container(
         margin: const EdgeInsets.all(1.5),
@@ -235,19 +369,30 @@ class _DayCell extends StatelessWidget {
           border: isRisk
               ? Border.all(color: const Color(0xFFDC2626), width: 1.5)
               : isSelected
-                  ? Border.all(color: AppColors.primary, width: 2)
-                  : null,
+              ? Border.all(color: AppColors.primary, width: 2)
+              : null,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.day}', style: TextStyle(fontSize: 11, color: textColor, fontWeight: isToday ? FontWeight.w800 : FontWeight.w400)),
+            Text(
+              '${day.day}',
+              style: TextStyle(
+                fontSize: 11,
+                color: textColor,
+                fontWeight: isToday ? FontWeight.w800 : FontWeight.w400,
+              ),
+            ),
             const SizedBox(height: 2),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (logged) _Dot(color: isToday ? Colors.white : AppColors.secondary),
-                if (overtime) ...[const SizedBox(width: 2), _Dot(color: isToday ? Colors.white : AppColors.accent)],
+                if (logged)
+                  _Dot(color: isToday ? Colors.white : AppColors.secondary),
+                if (overtime) ...[
+                  const SizedBox(width: 2),
+                  _Dot(color: isToday ? Colors.white : AppColors.accent),
+                ],
               ],
             ),
           ],
@@ -263,7 +408,11 @@ class _Dot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: 4, height: 4, decoration: BoxDecoration(color: color, shape: BoxShape.circle));
+    return Container(
+      width: 4,
+      height: 4,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    );
   }
 }
 
@@ -277,9 +426,16 @@ class _LegendDot extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 6, height: 6, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
         const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 9.5, color: AppColors.textMuted)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 9.5, color: AppColors.textMuted),
+        ),
       ],
     );
   }
@@ -297,25 +453,41 @@ class _LegendRiskBox extends StatelessWidget {
         Container(
           width: 8,
           height: 8,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(2), border: Border.all(color: const Color(0xFFDC2626), width: 1.5)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(2),
+            border: Border.all(color: const Color(0xFFDC2626), width: 1.5),
+          ),
         ),
         const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 9.5, color: AppColors.textMuted)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 9.5, color: AppColors.textMuted),
+        ),
       ],
     );
   }
 }
 
 class _DailyHookBody extends StatelessWidget {
-  const _DailyHookBody({required this.controller});
+  const _DailyHookBody({required this.controller, this.scrollController});
   final WorkLogController controller;
+  final ScrollController? scrollController;
 
-  Future<void> _pickTime(BuildContext context, {required bool isClockIn}) async {
+  Future<void> _pickTime(
+    BuildContext context, {
+    required bool isClockIn,
+  }) async {
     final record = controller.selectedRecord;
-    final initial = (isClockIn ? record.clockIn : record.clockOut) ?? const TimeOfDay(hour: 9, minute: 0);
+    final initial =
+        (isClockIn ? record.clockIn : record.clockOut) ??
+        const TimeOfDay(hour: 9, minute: 0);
     final picked = await showTimePicker(context: context, initialTime: initial);
     if (picked == null) return;
-    controller.updateSelectedRecord((r) => isClockIn ? r.copyWith(clockIn: picked) : r.copyWith(clockOut: picked));
+    controller.updateSelectedRecord(
+      (r) => isClockIn
+          ? r.copyWith(clockIn: picked)
+          : r.copyWith(clockOut: picked),
+    );
   }
 
   Future<void> _pickBreakMinutes(BuildContext context) async {
@@ -330,7 +502,14 @@ class _DailyHookBody extends StatelessWidget {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('$value분', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.primary)),
+                  Text(
+                    '$value분',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                  ),
                   Slider(
                     value: value.toDouble(),
                     min: 0,
@@ -342,8 +521,14 @@ class _DailyHookBody extends StatelessWidget {
                 ],
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('취소')),
-                FilledButton(onPressed: () => Navigator.of(context).pop(value), child: const Text('확인')),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('취소'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(context).pop(value),
+                  child: const Text('확인'),
+                ),
               ],
             );
           },
@@ -354,7 +539,9 @@ class _DailyHookBody extends StatelessWidget {
     controller.updateSelectedRecord((r) => r.copyWith(breakMinutes: result));
   }
 
-  String _fmtTime(TimeOfDay? t) => t == null ? '--:--' : '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+  String _fmtTime(TimeOfDay? t) => t == null
+      ? '--:--'
+      : '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
@@ -363,23 +550,38 @@ class _DailyHookBody extends StatelessWidget {
     final worked = record.workedDuration;
 
     return ListView(
+      controller: scrollController,
       padding: const EdgeInsets.fromLTRB(15, 13, 15, 20),
       children: [
         Container(
           padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(color: Colors.white, border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(13)),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(13),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${day.year}.${day.month.toString().padLeft(2, '0')}.${day.day.toString().padLeft(2, '0')}',
-                      style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800)),
+                  Text(
+                    '${day.year}.${day.month.toString().padLeft(2, '0')}.${day.day.toString().padLeft(2, '0')}',
+                    style: const TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: record.gpsVerified ? const Color(0xFFE6F6F4) : const Color(0xFFFEF3E2),
+                      color: record.gpsVerified
+                          ? const Color(0xFFE6F6F4)
+                          : const Color(0xFFFEF3E2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -387,37 +589,74 @@ class _DailyHookBody extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        color: record.gpsVerified ? const Color(0xFF0B7267) : const Color(0xFFB45309),
+                        color: record.gpsVerified
+                            ? const Color(0xFF0B7267)
+                            : const Color(0xFFB45309),
                       ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 11),
-              _TimeRow(label: '출근', value: _fmtTime(record.clockIn), onTap: () => _pickTime(context, isClockIn: true)),
+              _TimeRow(
+                label: '출근',
+                value: _fmtTime(record.clockIn),
+                onTap: () => _pickTime(context, isClockIn: true),
+              ),
               const SizedBox(height: 8),
-              _TimeRow(label: '퇴근', value: _fmtTime(record.clockOut), onTap: () => _pickTime(context, isClockIn: false)),
+              _TimeRow(
+                label: '퇴근',
+                value: _fmtTime(record.clockOut),
+                onTap: () => _pickTime(context, isClockIn: false),
+              ),
               const SizedBox(height: 8),
-              _TimeRow(label: '휴게', value: '${record.breakMinutes}m', onTap: () => _pickBreakMinutes(context)),
+              _TimeRow(
+                label: '휴게',
+                value: '${record.breakMinutes}m',
+                onTap: () => _pickBreakMinutes(context),
+              ),
               const SizedBox(height: 10),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 10),
-                decoration: BoxDecoration(color: AppColors.blueBg, borderRadius: BorderRadius.circular(9)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 11,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.blueBg,
+                  borderRadius: BorderRadius.circular(9),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('실근무시간', style: TextStyle(fontSize: 11, color: AppColors.primary, fontWeight: FontWeight.w600)),
-                    Text('${worked.inHours}h ${(worked.inMinutes % 60).toString().padLeft(2, '0')}m',
-                        style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: Color(0xFF1E3A8A))),
+                    const Text(
+                      '실근무시간',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      '${worked.inHours}h ${(worked.inMinutes % 60).toString().padLeft(2, '0')}m',
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF1E3A8A),
+                      ),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 10),
               Row(
                 children: [
-                  Expanded(child: _AttachButton(label: '📷 타임스탬프 사진', onTap: () {})),
+                  Expanded(
+                    child: _AttachButton(label: '📷 타임스탬프 사진', onTap: () {}),
+                  ),
                   const SizedBox(width: 7),
-                  Expanded(child: _AttachButton(label: '📎 급여명세서 첨부', onTap: () {})),
+                  Expanded(
+                    child: _AttachButton(label: '📎 급여명세서 첨부', onTap: () {}),
+                  ),
                 ],
               ),
               const SizedBox(height: 9),
@@ -425,23 +664,40 @@ class _DailyHookBody extends StatelessWidget {
                 minLines: 2,
                 maxLines: 4,
                 controller: TextEditingController(text: record.memo)
-                  ..selection = TextSelection.collapsed(offset: record.memo.length),
-                onChanged: (v) => controller.updateSelectedRecord((r) => r.copyWith(memo: v)),
+                  ..selection = TextSelection.collapsed(
+                    offset: record.memo.length,
+                  ),
+                onChanged: (v) =>
+                    controller.updateSelectedRecord((r) => r.copyWith(memo: v)),
                 style: const TextStyle(fontSize: 12),
                 decoration: InputDecoration(
                   hintText: '오늘 있었던 일을 적어두세요 (예: 사장님이 30분 더 일하라고 함)',
-                  hintStyle: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+                  hintStyle: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                  ),
                   filled: true,
                   fillColor: const Color(0xFFFBFDFF),
                   contentPadding: const EdgeInsets.all(10),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(9), borderSide: const BorderSide(color: AppColors.border)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(9),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
                 ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 14),
-        const Text('기록이 쌓였다면', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.textMuted, letterSpacing: 0.5)),
+        const Text(
+          '기록이 쌓였다면',
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textMuted,
+            letterSpacing: 0.5,
+          ),
+        ),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -451,7 +707,11 @@ class _DailyHookBody extends StatelessWidget {
                 emoji: '💸',
                 title: '임금체불 진정 내비게이터',
                 subtitle: '단계별로 진정서까지 안내',
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WageNavigatorScreen())),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const WageNavigatorScreen(),
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 9),
@@ -461,7 +721,11 @@ class _DailyHookBody extends StatelessWidget {
                 emoji: '⛑️',
                 title: '산재처리 신청 내비게이터',
                 subtitle: '단계별로 요양급여 신청까지',
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AccidentNavigatorScreen())),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const AccidentNavigatorScreen(),
+                  ),
+                ),
               ),
             ),
           ],
@@ -472,7 +736,11 @@ class _DailyHookBody extends StatelessWidget {
 }
 
 class _TimeRow extends StatelessWidget {
-  const _TimeRow({required this.label, required this.value, required this.onTap});
+  const _TimeRow({
+    required this.label,
+    required this.value,
+    required this.onTap,
+  });
   final String label;
   final String value;
   final VoidCallback onTap;
@@ -481,7 +749,16 @@ class _TimeRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(width: 44, child: Text(label, style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary))),
+        SizedBox(
+          width: 44,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 11.5,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: InkWell(
@@ -489,12 +766,25 @@ class _TimeRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              decoration: BoxDecoration(color: AppColors.background, border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(value, style: const TextStyle(fontSize: 12.5, color: AppColors.textPrimary)),
-                  const Text('▾', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const Text(
+                    '▾',
+                    style: TextStyle(fontSize: 10, color: AppColors.textMuted),
+                  ),
                 ],
               ),
             ),
@@ -520,13 +810,23 @@ class _AttachButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
       ),
-      child: Text(label, style: const TextStyle(fontSize: 10.5, color: AppColors.textSecondary), textAlign: TextAlign.center),
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 10.5, color: AppColors.textSecondary),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }
 
 class _EntryCard extends StatelessWidget {
-  const _EntryCard({required this.gradient, required this.emoji, required this.title, required this.subtitle, required this.onTap});
+  const _EntryCard({
+    required this.gradient,
+    required this.emoji,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
   final List<Color> gradient;
   final String emoji;
   final String title;
@@ -541,7 +841,11 @@ class _EntryCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(13),
         decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: gradient),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: gradient,
+          ),
           borderRadius: BorderRadius.circular(13),
         ),
         child: Column(
@@ -549,9 +853,24 @@ class _EntryCard extends StatelessWidget {
           children: [
             Text(emoji, style: const TextStyle(fontSize: 17)),
             const SizedBox(height: 5),
-            Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white, height: 1.35)),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                height: 1.35,
+              ),
+            ),
             const SizedBox(height: 3),
-            Text(subtitle, style: const TextStyle(fontSize: 9.5, color: Colors.white70, height: 1.4)),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 9.5,
+                color: Colors.white70,
+                height: 1.4,
+              ),
+            ),
           ],
         ),
       ),

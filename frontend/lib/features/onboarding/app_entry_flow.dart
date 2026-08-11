@@ -47,13 +47,16 @@ class _AppEntryFlowState extends State<AppEntryFlow> {
       child: Stack(
         children: [
           const MainShell(),
-          if (_stage == _EntryStage.onboarding) OnboardingScreen(onFinished: _finishOnboarding),
-          IgnorePointer(
-            ignoring: _stage != _EntryStage.splash,
-            child: AnimatedOpacity(
-              opacity: _stage == _EntryStage.splash ? 1 : 0,
-              duration: const Duration(milliseconds: 450),
-              child: const SplashScreen(),
+          if (_stage == _EntryStage.onboarding)
+            Positioned.fill(child: OnboardingScreen(onFinished: _finishOnboarding)),
+          Positioned.fill(
+            child: IgnorePointer(
+              ignoring: _stage != _EntryStage.splash,
+              child: AnimatedOpacity(
+                opacity: _stage == _EntryStage.splash ? 1 : 0,
+                duration: const Duration(milliseconds: 450),
+                child: const SplashScreen(),
+              ),
             ),
           ),
         ],

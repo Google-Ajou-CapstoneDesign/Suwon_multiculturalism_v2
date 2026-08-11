@@ -7,16 +7,20 @@
 실패하면 예외를 그대로 던져 호출부가 정적 안내 문구로 폴백하게 한다.
 """
 
+import logging
 import uuid
 from typing import Optional
 
 from google.adk.agents import Agent
+from google.adk.events import Event
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
 from ..core.genai_client import get_model_name
 from .tools import build_tools
+
+logger = logging.getLogger(__name__)
 
 _APP_NAME = "local_bridge_chat"
 
@@ -37,6 +41,23 @@ _SYSTEM_INSTRUCTION = """당신은 수원시 이주노동자·유학생을 돕�
 _session_service = InMemorySessionService()
 
 
+def _log_agent_event(event: Event) -> None:
+    """에이전트 루프에서 일어난 사고 과정·도구 호출·도구 결과를 로그로 남긴다.
+
+    에이전트구상.png의 Agent loop 내부(Gemini 응답 → 함수 호출 판단 → Tools 실행
+    → 재전송)를 로그만으로도 그대로 따라갈 수 있게 하기 위함이다 — 사용자에게
+    나가는 답변에는 영향을 주지 않는다.
+    """
+    if event.content and event.content.parts:
+        for part in event.content.parts:
+            if part.thought and part.text:
+                logger.info("🤔 [%s] 사고 과정: %s", event.author, part.text)
+    for call in event.get_function_calls():
+        logger.info("🔧 [%s] 도구 호출: %s(%s)", event.author, call.name, call.args)
+    for response in event.get_function_responses():
+        logger.info("✅ [%s] 도구 결과: %s → %s", event.author, response.name, response.response)
+
+
 async def run_agent(
     *,
     message: str,
@@ -51,6 +72,12 @@ async def run_agent(
         model=get_model_name(),
         instruction=_SYSTEM_INSTRUCTION,
         tools=build_tools(uid=uid),
+        # 모델이 사고 과정(thought)을 함께 반환하게 한다 — 모델이 지원하지 않으면
+        # 조용히 무시된다. _log_agent_event()가 이 부분만 로그로 남기고 사용자
+        # 응답에는 포함하지 않는다.
+        generate_content_config=types.GenerateContentConfig(
+            thinking_config=types.ThinkingConfig(include_thoughts=True)
+        ),
     )
     runner = Runner(agent=agent, app_name=_APP_NAME, session_service=_session_service)
 
@@ -75,6 +102,7 @@ async def run_agent(
     async for event in runner.run_async(
         user_id=effective_uid, session_id=session_id, new_message=new_message
     ):
+        _log_agent_event(event)
         if event.is_final_response() and event.content and event.content.parts:
             final_text_parts = [part.text for part in event.content.parts if part.text]
 
