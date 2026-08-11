@@ -52,3 +52,12 @@ def test_search_support_orgs_returns_default_list_without_location():
 
     assert len(result["orgs"]) > 0
     assert "name" in result["orgs"][0]
+
+
+def test_search_reference_documents_returns_empty_when_datastore_unconfigured():
+    # 로컬/CI 기본 상태: DISCOVERY_ENGINE_ID가 설정되지 않아 클라이언트가 None이다.
+    search_reference_documents = _tool("search_reference_documents")
+
+    result = search_reference_documents(query="근로기준법 임금 지급기한")
+
+    assert result["documents"] == []

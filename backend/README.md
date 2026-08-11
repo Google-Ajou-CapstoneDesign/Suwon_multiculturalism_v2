@@ -30,6 +30,12 @@ Google Cloud Run(Docker) 배포를 전제로 한 FastAPI 백엔드. 챗봇은 `g
 - 증빙 파일 업로드(Firebase Storage, 원본 그대로 저장·OCR 없음) — `POST /api/uploads`
 - 위치 기반 기관 라우팅(고정 목록) — `GET /api/orgs`. 같은 데이터를 에이전트의
   `search_support_orgs` 도구가 재사용한다.
+- 법령·안내 문서 검색(Vertex AI Search, `app/services/document_search_service.py`) —
+  데이터스토어에 미리 임베딩·색인해 둔 문서에서 관련 조각을 찾아온다. 에이전트의
+  `search_reference_documents` 도구가 이걸 호출해, 법 조항처럼 원문 근거가 필요한
+  질문에 조문을 지어내지 않고 실제 문서 조각만 인용하게 한다. `DISCOVERY_ENGINE_ID`가
+  없으면(콘솔에서 데이터스토어+검색 앱을 아직 안 만들었으면) 도구가 조용히 빈 결과를
+  반환한다.
 
 **의도적 범위 제한**: 상담 이력 Firestore 저장은 로그인 사용자에 한한다. 익명
 요청은 이력 없이(도구가 빈 목록을 반환) 매번 새 대화로 처리된다.
@@ -114,8 +120,11 @@ gcloud iam service-accounts add-iam-policy-binding \
 | `GENAI_MODEL` | 예: `gemini-3.5-flash` (에이전트와 주제 판별이 같은 값을 쓴다) |
 | `FIREBASE_CREDENTIALS_JSON` | Secret Manager 연동 권장(서비스 계정 JSON) — Firestore 상담 이력 저장/조회에도 쓰인다 |
 | `FIREBASE_STORAGE_BUCKET` | `<project-id>.appspot.com` |
+| `DISCOVERY_ENGINE_ID` | Vertex AI Search 검색 앱(엔진) ID — 콘솔에서 데이터스토어와 검색 앱을 만든 뒤 채운다. 미설정 시 `search_reference_documents` 도구가 비활성화(빈 결과)된다 |
+| `DISCOVERY_ENGINE_LOCATION` | 데이터스토어 리전. 기본값 `global` |
 
 `AUTH_DEV_BYPASS`는 Cloud Run에 절대 설정하지 않는다(미설정 시 기본값 `false`).
 ADK 에이전트는 별도 환경변수 없이 위 `GOOGLE_GENAI_USE_VERTEXAI`/`GOOGLE_CLOUD_PROJECT`/
 `GOOGLE_CLOUD_LOCATION`(또는 `GEMINI_API_KEY`)를 그대로 재사용한다(google-genai
-SDK와 동일한 자격증명 해석 로직).
+SDK와 동일한 자격증명 해석 로직). Vertex AI Search를 쓰려면 서비스 계정에
+`roles/discoveryengine.viewer`(검색만) 권한이 추가로 필요하다.

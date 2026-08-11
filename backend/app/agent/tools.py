@@ -13,7 +13,7 @@ from datetime import date
 from typing import Callable, List, Optional
 
 from ..schemas.wage import WageFacts
-from ..services import history_service, org_service, wage_rules
+from ..services import document_search_service, history_service, org_service, wage_rules
 
 logger = logging.getLogger(__name__)
 
@@ -101,4 +101,35 @@ def build_tools(*, uid: Optional[str]) -> List[Callable]:
             return {"error": str(exc)}
         return {"orgs": [org.model_dump(mode="json") for org in orgs]}
 
-    return [get_user_history, calculate_wage, search_support_orgs]
+    def search_reference_documents(query: str) -> dict:
+        """GCP 데이터스토어(Vertex AI Search)에 미리 임베딩·색인해 둔 근로기준법
+        조문·정부 안내 문서에서 질문과 관련된 문서 조각을 검색합니다.
+
+        법 조항 번호나 정확한 제도 내용처럼 원문 근거가 필요한 질문에는 이 도구로
+        찾은 조각만 인용하세요 — 조문 내용을 직접 지어내지 마세요. 데이터스토어가
+        아직 설정되지 않았거나 관련 문서가 없으면 빈 목록이 돌아오니, 그럴 땐 이미
+        알고 있는 일반적인 안내로 답하되 원문을 인용하고 있다고 말하지 마세요.
+
+        Args:
+            query: 검색할 질문 또는 키워드.
+
+        Returns:
+            관련 문서 조각 목록(documents) — title, snippet(본문 발췌), link.
+        """
+        try:
+            results = document_search_service.search_documents(query)
+        except Exception as exc:  # noqa: BLE001 - 도구 실패를 모델에게 알려 회복시킨다.
+            logger.exception("문서 검색 도구 실패")
+            return {"error": str(exc)}
+        return {
+            "documents": [
+                {"title": r.title, "snippet": r.snippet, "link": r.link} for r in results
+            ]
+        }
+
+    return [
+        get_user_history,
+        calculate_wage,
+        search_support_orgs,
+        search_reference_documents,
+    ]
