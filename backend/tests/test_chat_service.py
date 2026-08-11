@@ -4,16 +4,16 @@ from app.schemas.chat import ChatRequest
 from app.services import chat_service
 
 
-def test_keyword_fallback_used_when_genai_client_unavailable(monkeypatch):
+async def test_keyword_fallback_used_when_genai_client_unavailable(monkeypatch):
     # 로컬/CI 기본 상태: genai 자격증명이 없으므로 get_genai_client()는 None을 반환해야 한다.
     monkeypatch.setattr(chat_service, "get_genai_client", lambda: None)
 
-    response = chat_service.answer(ChatRequest(message="산재로 다쳤어요 어떻게 하나요"))
+    response = await chat_service.answer(ChatRequest(message="산재로 다쳤어요 어떻게 하나요"))
 
     assert response.routing_target.module == "module3-accident"
 
 
-def test_genai_classification_result_drives_routing(monkeypatch):
+async def test_genai_classification_result_drives_routing(monkeypatch):
     fake_parsed = chat_service.IntentClassification(intent="wage")
     fake_response = SimpleNamespace(parsed=fake_parsed)
     fake_models = SimpleNamespace(generate_content=lambda **_kwargs: fake_response)
@@ -22,12 +22,14 @@ def test_genai_classification_result_drives_routing(monkeypatch):
     monkeypatch.setattr(chat_service, "get_genai_client", lambda: fake_client)
 
     # 메시지 자체에는 키워드 규칙에 걸릴 단어가 없어도, genai 분류 결과를 따라야 한다.
-    response = chat_service.answer(ChatRequest(message="지난달 돈을 못 받았어요"))
+    # (에이전트 호출은 테스트 환경에 GCP 자격증명이 없어 실패 → 정적 문구로 폴백하지만,
+    #  이 테스트가 검증하는 라우팅 결과에는 영향이 없다.)
+    response = await chat_service.answer(ChatRequest(message="지난달 돈을 못 받았어요"))
 
     assert response.routing_target.module == "module3-wage"
 
 
-def test_genai_exception_falls_back_to_keywords(monkeypatch):
+async def test_genai_exception_falls_back_to_keywords(monkeypatch):
     def _raise(**_kwargs):
         raise RuntimeError("network error")
 
@@ -35,7 +37,7 @@ def test_genai_exception_falls_back_to_keywords(monkeypatch):
     fake_client = SimpleNamespace(models=fake_models)
     monkeypatch.setattr(chat_service, "get_genai_client", lambda: fake_client)
 
-    response = chat_service.answer(ChatRequest(message="근로계약서를 안 써줬어요"))
+    response = await chat_service.answer(ChatRequest(message="근로계약서를 안 써줬어요"))
 
     assert response.routing_target.module == "module1"
     assert response.routing_target.category_id == "contract_check"

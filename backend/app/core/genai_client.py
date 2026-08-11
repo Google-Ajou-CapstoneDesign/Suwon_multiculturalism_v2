@@ -52,4 +52,4 @@ def get_genai_client() -> Optional[genai.Client]:
 
 
 def get_model_name() -> str:
-    return os.getenv("GENAI_MODEL", "gemini-2.5-flash")
+    return os.getenv("GENAI_MODEL", "gemini-3.5-flash")

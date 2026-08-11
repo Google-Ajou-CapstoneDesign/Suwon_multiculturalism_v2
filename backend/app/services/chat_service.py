@@ -1,11 +1,16 @@
-"""챗봇 라이트 라우팅.
+"""챗봇 파이프라인 (에이전트구상.png).
 
-google-genai(Gemini)는 사용자 문장의 '의도 분류'에만 쓴다 — 절대로 안내 문구
-자체를 생성하지 않는다. 실제로 사용자에게 나가는 factAnswer/riskNotice는 전부
-_CONTENT에 미리 검수해 둔 정적 문구뿐이다(법률 환각 방지 원칙).
-
-genai 클라이언트가 설정되지 않았거나(로컬 개발, CI) 호출이 실패하면 키워드
-매칭 규칙으로 폴백해, 자격증명 없이도 항상 응답할 수 있게 한다.
+1) genai로 '주제 판별(의도 분류)'만 먼저 하고(실패 시 키워드 폴백) — 이 게이트가
+   "답변이 판단할 수 있는 소재인가?"에 해당한다. other로 분류되면 에이전트를
+   아예 부르지 않고 정적 안내(_FALLBACK_RISK_NOTICE)만 돌려준다.
+2) 소재가 있다고 판단되면 app.agent.pipeline.run_agent()로 Tools(사용자 이력
+   조회·임금 계산·기관 조회)를 갖춘 Gemini 에이전트 루프를 돌려 최종 답변을
+   받는다 — 더 이상 정적 문구만 내보내지 않고, 도구로 근거를 확보한 뒤 LLM이
+   답변을 구성한다.
+3) 에이전트 호출이 실패하면(자격증명 없음, 네트워크 오류 등) _CONTENT의 사전
+   검수 문구로 폴백해 항상 응답할 수 있게 한다.
+4) 로그인한 사용자(uid)라면 history_service로 이번 대화를 저장한다 — 이력
+   저장 실패가 응답 자체를 막지는 않는다.
 """
 
 import logging
@@ -14,9 +19,11 @@ from typing import Dict, List, Literal, Optional, TypedDict
 from google.genai import types
 from pydantic import BaseModel
 
+from ..agent.pipeline import run_agent
 from ..core.genai_client import get_genai_client, get_model_name
 from ..schemas.chat import ChatRequest, ChatResponse, RoutingTarget
 from ..schemas.org import Org
+from . import history_service
 from .org_service import DEFAULT_ORGS
 
 logger = logging.getLogger(__name__)
@@ -119,14 +126,32 @@ def _classify_with_keywords(message: str) -> Intent:
     return "other"
 
 
-def answer(request: ChatRequest) -> ChatResponse:
+async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatResponse:
     intent = _classify_with_genai(request.message) or _classify_with_keywords(request.message)
     content = _CONTENT[intent]
 
+    fact_answer = content["fact_answer"]
+    if intent != "other":
+        try:
+            fact_answer = await run_agent(
+                message=request.message,
+                uid=uid,
+                visa_group=request.visa_group,
+                lifecycle_stage=request.lifecycle_stage,
+            )
+        except Exception:
+            logger.exception("에이전트 응답 생성 실패 — 사전 검수 문구로 폴백합니다.")
+            fact_answer = content["fact_answer"]
+
     orgs: List[Org] = DEFAULT_ORGS[:2] if intent != "other" else DEFAULT_ORGS[:1]
-    return ChatResponse(
-        fact_answer=content["fact_answer"],
+    response = ChatResponse(
+        fact_answer=fact_answer,
         risk_notice=content["risk_notice"],
         routing_target=content["routing_target"],
         recommended_orgs=orgs,
     )
+
+    if uid:
+        history_service.save_turn(uid, request.message, fact_answer)
+
+    return response
