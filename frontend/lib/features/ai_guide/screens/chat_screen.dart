@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../common/models/org.dart';
 import '../../../core/api_config.dart';
 import '../../../theme/app_colors.dart';
 import '../../worklog/screens/accident_navigator_screen.dart';
@@ -11,8 +10,7 @@ import '../widgets/ai_response_card.dart';
 
 /// AI 가이드 챗봇. 라이트 라우팅 기반 안내 화면.
 /// 하단 탭이 아니라 우측 하단 AI 버블 → 슬라이드업 시트로 진입한다(AiChatSheet).
-/// 최초 노출되는 대화 한 쌍은 UI 시안(UI3.png)을 보여주기 위한 고정 예시이고,
-/// 이후 사용자가 보내는 메시지는 실제 백엔드(POST /api/chat)를 호출한다.
+/// 사용자가 보내는 메시지는 실제 백엔드(POST /api/chat)를 호출한다.
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, this.onClose});
 
@@ -29,28 +27,19 @@ class _ChatScreenState extends State<ChatScreen> {
   final _chatApi = ChatApiService();
   bool _isSending = false;
 
-  final List<ChatMessage> _messages = [
-    const ChatMessage.user('임금 못받은지 3주됐어요 어떻게 해요?'),
-    ChatMessage.bot(
-      const AiResponse(
-        factAnswer: '근로기준법상 사용자는 퇴직·지급일로부터 14일 이내에 임금을 지급해야 해요. 이미 기간이 지났다면 진정 제기가 가능해요.',
-        riskNotice: '즉시 대응이 필요한 사안으로 보여요. 정확한 판단은 AI가 아닌 아래 네비게이터·전문가를 통해 확인해 주세요.',
-        routingTarget: RoutingTarget(RoutingModule.module3Wage),
-        recommendedOrgs: [
-          Org(name: '경기지방고용노동청 수원지청', distanceKm: 2.4),
-          Org(name: '수원시비정규직노동자복지센터', distanceKm: 1.1),
-        ],
-      ),
-    ),
-  ];
+  final List<ChatMessage> _messages = [];
 
   void _openRouting(RoutingTarget target) {
     switch (target.module) {
       case RoutingModule.module3Wage:
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WageNavigatorScreen()));
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const WageNavigatorScreen()));
         break;
       case RoutingModule.module3Accident:
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AccidentNavigatorScreen()));
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const AccidentNavigatorScreen()),
+        );
         break;
       case RoutingModule.module1:
         Navigator.of(context).pop(); // 백과사전 탭으로 안내 (P1: 카테고리 딥링크 연결)
@@ -76,11 +65,13 @@ class _ChatScreenState extends State<ChatScreen> {
       // ApiConfig.baseUrl(디버그 콘솔에 출력)이 의도한 배포 주소가 맞는지부터 확인할 것 —
       // dart-define 없이 실행하면 로컬 기본값(localhost:8080)으로 떨어져 항상 여기로 온다.
       debugPrint('POST /api/chat 실패 (baseUrl=${ApiConfig.baseUrl}): $e');
-      setState(() => _messages.add(
-            const ChatMessage.bot(
-              AiResponse(riskNotice: '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.'),
-            ),
-          ));
+      setState(
+        () => _messages.add(
+          const ChatMessage.bot(
+            AiResponse(riskNotice: '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.'),
+          ),
+        ),
+      );
     } finally {
       setState(() => _isSending = false);
       _scrollToBottom();
@@ -114,29 +105,89 @@ class _ChatScreenState extends State<ChatScreen> {
         automaticallyImplyLeading: false,
         actions: [
           if (widget.onClose != null)
-            IconButton(onPressed: widget.onClose, icon: const Icon(Icons.close), tooltip: '닫기'),
+            IconButton(
+              onPressed: widget.onClose,
+              icon: const Icon(Icons.close),
+              tooltip: '닫기',
+            ),
         ],
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16),
-              itemCount: _messages.length,
-              itemBuilder: (context, i) {
-                final message = _messages[i];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: message.isUser
-                      ? _UserBubble(text: message.text!)
-                      : AiResponseCard(response: message.aiResponse!, onRoutingTap: _openRouting),
-                );
-              },
-            ),
+            child: _messages.isEmpty
+                ? const _EmptyState()
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _messages.length,
+                    itemBuilder: (context, i) {
+                      final message = _messages[i];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: message.isUser
+                            ? _UserBubble(text: message.text!)
+                            : AiResponseCard(
+                                response: message.aiResponse!,
+                                onRoutingTap: _openRouting,
+                              ),
+                      );
+                    },
+                  ),
           ),
-          _ChatInputBar(controller: _controller, onSend: _send, isSending: _isSending),
+          _ChatInputBar(
+            controller: _controller,
+            onSend: _send,
+            isSending: _isSending,
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: AppColors.blueBg,
+                shape: BoxShape.circle,
+              ),
+              child: const Text('🧭', style: TextStyle(fontSize: 22)),
+            ),
+            const SizedBox(height: 14),
+            const Text(
+              '무엇이든 물어보세요',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              '임금·체불, 산업재해, 근로계약서 등 노동 관련 궁금한 점을 편하게 물어보세요.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11.5,
+                color: AppColors.textMuted,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -151,7 +202,9 @@ class _UserBubble extends StatelessWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: const BoxDecoration(
           color: AppColors.primary,
@@ -162,14 +215,21 @@ class _UserBubble extends StatelessWidget {
             bottomRight: Radius.circular(4),
           ),
         ),
-        child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 13)),
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.white, fontSize: 13),
+        ),
       ),
     );
   }
 }
 
 class _ChatInputBar extends StatelessWidget {
-  const _ChatInputBar({required this.controller, required this.onSend, required this.isSending});
+  const _ChatInputBar({
+    required this.controller,
+    required this.onSend,
+    required this.isSending,
+  });
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool isSending;
@@ -203,7 +263,10 @@ class _ChatInputBar extends StatelessWidget {
                     ? const SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : const Icon(Icons.send, size: 18),
               ),
