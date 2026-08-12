@@ -1,18 +1,20 @@
-"""`organizations` 컬렉션 초기 시딩.
+"""`organizations` 컬렉션 시딩.
 
-docs/firestore_스키마.md §3에서 설계한 스키마로, 기존 app/data/orgs.json(name/lat/lng/
-categories만 존재)의 검증된 값만 그대로 옮긴다. description/phone_number/address/
-business_hours/website_url/email/recommended_for처럼 orgs.json에 없는 필드는 실제
-기관에 확인한 값으로 채워야 하므로 빈 문자열/빈 배열로만 남겨둔다 — 실존 정부·공공
-기관의 연락처를 여기서 지어내지 않는다.
+docs/firestore_스키마.md §3에서 설계한 스키마로, scripts/geocode_organizations.py가
+DB/Organizations/*.csv(5개 파일, 32개 기관)를 지오코딩해 만든
+app/data/organizations.json을 그대로 Firestore에 올린다.
 
 실행 전:
 1. backend/.env에 GOOGLE_APPLICATION_CREDENTIALS 또는 FIREBASE_CREDENTIALS_JSON을 설정.
-2. Firestore가 이미 활성화된 Firebase 프로젝트여야 한다.
+2. app/data/organizations.json이 최신 상태인지 확인(없으면 먼저
+   `python scripts/geocode_organizations.py`를 실행).
 
 실행:
     cd backend
     python scripts/seed_organizations.py
+
+기존 organizations 컬렉션 문서를 전부 지우고 다시 채운다(멱등적 재실행) —
+그렇지 않으면 재실행할 때마다 중복 문서가 쌓인다.
 """
 
 import json
@@ -20,8 +22,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Windows 콘솔 기본 코드페이지(cp949)는 이모지·일부 유니코드를 못 씁니다 —
-# stdout을 UTF-8로 강제해서 print()가 인코딩 에러로 죽지 않게 합니다.
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
@@ -29,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.core.firebase import get_firebase_app  # noqa: E402
 
-_ORGS_JSON = Path(__file__).resolve().parent.parent / "app" / "data" / "orgs.json"
+_ORGS_JSON = Path(__file__).resolve().parent.parent / "app" / "data" / "organizations.json"
 _COLLECTION = "organizations"
 
 
@@ -43,31 +43,48 @@ def main() -> None:
         )
         raise SystemExit(1)
 
+    if not _ORGS_JSON.exists():
+        print(
+            f"{_ORGS_JSON}이 없습니다. 먼저 "
+            "`python scripts/geocode_organizations.py`를 실행해 생성해주세요."
+        )
+        raise SystemExit(1)
+
     from firebase_admin import firestore
 
     db = firestore.client(app)
     orgs = json.loads(_ORGS_JSON.read_text(encoding="utf-8"))
 
+    existing = list(db.collection(_COLLECTION).stream())
+    if existing:
+        delete_batch = db.batch()
+        for doc in existing:
+            delete_batch.delete(doc.reference)
+        delete_batch.commit()
+        print(f"기존 문서 {len(existing)}개를 지웠습니다.")
+
     now = datetime.now(timezone.utc)
     batch = db.batch()
+    needs_review_count = 0
     for org in orgs:
         doc_ref = db.collection(_COLLECTION).document()
+        if org.get("needs_review"):
+            needs_review_count += 1
         batch.set(
             doc_ref,
             {
                 "org_id": doc_ref.id,
                 "name": org["name"],
-                "description": "",  # TODO: 실제 기관 설명으로 채우기
-                "phone_number": None,  # TODO: 실제 대표번호로 채우기
-                "address": "",  # TODO: 실제 주소로 채우기
-                "website_url": None,
-                "email": None,
-                "business_hours": None,  # TODO: 예) "평일 09:00–18:00"
-                "recommended_for": [],  # TODO: 예) ["E-9", "H-2"] 또는 상황 키워드
-                "categories": org["categories"],
-                "latitude": org["lat"],
-                "longitude": org["lng"],
-                "languages_supported": [],
+                "description": org.get("description") or "",
+                "phone_number": org.get("phone_number"),
+                "address": org.get("address") or "",
+                "website_url": org.get("website_url"),
+                "email": org.get("email"),
+                "business_hours": org.get("business_hours"),
+                "recommended_for": org.get("recommended_for") or "",
+                "latitude": org.get("latitude"),
+                "longitude": org.get("longitude"),
+                "source_file": org.get("source_file"),
                 "is_active": True,
                 "created_at": now,
                 "updated_at": now,
@@ -75,7 +92,12 @@ def main() -> None:
         )
     batch.commit()
     print(f"{len(orgs)}개 기관을 '{_COLLECTION}' 컬렉션에 등록했습니다.")
-    print("⚠ description/phone_number/address/business_hours 등은 빈 값이니 콘솔에서 실제 값으로 채워주세요.")
+    if needs_review_count:
+        print(
+            f"참고: {needs_review_count}개는 위경도가 없습니다(오프라인 주소가 "
+            "없는 콜센터·온라인 포털 등) — 거리 정렬 시 자동으로 뒤로 밀려날 뿐, "
+            "정상적인 상태입니다."
+        )
 
 
 if __name__ == "__main__":

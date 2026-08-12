@@ -6,6 +6,7 @@
 from datetime import date, timedelta
 from typing import Optional
 
+from ..core.time_utils import today_kst
 from ..schemas.wage import WageClassifyResponse, WageFacts
 
 _PAYMENT_DEADLINE_DAYS = 14
@@ -20,7 +21,7 @@ _GUIDANCE_NO_UNPAID = "미지급 금액이 입력되지 않았어요. 금액을 
 
 
 def classify(facts: WageFacts, *, today: Optional[date] = None) -> WageClassifyResponse:
-    today = today or date.today()
+    today = today or today_kst()
     payment_due_date = facts.last_work_date + timedelta(days=_PAYMENT_DEADLINE_DAYS)
     is_overdue = today > payment_due_date and facts.unpaid_amount > 0
     days_overdue = max((today - payment_due_date).days, 0)

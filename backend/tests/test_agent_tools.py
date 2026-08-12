@@ -1,4 +1,9 @@
+import json
+from pathlib import Path
+
 from app.agent.tools import build_tools
+
+_ORGS_JSON = Path(__file__).resolve().parent.parent / "app" / "data" / "organizations.json"
 
 
 def _tool(name: str, uid=None):
@@ -52,6 +57,26 @@ def test_search_support_orgs_returns_default_list_without_location():
 
     assert len(result["orgs"]) > 0
     assert "name" in result["orgs"][0]
+
+
+def test_search_support_orgs_filters_by_situation_via_keyword_fallback():
+    # 로컬/CI 기본 상태: genai 자격증명이 없으므로 키워드 매칭 경로로 폴백한다.
+    search_support_orgs = _tool("search_support_orgs")
+
+    result = search_support_orgs(situation="임금체불 진정 제기")
+
+    assert 0 < len(result["orgs"]) <= 3
+
+
+def test_search_support_orgs_sorts_by_distance_when_location_given():
+    data = json.loads(_ORGS_JSON.read_text(encoding="utf-8"))
+    target = next(o for o in data if o.get("latitude") is not None)
+    search_support_orgs = _tool("search_support_orgs")
+
+    result = search_support_orgs(lat=target["latitude"], lng=target["longitude"])
+
+    distances = [o["distance_km"] for o in result["orgs"]]
+    assert distances == sorted(distances)
 
 
 def test_search_reference_documents_returns_empty_when_datastore_unconfigured():

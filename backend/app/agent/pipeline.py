@@ -20,6 +20,7 @@ from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
 from ..core.genai_client import get_model_name, resolve_client_kwargs
+from ..core.time_utils import now_kst, weekday_kst_ko
 from ..schemas.org import Org
 from .tools import build_tools
 
@@ -35,6 +36,10 @@ _SYSTEM_INSTRUCTION = """당신은 수원시 이주노동자·유학생을 돕�
   사실과 다음 행동(진정 제기, 네비게이터 이용, 기관 문의 등)을 안내하세요.
 - 확실하지 않은 정보는 지어내지 말고, 백과사전 탭이나 관련 기관 문의를 안내하세요.
 - 사용자의 언어로 최대한 친절하고 상세하게 답변하세요.
+- 메시지 맨 앞 대괄호에 오늘 날짜·요일·시각이 함께 주어집니다. "내일", "이번
+  주말"처럼 상대적인 시점을 판단하거나, 기관 이용시간(예: "평일 09:00~18:00")을
+  보고 지금·내일 이용 가능한지 판단할 때 이 정보를 기준으로 삼으세요 — 당신의
+  기억 속 날짜가 아니라 항상 이 값을 써야 합니다.
 
 도구 호출:
 - 임금·체불과 관련된 날짜/금액 수치를 안내할 때는 반드시 calculate_wage 도구를
@@ -121,12 +126,20 @@ async def run_agent(
         app_name=_APP_NAME, user_id=effective_uid, session_id=session_id
     )
 
-    context_lines = []
+    now = now_kst()
+    # 에이전트는 실제 시계가 없어 "오늘"을 모른다 — 매 요청마다 한국 시간 기준
+    # 날짜·요일·시각을 넣어줘야 "내일", "지금 문 열었나요" 같은 상대적 시점
+    # 질문과 기관 이용시간 판단이 가능하다(서버가 UTC로 도는 Cloud Run이라
+    # KST로 명시 변환한다 — core.time_utils 참고).
+    context_lines = [
+        f"오늘 날짜: {now.strftime('%Y-%m-%d')} ({weekday_kst_ko(now.date())}요일) "
+        f"{now.strftime('%H:%M')} 기준(한국시간)"
+    ]
     if visa_group:
         context_lines.append(f"체류자격: {visa_group}")
     if lifecycle_stage:
         context_lines.append(f"생애주기 단계: {lifecycle_stage}")
-    context_prefix = f"[{' / '.join(context_lines)}]\n" if context_lines else ""
+    context_prefix = f"[{' / '.join(context_lines)}]\n"
 
     new_message = types.Content(
         role="user", parts=[types.Part(text=context_prefix + message)]

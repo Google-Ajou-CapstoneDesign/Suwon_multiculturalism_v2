@@ -22,7 +22,9 @@ def test_chat_wage_keyword_routes_to_wage_navigator():
 def test_orgs_default_list_without_location():
     response = client.get("/api/orgs")
     assert response.status_code == 200
-    assert len(response.json()) == 5
+    # DB/Organizations/*.csv 5개 파일(scripts/geocode_organizations.py로 지오코딩)
+    # 총 32개 기관 — 개수가 바뀌면 데이터 유실/중복을 의심해볼 신호가 된다.
+    assert len(response.json()) == 32
 
 
 def test_wage_classify_requires_auth_dev_bypass_ok():
