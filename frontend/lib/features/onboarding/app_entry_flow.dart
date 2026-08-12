@@ -38,7 +38,7 @@ class _AppEntryFlowState extends State<AppEntryFlow> {
   Future<void> _prepareAndAdvance() async {
     final minDelay = Future.delayed(const Duration(milliseconds: 2200));
     final logoReady = precacheImage(
-      const AssetImage('assets/images/logo.png'),
+      const AssetImage('img/Logo.png'),
       context,
     ).timeout(const Duration(milliseconds: 8000), onTimeout: () {});
     await Future.wait([minDelay, logoReady]);

@@ -1,0 +1,38 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "worklogs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_id", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "worklogs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "is_risk", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "organizations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "categories", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "is_active", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "evidence_files",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_id", "order": "ASCENDING" },
+        { "fieldPath": "case_type", "order": "ASCENDING" },
+        { "fieldPath": "uploaded_at", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+
+    match /users/{userId} {
+      allow read, update: if isOwner(userId);
+      allow create: if isOwner(userId);
+    }
+
+    match /worklogs/{worklogId} {
+      allow read, update, delete: if isSignedIn() && resource.data.user_id == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.user_id == request.auth.uid;
+    }
+
+    match /evidence_files/{fileId} {
+      allow read, update, delete: if isSignedIn() && resource.data.user_id == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.user_id == request.auth.uid;
+    }
+
+    // 기관 정보는 누구나 읽을 수 있고(로그인 여부 무관), 쓰기는 백엔드(Admin SDK, 규칙 우회)만.
+    match /organizations/{orgId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /user_favorites/{favoriteId} {
+      allow read, delete: if isSignedIn() && resource.data.user_id == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.user_id == request.auth.uid;
+    }
+
+    match /chat_history/{userId}/turns/{turnId} {
+      allow read, write: if isOwner(userId);
+    }
+  }
+}
