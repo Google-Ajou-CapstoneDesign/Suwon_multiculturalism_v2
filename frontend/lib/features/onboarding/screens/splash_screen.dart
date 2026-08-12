@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen>
                     ],
                   ),
                   child: Image.asset(
-                    'assets/images/local_bridge_logo.png',
+                    'assets/images/logo.png',
                     width: 132,
                     height: 132,
                     fit: BoxFit.contain,

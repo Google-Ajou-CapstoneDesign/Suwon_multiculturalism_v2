@@ -19,14 +19,31 @@ class AppEntryFlow extends StatefulWidget {
 class _AppEntryFlowState extends State<AppEntryFlow> {
   final _profile = UserProfileController();
   _EntryStage _stage = _EntryStage.splash;
+  bool _prepareStarted = false;
 
   @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(milliseconds: 2000), () {
-      if (!mounted) return;
-      setState(() => _stage = _EntryStage.onboarding);
-    });
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 스플래시 로고를 여기서 미리 캐싱해두고, 그게 끝날 때까지(느린 네트워크
+    // 대비 최대 8초) 화면 전환을 미루면 "로고가 아직 안 떠서 흰 박스만 보이는"
+    // 문제가 사라진다. 8초 캡은 이미지 요청 자체가 실패(404 등)해도 스플래시에
+    // 영원히 갇히지 않도록 하는 안전장치일 뿐이다. didChangeDependencies에서
+    // 호출해야 precacheImage가 필요로 하는 상위 InheritedWidget(MediaQuery 등)이
+    // 완전히 연결된 상태를 보장할 수 있다.
+    if (_prepareStarted) return;
+    _prepareStarted = true;
+    _prepareAndAdvance();
+  }
+
+  Future<void> _prepareAndAdvance() async {
+    final minDelay = Future.delayed(const Duration(milliseconds: 2200));
+    final logoReady = precacheImage(
+      const AssetImage('assets/images/logo.png'),
+      context,
+    ).timeout(const Duration(milliseconds: 8000), onTimeout: () {});
+    await Future.wait([minDelay, logoReady]);
+    if (!mounted) return;
+    setState(() => _stage = _EntryStage.onboarding);
   }
 
   void _finishOnboarding() {
