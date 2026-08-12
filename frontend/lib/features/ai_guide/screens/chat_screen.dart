@@ -157,13 +157,19 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: _messages.isEmpty
+            child: _messages.isEmpty && !_isSending
                 ? _EmptyState(language: lang)
                 : ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(16),
-                    itemCount: _messages.length,
+                    itemCount: _messages.length + (_isSending ? 1 : 0),
                     itemBuilder: (context, i) {
+                      if (i == _messages.length) {
+                        return const Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: _TypingBubble(),
+                        );
+                      }
                       final message = _messages[i];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
@@ -232,6 +238,75 @@ class _EmptyState extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// AI 답변을 기다리는 동안 보여주는 말풍선 — 세 점이 순서대로 밝아졌다 어두워지며
+/// "생성 중"임을 나타낸다.
+class _TypingBubble extends StatefulWidget {
+  const _TypingBubble();
+
+  @override
+  State<_TypingBubble> createState() => _TypingBubbleState();
+}
+
+class _TypingBubbleState extends State<_TypingBubble>
+    with SingleTickerProviderStateMixin {
+  late final _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1200),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: AppColors.border),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(14),
+            topRight: Radius.circular(14),
+            bottomRight: Radius.circular(14),
+            bottomLeft: Radius.circular(4),
+          ),
+        ),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(3, (i) {
+                final t = (_controller.value - i * 0.2) % 1.0;
+                final peak = (1 - (t - 0.5).abs() * 2).clamp(0.0, 1.0);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Opacity(
+                    opacity: 0.25 + 0.75 * peak,
+                    child: Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        color: AppColors.textMuted,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            );
+          },
         ),
       ),
     );

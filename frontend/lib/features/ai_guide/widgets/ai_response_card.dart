@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import '../../../core/app_language.dart';
 import '../../../theme/app_colors.dart';
 import '../models/ai_response.dart';
@@ -39,12 +40,51 @@ class AiResponseCard extends StatelessWidget {
               ),
               border: Border.all(color: AppColors.border),
             ),
-            child: Text(
-              response.factAnswer!,
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.textPrimary,
-                height: 1.4,
+            child: MarkdownBody(
+              data: response.factAnswer!,
+              styleSheet: MarkdownStyleSheet(
+                p: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textPrimary,
+                  height: 1.4,
+                ),
+                strong: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                  height: 1.4,
+                ),
+                em: const TextStyle(
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                  color: AppColors.textPrimary,
+                  height: 1.4,
+                ),
+                listBullet: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textPrimary,
+                ),
+                code: TextStyle(
+                  fontSize: 12,
+                  backgroundColor: AppColors.blueBg,
+                  color: AppColors.textPrimary,
+                ),
+                blockSpacing: 8,
+                h1: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+                h2: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+                h3: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
           ),
