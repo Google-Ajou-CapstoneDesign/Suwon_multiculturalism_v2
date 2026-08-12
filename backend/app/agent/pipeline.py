@@ -9,7 +9,8 @@
 
 import logging
 import uuid
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 from google.adk.agents import Agent
 from google.adk.events import Event
@@ -19,6 +20,7 @@ from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
 from ..core.genai_client import get_model_name, resolve_client_kwargs
+from ..schemas.org import Org
 from .tools import build_tools
 
 logger = logging.getLogger(__name__)
@@ -32,7 +34,7 @@ _SYSTEM_INSTRUCTION = """당신은 수원시 이주노동자·유학생을 돕�
 - "위법입니다", "무조건 이깁니다"처럼 단정적인 법적 결론을 내리지 말고, 확인된
   사실과 다음 행동(진정 제기, 네비게이터 이용, 기관 문의 등)을 안내하세요.
 - 확실하지 않은 정보는 지어내지 말고, 백과사전 탭이나 관련 기관 문의를 안내하세요.
-- 한국어 존댓말로, 3~5문장 이내로 간결하게 답하세요.
+- 사용자의 언어로 최대한 친절하고 상세하게 답변하세요.
 
 도구 호출:
 - 임금·체불과 관련된 날짜/금액 수치를 안내할 때는 반드시 calculate_wage 도구를
@@ -42,9 +44,30 @@ _SYSTEM_INSTRUCTION = """당신은 수원시 이주노동자·유학생을 돕�
 - 가까운 상담·지원 기관이 필요하면 search_support_orgs 도구를 호출하세요.
 - 법 조항이나 정부 안내 문서의 정확한 내용이 필요하면 search_reference_documents
   도구로 찾은 조각만 인용하세요. 조문을 직접 지어내지 마세요.
+- 사용자가 지금 바로 다음 행동을 취해야 할 만큼 긴급·구체적인 상황이라고
+  판단되면(단순 정보 문의는 해당 안 됨) flag_urgent_action 도구를 호출하세요
+  — 이 판단에 따라 화면에 경고와 네비게이터 이동 버튼이 뜹니다.
 """
 
 _session_service = InMemorySessionService()
+
+
+@dataclass
+class AgentResult:
+    """run_agent()의 반환값.
+
+    chat_service가 예전에는 risk_notice/routing_target/recommended_orgs를
+    intent(wage/accident/contract) 분류만 보고 무조건 채웠는데, 그러면 사용자가
+    가벼운 질문을 해도 매번 경고문구·네비게이터 버튼·기관목록이 떴다. 이제는
+    에이전트가 flag_urgent_action 호출 여부로 "지금 안내가 필요한 상황인지"를
+    직접 판단하고(urgent), search_support_orgs를 실제로 호출했다면 그 결과를
+    그대로(orgs) 돌려줘서 화면에 뜨는 기관이 에이전트가 실제로 찾은 것과
+    일치하게 한다.
+    """
+
+    text: str
+    urgent: bool = False
+    orgs: List[Org] = field(default_factory=list)
 
 
 def _log_agent_event(event: Event) -> None:
@@ -70,8 +93,8 @@ async def run_agent(
     uid: Optional[str],
     visa_group: Optional[str],
     lifecycle_stage: Optional[str],
-) -> str:
-    """Tools를 갖춘 Gemini 에이전트를 한 번 실행해 최종 답변 텍스트를 반환한다."""
+) -> AgentResult:
+    """Tools를 갖춘 Gemini 에이전트를 한 번 실행해 답변과 에이전트의 판단(AgentResult)을 반환한다."""
 
     agent = Agent(
         name="local_bridge_agent",
@@ -110,14 +133,31 @@ async def run_agent(
     )
 
     final_text_parts: list[str] = []
+    urgent = False
+    found_orgs: List[Org] = []
     async for event in runner.run_async(
         user_id=effective_uid, session_id=session_id, new_message=new_message
     ):
         _log_agent_event(event)
+        for call in event.get_function_calls():
+            if call.name == "flag_urgent_action":
+                urgent = True
+        for response in event.get_function_responses():
+            if response.name == "search_support_orgs" and isinstance(response.response, dict):
+                orgs_data = response.response.get("orgs") or []
+                found_orgs = [Org.model_validate(o) for o in orgs_data]
         if event.is_final_response() and event.content and event.content.parts:
-            final_text_parts = [part.text for part in event.content.parts if part.text]
+            # part.thought(사고 과정)까지 같이 걸러내지 않으면 "Oh no, they're
+            # really hurting..." 같은 영어 사고 과정 텍스트가 실제 답변 앞에
+            # 그대로 붙어서 사용자에게 노출된다 — _log_agent_event()가 이미
+            # 로그로 따로 남기므로 여기서는 사고 과정이 아닌 part만 모은다.
+            final_text_parts = [
+                part.text
+                for part in event.content.parts
+                if part.text and not part.thought
+            ]
 
     final_text = "".join(final_text_parts).strip()
     if not final_text:
         raise RuntimeError("에이전트가 최종 응답을 생성하지 못했습니다.")
-    return final_text
+    return AgentResult(text=final_text, urgent=urgent, orgs=found_orgs)

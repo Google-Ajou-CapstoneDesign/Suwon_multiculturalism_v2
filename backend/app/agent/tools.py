@@ -130,9 +130,32 @@ def build_tools(*, uid: Optional[str]) -> List[Callable]:
             ]
         }
 
+    def flag_urgent_action(reason: str) -> dict:
+        """사용자가 지금 바로 구체적인 다음 행동(진정 제기, 네비게이터 이용,
+        기관 문의 등)을 취해야 할 만큼 긴급하거나 실질적인 상황이라고 판단될
+        때만 호출하세요 — 예: 임금이 실제로 밀린 지 오래됐다, 산재를 당해서
+        어디에 신고해야 할지 모른다 등 구체적인 피해·위험이 이미 발생한 경우.
+
+        단순 정보 문의("임금체불이 뭐예요?"), 제도 설명 요청, 아직 상황이
+        구체화되지 않은 일반적인 대화에는 호출하지 마세요. 이 도구를 호출하면
+        사용자 화면에 경고 문구와 네비게이터 이동 버튼이 함께 뜨므로, 실제로
+        그게 도움이 될 때만 써야 합니다 — 매 대화마다 습관적으로 호출하지
+        마세요.
+
+        Args:
+            reason: 왜 긴급하다고 판단했는지 한 줄 요약(로그 확인용, 사용자
+                에게는 노출되지 않습니다).
+
+        Returns:
+            호출이 기록됐다는 확인 메시지.
+        """
+        logger.info("🚩 [flag_urgent_action] %s", reason)
+        return {"flagged": True}
+
     return [
         get_user_history,
         calculate_wage,
         search_support_orgs,
         search_reference_documents,
+        flag_urgent_action,
     ]

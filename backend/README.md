@@ -70,8 +70,12 @@ CI(GitHub Actions)도 genai 자격증명 없이 동일하게 동작한다 — `_
 ```bash
 gcloud services enable run.googleapis.com artifactregistry.googleapis.com aiplatform.googleapis.com
 
+# --location은 cloudbuild.yaml의 _REGION과 반드시 같아야 한다(docker push가
+# "${_REGION}-docker.pkg.dev/..."로 나가므로) — 지금 실제 운영 리전은
+# europe-west1이다. 여기 asia-northeast3는 이 안내를 처음 작성할 때의 계획값이고
+# 실제로 그 리전에 만들었는지는 확인되지 않았다.
 gcloud artifacts repositories create local-bridge \
-  --repository-format=docker --location=asia-northeast3
+  --repository-format=docker --location=europe-west1
 
 # Cloud Run 서비스 계정에 Vertex AI(Gemini) 호출 권한 부여
 gcloud projects add-iam-policy-binding <PROJECT_ID> \
@@ -112,6 +116,14 @@ gcloud iam service-accounts add-iam-policy-binding \
 
 ### 런타임 환경변수 (Cloud Run 서비스 설정)
 
+**배포 방식 A(`cloudbuild.yaml`)를 쓰면 아래 표의 `GOOGLE_GENAI_USE_VERTEXAI`/
+`GOOGLE_CLOUD_PROJECT`/`GOOGLE_CLOUD_LOCATION`/`GENAI_MODEL`/`DISCOVERY_ENGINE_ID`/
+`DISCOVERY_ENGINE_LOCATION`은 배포 스텝의 `--set-env-vars`가 매번 자동으로
+채운다 — 사람이 콘솔에서 수동으로 넣을 필요가 없다.** `FIREBASE_CREDENTIALS_JSON`/
+`FIREBASE_STORAGE_BUCKET`은 시크릿이거나 프로젝트마다 실제 값 확인이 필요해서
+`cloudbuild.yaml`에 없다 — 아래처럼 최초 1회 콘솔이나 `gcloud run services update`로
+직접 설정해야 한다. 배포 방식 B(GitHub Actions)를 쓴다면 전부 수동으로 채워야 한다.
+
 | 변수 | 값 |
 |---|---|
 | `GOOGLE_GENAI_USE_VERTEXAI` | `true` |
@@ -124,7 +136,16 @@ gcloud iam service-accounts add-iam-policy-binding \
 | `DISCOVERY_ENGINE_LOCATION` | 데이터스토어 리전. 기본값 `global` |
 
 `AUTH_DEV_BYPASS`는 Cloud Run에 절대 설정하지 않는다(미설정 시 기본값 `false`).
-ADK 에이전트는 별도 환경변수 없이 위 `GOOGLE_GENAI_USE_VERTEXAI`/`GOOGLE_CLOUD_PROJECT`/
-`GOOGLE_CLOUD_LOCATION`(또는 `GEMINI_API_KEY`)를 그대로 재사용한다(google-genai
-SDK와 동일한 자격증명 해석 로직). Vertex AI Search를 쓰려면 서비스 계정에
-`roles/discoveryengine.viewer`(검색만) 권한이 추가로 필요하다.
+
+⚠️ **주의(2026-08-12에 실제로 겪은 장애)**: ADK 에이전트(`app/agent/pipeline.py`)에
+모델 이름 문자열만 주면, `app/core/genai_client.py`의 `get_genai_client()`와
+달리 ADK 내부는 `GOOGLE_GENAI_USE_VERTEXAI` 환경변수가 없을 때 자체적으로
+`"true"`로 기본값 처리해주지 않는다 — 즉 이 변수 하나만 빠져도 genai 분류
+호출(`_classify_with_genai`)은 멀쩡히 성공하는데 에이전트만 "No API key was
+provided"로 조용히 죽는, 진단하기 아주 까다로운 비대칭 장애가 난다. 지금은
+`pipeline.py`가 `Gemini(model=..., client_kwargs=resolve_client_kwargs())`로
+`get_genai_client()`와 동일한 규칙을 명시적으로 넘기도록 고쳐서, 환경변수가
+빠지면 분류/에이전트 양쪽이 같이 실패하거나 같이 성공하게 됐다 — 그래도
+위 환경변수들은 여전히 실제로 설정해야 한다(코드가 "안전하게 실패"하게
+됐을 뿐, 설정 자체를 대신해주지는 않는다). Vertex AI Search를 쓰려면 서비스
+계정에 `roles/discoveryengine.viewer`(검색만) 권한이 추가로 필요하다.

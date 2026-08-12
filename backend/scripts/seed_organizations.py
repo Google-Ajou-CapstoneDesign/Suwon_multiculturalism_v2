@@ -20,6 +20,11 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Windows 콘솔 기본 코드페이지(cp949)는 이모지·일부 유니코드를 못 씁니다 —
+# stdout을 UTF-8로 강제해서 print()가 인코딩 에러로 죽지 않게 합니다.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.core.firebase import get_firebase_app  # noqa: E402

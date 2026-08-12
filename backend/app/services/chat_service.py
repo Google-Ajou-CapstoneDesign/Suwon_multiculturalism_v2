@@ -133,24 +133,43 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
     content = _CONTENT[intent]
 
     fact_answer = content["fact_answer"]
+    # risk_notice/routing_target은 예전엔 intent만 보고 무조건 채웠다 — 그러면
+    # 가벼운 질문에도 매번 경고문구·네비게이터 버튼이 떴다. 이제는 에이전트가
+    # flag_urgent_action 도구로 "지금 안내가 필요한 상황인지" 직접 판단한
+    # 경우에만 채운다(urgent). recommended_orgs도 고정 목록 대신, 에이전트가
+    # search_support_orgs를 실제로 호출했다면 그 결과를 그대로 쓴다.
+    risk_notice: Optional[str] = None
+    routing_target: Optional[RoutingTarget] = None
+    orgs: List[Org] = DEFAULT_ORGS[:1]
+
     if intent != "other":
         try:
-            fact_answer = await run_agent(
+            agent_result = await run_agent(
                 message=request.message,
                 uid=uid,
                 visa_group=request.visa_group,
                 lifecycle_stage=request.lifecycle_stage,
             )
+            fact_answer = agent_result.text
+            if agent_result.urgent:
+                risk_notice = content["risk_notice"]
+                routing_target = content["routing_target"]
+            orgs = agent_result.orgs or DEFAULT_ORGS[:1]
         except Exception as exc:
             log_exception_summary(logger, "에이전트 응답 생성 실패 — 사전 검수 문구로 폴백합니다.", exc)
             logger.exception("에이전트 응답 생성 실패 전체 트레이스백")
             fact_answer = content["fact_answer"]
+            # 에이전트가 아예 실패하면 "지금 안내가 필요한 상황인지" 판단을
+            # 대신해줄 수 없으니, 예전처럼 intent 기반 고정 안내로 안전하게
+            # 폴백한다 — 과소 안내보다는 과다 안내가 낫다.
+            risk_notice = content["risk_notice"]
+            routing_target = content["routing_target"]
+            orgs = DEFAULT_ORGS[:2]
 
-    orgs: List[Org] = DEFAULT_ORGS[:2] if intent != "other" else DEFAULT_ORGS[:1]
     response = ChatResponse(
         fact_answer=fact_answer,
-        risk_notice=content["risk_notice"],
-        routing_target=content["routing_target"],
+        risk_notice=risk_notice,
+        routing_target=routing_target,
         recommended_orgs=orgs,
     )
 

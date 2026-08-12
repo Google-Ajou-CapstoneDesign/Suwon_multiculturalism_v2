@@ -1,9 +1,15 @@
 # Cloud Build 설정. Cloud Run 콘솔에서 "저장소에서 지속적으로 배포" 트리거를 만들 때
 # 이 파일을 빌드 구성으로 지정하고, 소스 디렉터리는 반드시 backend 로 지정한다.
 # (트리거의 Directory = backend 라고 가정하고 빌드 컨텍스트를 '.'로 둔다.)
+#
+# _SERVICE_NAME/_REGION은 실제 운영 중인 Cloud Run 서비스(local-bridge-api-for-backend-git,
+# europe-west1)와 반드시 일치해야 한다 — 다르면 이 파이프라인이 엉뚱한 서비스를
+# 새로 만들거나 배포해서, 실제 트래픽이 가는 서비스와 별개로 관리되는 좀비
+# 리비전이 생긴다(2026-08-12에 이 불일치 때문에 GOOGLE_GENAI_USE_VERTEXAI
+# 환경변수가 실제 서비스에는 빠진 채로 방치돼 에이전트가 죽어 있었다).
 substitutions:
-  _SERVICE_NAME: local-bridge-backend
-  _REGION: asia-northeast3
+  _SERVICE_NAME: local-bridge-api-for-backend-git
+  _REGION: europe-west1
   _REPOSITORY: local-bridge
 
 steps:
@@ -29,6 +35,15 @@ steps:
       - --region=${_REGION}
       - --platform=managed
       - --allow-unauthenticated
+      # 여기 없으면 배포될 때마다 사람이 콘솔에서 수동으로 채워야 하는데,
+      # 하나라도 빠뜨리면(실제로 GOOGLE_GENAI_USE_VERTEXAI가 빠져서 에이전트가
+      # "No API key was provided" 에러로 죽은 적이 있다) 조용히 깨진다.
+      # FIREBASE_CREDENTIALS_JSON처럼 시크릿인 값은 여기 넣지 않고
+      # --set-secrets(Secret Manager 연동)로 별도 관리한다.
+      - --set-env-vars=GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=us-central1,GENAI_MODEL=gemini-2.5-flash,DISCOVERY_ENGINE_ID=capstone-design-document_1786499678311,DISCOVERY_ENGINE_LOCATION=global
+      # TODO(backend): FIREBASE_STORAGE_BUCKET(실제 버킷명 확인 후 채우기)과
+      # FIREBASE_CREDENTIALS_JSON(Secret Manager --set-secrets)은 아직 여기
+      # 없다 — 실제 값을 확인하기 전까지 추측값을 넣지 않았다.
 
 images:
   - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE_NAME}:$SHORT_SHA"
