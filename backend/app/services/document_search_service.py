@@ -13,6 +13,7 @@ from typing import List
 from google.cloud import discoveryengine_v1 as discoveryengine
 
 from ..core.discovery_engine_client import get_search_client, get_serving_config
+from ..core.logging_utils import log_exception_summary
 
 logger = logging.getLogger(__name__)
 
@@ -44,8 +45,9 @@ def search_documents(query: str, *, page_size: int = 5) -> List[DocumentSnippet]
 
     try:
         response = client.search(request)
-    except Exception:
-        logger.exception("Vertex AI Search 호출 실패 — 빈 결과로 진행합니다.")
+    except Exception as exc:
+        log_exception_summary(logger, "Vertex AI Search 호출 실패 — 빈 결과로 진행합니다.", exc)
+        logger.exception("Vertex AI Search 호출 실패 전체 트레이스백")
         return []
 
     results: List[DocumentSnippet] = []

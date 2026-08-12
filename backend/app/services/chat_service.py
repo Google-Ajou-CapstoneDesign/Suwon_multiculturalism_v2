@@ -21,6 +21,7 @@ from pydantic import BaseModel
 
 from ..agent.pipeline import run_agent
 from ..core.genai_client import get_genai_client, get_model_name
+from ..core.logging_utils import log_exception_summary
 from ..schemas.chat import ChatRequest, ChatResponse, RoutingTarget
 from ..schemas.org import Org
 from . import history_service
@@ -112,8 +113,9 @@ def _classify_with_genai(message: str) -> Optional[Intent]:
         if not isinstance(parsed, IntentClassification):
             return None
         return parsed.intent
-    except Exception:
-        logger.exception("genai 의도 분류 실패 — 키워드 규칙으로 폴백합니다.")
+    except Exception as exc:
+        log_exception_summary(logger, "genai 의도 분류 실패 — 키워드 규칙으로 폴백합니다.", exc)
+        logger.exception("genai 의도 분류 실패 전체 트레이스백")
         return None
 
 
@@ -139,8 +141,9 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
                 visa_group=request.visa_group,
                 lifecycle_stage=request.lifecycle_stage,
             )
-        except Exception:
-            logger.exception("에이전트 응답 생성 실패 — 사전 검수 문구로 폴백합니다.")
+        except Exception as exc:
+            log_exception_summary(logger, "에이전트 응답 생성 실패 — 사전 검수 문구로 폴백합니다.", exc)
+            logger.exception("에이전트 응답 생성 실패 전체 트레이스백")
             fact_answer = content["fact_answer"]
 
     orgs: List[Org] = DEFAULT_ORGS[:2] if intent != "other" else DEFAULT_ORGS[:1]

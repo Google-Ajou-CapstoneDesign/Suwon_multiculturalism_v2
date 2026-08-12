@@ -12,6 +12,7 @@ import logging
 from datetime import date
 from typing import Callable, List, Optional
 
+from ..core.logging_utils import log_exception_summary
 from ..schemas.wage import WageFacts
 from ..services import document_search_service, history_service, org_service, wage_rules
 
@@ -97,7 +98,8 @@ def build_tools(*, uid: Optional[str]) -> List[Callable]:
         try:
             orgs = org_service.list_orgs(lat=lat, lng=lng, category=category)
         except Exception as exc:  # noqa: BLE001 - 도구 실패를 모델에게 알려 회복시킨다.
-            logger.exception("기관 조회 도구 실패")
+            log_exception_summary(logger, "기관 조회 도구 실패", exc)
+            logger.exception("기관 조회 도구 실패 전체 트레이스백")
             return {"error": str(exc)}
         return {"orgs": [org.model_dump(mode="json") for org in orgs]}
 
@@ -119,7 +121,8 @@ def build_tools(*, uid: Optional[str]) -> List[Callable]:
         try:
             results = document_search_service.search_documents(query)
         except Exception as exc:  # noqa: BLE001 - 도구 실패를 모델에게 알려 회복시킨다.
-            logger.exception("문서 검색 도구 실패")
+            log_exception_summary(logger, "문서 검색 도구 실패", exc)
+            logger.exception("문서 검색 도구 실패 전체 트레이스백")
             return {"error": str(exc)}
         return {
             "documents": [

@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from ..core.firebase import get_firebase_app
+from ..core.logging_utils import log_exception_summary
 
 logger = logging.getLogger(__name__)
 
@@ -38,8 +39,9 @@ def save_turn(uid: str, message: str, response_text: Optional[str]) -> None:
                 "created_at": datetime.now(timezone.utc),
             }
         )
-    except Exception:
-        logger.exception("상담 이력 저장 실패 — 응답 자체에는 영향을 주지 않습니다.")
+    except Exception as exc:
+        log_exception_summary(logger, "상담 이력 저장 실패 — 응답 자체에는 영향을 주지 않습니다.", exc)
+        logger.exception("상담 이력 저장 실패 전체 트레이스백")
 
 
 def get_recent_history(uid: str, *, limit: int = 5) -> List[dict]:
@@ -58,6 +60,7 @@ def get_recent_history(uid: str, *, limit: int = 5) -> List[dict]:
             .stream()
         )
         return [doc.to_dict() for doc in docs]
-    except Exception:
-        logger.exception("상담 이력 조회 실패 — 빈 이력으로 진행합니다.")
+    except Exception as exc:
+        log_exception_summary(logger, "상담 이력 조회 실패 — 빈 이력으로 진행합니다.", exc)
+        logger.exception("상담 이력 조회 실패 전체 트레이스백")
         return []
