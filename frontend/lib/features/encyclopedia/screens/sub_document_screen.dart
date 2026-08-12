@@ -7,7 +7,11 @@ import '../models/encyclopedia_strings.dart';
 
 /// 카테고리 하위 문서 1개(예: "하이코리아 회원가입 & 비밀번호 찾기") 상세 화면.
 class SubDocumentScreen extends StatefulWidget {
-  const SubDocumentScreen({super.key, required this.doc, required this.language});
+  const SubDocumentScreen({
+    super.key,
+    required this.doc,
+    required this.language,
+  });
 
   final SubDocument doc;
   final AppLanguage language;
@@ -23,26 +27,48 @@ class _SubDocumentScreenState extends State<SubDocumentScreen> {
   Widget build(BuildContext context) {
     final doc = widget.doc;
     return Scaffold(
-      appBar: AppBar(title: Text(doc.title.of(widget.language), style: const TextStyle(fontSize: 15))),
+      appBar: AppBar(
+        title: Text(
+          doc.title.of(widget.language),
+          style: const TextStyle(fontSize: 15),
+        ),
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
-          Text(doc.description.of(widget.language), style: const TextStyle(fontSize: 12.5, color: AppColors.textMuted, height: 1.5)),
+          Text(
+            doc.description.of(widget.language),
+            style: const TextStyle(
+              fontSize: 12.5,
+              color: AppColors.textMuted,
+              height: 1.5,
+            ),
+          ),
           const SizedBox(height: 14),
           AppCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 for (var i = 0; i < doc.body.length; i++) ...[
-                  if (i > 0) const Padding(padding: EdgeInsets.symmetric(vertical: 7), child: Divider(height: 1)),
-                  Text(doc.body[i].of(widget.language), style: const TextStyle(fontSize: 13, height: 1.55)),
+                  if (i > 0)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 7),
+                      child: Divider(height: 1),
+                    ),
+                  Text(
+                    doc.body[i].of(widget.language),
+                    style: const TextStyle(fontSize: 13, height: 1.55),
+                  ),
                 ],
               ],
             ),
           ),
           if (doc.checklist.isNotEmpty) ...[
             const SizedBox(height: 14),
-            Text(EncyclopediaStrings.checklistTitle.of(widget.language), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+            Text(
+              EncyclopediaStrings.checklistTitle.of(widget.language),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+            ),
             const SizedBox(height: 8),
             AppCard(
               padding: EdgeInsets.zero,
@@ -50,10 +76,15 @@ class _SubDocumentScreenState extends State<SubDocumentScreen> {
                 children: [
                   for (var i = 0; i < doc.checklist.length; i++)
                     CheckboxListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 13),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 13,
+                      ),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: _checked.contains(i),
-                      title: Text(doc.checklist[i].of(widget.language), style: const TextStyle(fontSize: 12.5)),
+                      title: Text(
+                        doc.checklist[i].of(widget.language),
+                        style: const TextStyle(fontSize: 12.5),
+                      ),
                       onChanged: (v) => setState(() {
                         if (v ?? false) {
                           _checked.add(i);

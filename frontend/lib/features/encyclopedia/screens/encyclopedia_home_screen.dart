@@ -6,13 +6,13 @@ import '../widgets/book_cover.dart';
 import '../widgets/book_page_switcher.dart';
 import '../widgets/category_toc_page.dart';
 import '../widgets/group_bookmark_rail.dart';
-import '../widgets/language_sheet.dart';
 import 'category_detail_screen.dart';
 import 'favorites_screen.dart';
 
 /// Tab 1 · 백과사전. "책 표지 + 세로 북마크" 컨셉(프론트엔드_구상.html 기반).
 /// 표지(닫힌 책)를 기본으로 보여주고, 우측 세로 북마크(A/B/C)를 탭하면 해당
-/// 그룹의 목차로 전환된다. 상세·즐겨찾기는 별도 화면으로 push한다.
+/// 그룹의 목차로 전환된다. 상세·즐겨찾기는 별도 화면으로 push한다. 언어는
+/// 앱 전역 UserProfileScope에서 읽는다(홈 화면 버튼에서 바꾼 값이 여기도 반영됨).
 class EncyclopediaHomeScreen extends StatefulWidget {
   const EncyclopediaHomeScreen({super.key});
 
@@ -21,19 +21,7 @@ class EncyclopediaHomeScreen extends StatefulWidget {
 }
 
 class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
-  late final EncyclopediaController _controller;
-  bool _controllerReady = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // 온보딩에서 고른 언어를 시작값으로만 물려받는다(최초 1회) — 이후 이 탭 안에서
-    // 언어를 바꿔도 전역 프로필까지 되돌리지는 않는다.
-    if (!_controllerReady) {
-      _controller = EncyclopediaController(initialLanguage: UserProfileScope.of(context).language);
-      _controllerReady = true;
-    }
-  }
+  final _controller = EncyclopediaController();
 
   @override
   void dispose() {
@@ -46,7 +34,7 @@ class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
       MaterialPageRoute(
         builder: (_) => CategoryDetailScreen(
           categoryId: id,
-          language: _controller.language,
+          language: UserProfileScope.of(context).language,
           starred: _controller.isItemStarred(id),
           onToggleStar: () => _controller.toggleItemStar(id),
         ),
@@ -55,16 +43,20 @@ class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
   }
 
   void _openFavorites() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => FavoritesScreen(controller: _controller)));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FavoritesScreen(controller: _controller),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final lang = UserProfileScope.of(context).language;
+
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, _) {
-        final lang = _controller.language;
-
         return PopScope(
           canPop: _controller.isCoverShowing,
           onPopInvokedWithResult: (didPop, _) {
@@ -73,31 +65,33 @@ class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Local Bridge', style: TextStyle(fontWeight: FontWeight.w700)),
-              leading: IconButton(
-                tooltip: 'Favorites',
-                onPressed: _openFavorites,
-                icon: const Icon(Icons.star_border),
+              title: const Text(
+                'Local Bridge',
+                style: TextStyle(fontWeight: FontWeight.w700),
               ),
               actions: [
-                TextButton.icon(
-                  onPressed: () => showLanguageSheet(context, current: lang, onSelect: _controller.setLanguage),
-                  icon: const Icon(Icons.language, size: 16),
-                  label: Text(lang.code),
+                IconButton(
+                  tooltip: 'Favorites',
+                  onPressed: _openFavorites,
+                  icon: const Icon(Icons.star_border),
                 ),
-                const SizedBox(width: 4),
               ],
             ),
             body: Stack(
               children: [
                 Positioned.fill(
                   child: BookPageSwitcher(
-                    pageKey: _controller.isCoverShowing ? 'cover' : 'toc-${_controller.openGroup}',
+                    pageKey: _controller.isCoverShowing
+                        ? 'cover'
+                        : 'toc-${_controller.openGroup}',
                     child: _controller.isCoverShowing
                         ? DecoratedBox(
                             decoration: BookCover.background,
                             child: SingleChildScrollView(
-                              child: BookCover(language: lang, onOpenItem: _openDetail),
+                              child: BookCover(
+                                language: lang,
+                                onOpenItem: _openDetail,
+                              ),
                             ),
                           )
                         : ColoredBox(
@@ -112,7 +106,14 @@ class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
                           ),
                   ),
                 ),
-                Positioned(right: 0, top: 24, child: GroupBookmarkRail(controller: _controller)),
+                Positioned(
+                  right: 0,
+                  top: 24,
+                  child: GroupBookmarkRail(
+                    controller: _controller,
+                    language: lang,
+                  ),
+                ),
               ],
             ),
           ),

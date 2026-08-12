@@ -48,7 +48,9 @@ class _AppEntryFlowState extends State<AppEntryFlow> {
         children: [
           const MainShell(),
           if (_stage == _EntryStage.onboarding)
-            Positioned.fill(child: OnboardingScreen(onFinished: _finishOnboarding)),
+            Positioned.fill(
+              child: OnboardingScreen(onFinished: _finishOnboarding),
+            ),
           Positioned.fill(
             child: IgnorePointer(
               ignoring: _stage != _EntryStage.splash,

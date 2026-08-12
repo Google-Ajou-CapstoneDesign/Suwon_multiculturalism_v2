@@ -51,10 +51,15 @@ class UserProfileController extends ChangeNotifier {
 
 /// 위젯 트리 어디서나 UserProfileController에 접근할 수 있게 하는 스코프.
 class UserProfileScope extends InheritedNotifier<UserProfileController> {
-  const UserProfileScope({super.key, required UserProfileController controller, required super.child}) : super(notifier: controller);
+  const UserProfileScope({
+    super.key,
+    required UserProfileController controller,
+    required super.child,
+  }) : super(notifier: controller);
 
   static UserProfileController of(BuildContext context) {
-    final scope = context.dependOnInheritedWidgetOfExactType<UserProfileScope>();
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<UserProfileScope>();
     assert(scope != null, 'UserProfileScope가 위젯 트리 위쪽에 없습니다.');
     return scope!.notifier!;
   }

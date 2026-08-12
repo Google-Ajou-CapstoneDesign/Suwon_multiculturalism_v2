@@ -168,15 +168,17 @@ class FDateRow extends StatelessWidget {
     required this.onPick,
     this.help,
     this.monthOnly = false,
+    this.placeholder = '선택',
   });
   final String label;
   final DateTime? value;
   final ValueChanged<DateTime> onPick;
   final VoidCallback? help;
   final bool monthOnly;
+  final String placeholder;
 
   String get _text {
-    if (value == null) return '선택';
+    if (value == null) return placeholder;
     final v = value!;
     return monthOnly
         ? '${v.year}-${v.month.toString().padLeft(2, '0')}'

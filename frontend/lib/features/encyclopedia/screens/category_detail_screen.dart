@@ -45,8 +45,18 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(item.name.of(widget.language), style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
-            if (sub != null) Text(sub, style: const TextStyle(fontSize: 10.5, color: AppColors.textMuted)),
+            Text(
+              item.name.of(widget.language),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+            ),
+            if (sub != null)
+              Text(
+                sub,
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  color: AppColors.textMuted,
+                ),
+              ),
           ],
         ),
         actions: [
@@ -55,7 +65,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
               setState(() => _starred = !_starred);
               widget.onToggleStar();
             },
-            icon: Icon(_starred ? Icons.star : Icons.star_border, color: _starred ? AppColors.accent : AppColors.textMuted),
+            icon: Icon(
+              _starred ? Icons.star : Icons.star_border,
+              color: _starred ? AppColors.accent : AppColors.textMuted,
+            ),
           ),
         ],
       ),
@@ -66,7 +79,11 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 child: Text(
                   EncyclopediaStrings.notReady.of(widget.language),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, height: 1.5),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                    height: 1.5,
+                  ),
                 ),
               ),
             )
@@ -78,9 +95,16 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _StepLabel(text: detailStepCaptions[step.captionIndex].of(widget.language)),
+                        _StepLabel(
+                          text: detailStepCaptions[step.captionIndex].of(
+                            widget.language,
+                          ),
+                        ),
                         const SizedBox(height: 6),
-                        Text(step.text.of(widget.language), style: const TextStyle(fontSize: 14, height: 1.45)),
+                        Text(
+                          step.text.of(widget.language),
+                          style: const TextStyle(fontSize: 14, height: 1.45),
+                        ),
                       ],
                     ),
                   ),
@@ -91,7 +115,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _StepLabel(text: detailStepCaptions[4].of(widget.language)),
+                        _StepLabel(
+                          text: detailStepCaptions[4].of(widget.language),
+                        ),
                         const SizedBox(height: 10),
                         Row(
                           children: List.generate(3, (i) {
@@ -100,10 +126,15 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                                 margin: EdgeInsets.only(right: i < 2 ? 8 : 0),
                                 height: 72,
                                 decoration: BoxDecoration(
-                                  color: AppColors.border.withValues(alpha: 0.4),
+                                  color: AppColors.border.withValues(
+                                    alpha: 0.4,
+                                  ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Icon(Icons.image_outlined, color: AppColors.textMuted),
+                                child: const Icon(
+                                  Icons.image_outlined,
+                                  color: AppColors.textMuted,
+                                ),
                               ),
                             );
                           }),
@@ -116,7 +147,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 if (detail.subDocuments.isNotEmpty) ...[
                   Text(
                     EncyclopediaStrings.subDocumentsTitle.of(widget.language),
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   AppCard(
@@ -130,7 +164,12 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                             language: widget.language,
                             isLast: i == detail.subDocuments.length - 1,
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => SubDocumentScreen(doc: detail.subDocuments[i], language: widget.language)),
+                              MaterialPageRoute(
+                                builder: (_) => SubDocumentScreen(
+                                  doc: detail.subDocuments[i],
+                                  language: widget.language,
+                                ),
+                              ),
                             ),
                           ),
                       ],
@@ -140,7 +179,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 if (detail.checklist.isNotEmpty) ...[
                   Text(
                     EncyclopediaStrings.checklistTitle.of(widget.language),
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   AppCard(
@@ -149,10 +191,15 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       children: [
                         for (var i = 0; i < detail.checklist.length; i++)
                           CheckboxListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 13),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 13,
+                            ),
                             controlAffinity: ListTileControlAffinity.leading,
                             value: _checked.contains(i),
-                            title: Text(detail.checklist[i].of(widget.language), style: const TextStyle(fontSize: 12.5)),
+                            title: Text(
+                              detail.checklist[i].of(widget.language),
+                              style: const TextStyle(fontSize: 12.5),
+                            ),
                             onChanged: (v) => setState(() {
                               if (v ?? false) {
                                 _checked.add(i);
@@ -172,7 +219,13 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
 }
 
 class _SubDocumentRow extends StatelessWidget {
-  const _SubDocumentRow({required this.index, required this.doc, required this.language, required this.isLast, required this.onTap});
+  const _SubDocumentRow({
+    required this.index,
+    required this.doc,
+    required this.language,
+    required this.isLast,
+    required this.onTap,
+  });
 
   final int index;
   final SubDocument doc;
@@ -186,28 +239,63 @@ class _SubDocumentRow extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
-        decoration: BoxDecoration(border: Border(bottom: BorderSide(color: isLast ? Colors.transparent : const Color(0xFFF1F5F9)))),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: isLast ? Colors.transparent : const Color(0xFFF1F5F9),
+            ),
+          ),
+        ),
         child: Row(
           children: [
             Container(
               width: 22,
               height: 22,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(color: AppColors.blueBg, shape: BoxShape.circle),
-              child: Text('$index', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: AppColors.primary)),
+              decoration: const BoxDecoration(
+                color: AppColors.blueBg,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                '$index',
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                ),
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(doc.title.of(language), style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                  Text(
+                    doc.title.of(language),
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                   const SizedBox(height: 3),
-                  Text(doc.description.of(language), style: const TextStyle(fontSize: 10, color: AppColors.textMuted), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text(
+                    doc.description.of(language),
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: AppColors.textMuted,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, size: 18, color: AppColors.textMuted),
+            const Icon(
+              Icons.chevron_right,
+              size: 18,
+              color: AppColors.textMuted,
+            ),
           ],
         ),
       ),
@@ -223,8 +311,18 @@ class _StepLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: AppColors.blueBg, borderRadius: BorderRadius.circular(20)),
-      child: Text(text, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary)),
+      decoration: BoxDecoration(
+        color: AppColors.blueBg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: AppColors.primary,
+        ),
+      ),
     );
   }
 }

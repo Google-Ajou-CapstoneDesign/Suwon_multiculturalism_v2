@@ -1,8 +1,214 @@
 import 'package:flutter/material.dart';
+import '../../../core/app_language.dart';
 import '../../../theme/app_colors.dart';
 import '../models/wage_diagnosis.dart';
 import 'wage_form_widgets.dart';
 import 'wage_help.dart';
+
+class _S {
+  const _S(this.ko, this.en, this.zh, this.vi);
+  final String ko;
+  final String en;
+  final String zh;
+  final String vi;
+
+  L10nText get t => L10nText(ko: ko, en: en, zh: zh, vi: vi);
+  String of(AppLanguage lang) => t.of(lang);
+}
+
+const _watermark = _S(
+  '⚠ 입력값 기준 추정치',
+  '⚠ Estimate based on your input',
+  '⚠ 基于输入值的估算值',
+  '⚠ Ước tính dựa trên giá trị đã nhập',
+);
+const _basePay = _S('기본급', 'Base pay', '基本工资', 'Lương cơ bản');
+const _weeklyAllowance = _S(
+  '주휴수당',
+  'Weekly paid holiday allowance',
+  '周休津贴',
+  'Phụ cấp ngày nghỉ có lương hàng tuần',
+);
+const _notApplicable = _S('해당없음', 'N/A', '不适用', 'Không áp dụng');
+const _overtimeAllowance = _S(
+  '연장근로수당',
+  'Overtime allowance',
+  '延长劳动津贴',
+  'Phụ cấp làm thêm giờ',
+);
+const _nightAllowance = _S(
+  '야간근로수당',
+  'Night work allowance',
+  '夜间劳动津贴',
+  'Phụ cấp làm việc ban đêm',
+);
+const _holidayAllowance = _S(
+  '휴일근로수당',
+  'Holiday work allowance',
+  '假日劳动津贴',
+  'Phụ cấp làm việc ngày lễ',
+);
+const _grossTotal = _S('세전 총액', 'Total before tax', '税前总额', 'Tổng trước thuế');
+const _ifFourInsurance = _S(
+  '🛡 4대보험으로 공제된다면',
+  '🛡 If deducted via the 4 major insurances',
+  '🛡 如果按四大保险扣除',
+  '🛡 Nếu khấu trừ theo 4 loại bảo hiểm',
+);
+const _roomDeduction = _S(
+  '숙식비 공제',
+  'Room & board deduction',
+  '食宿费扣除',
+  'Khấu trừ tiền ăn ở',
+);
+const _expectedNet = _S(
+  '예상 실수령액',
+  'Expected net pay',
+  '预计实际到手金额',
+  'Số tiền thực nhận dự kiến',
+);
+const _ifBizTax = _S(
+  '🧾 3.3% 사업소득으로 공제된다면',
+  '🧾 If deducted as 3.3% business income tax',
+  '🧾 如果按3.3%事业所得税扣除',
+  '🧾 Nếu khấu trừ 3.3% thuế thu nhập kinh doanh',
+);
+const _bizTaxDeduction = _S(
+  '세금 공제 (사업소득세 3.3%)',
+  'Tax deduction (3.3% business income tax)',
+  '税款扣除（事业所得税3.3%）',
+  'Khấu trừ thuế (thuế thu nhập kinh doanh 3.3%)',
+);
+const _belowMinTitle = _S(
+  '⚠ 최저임금보다 낮습니다',
+  '⚠ Below minimum wage',
+  '⚠ 低于最低工资',
+  '⚠ Thấp hơn lương tối thiểu',
+);
+const _similarAmount = _S(
+  '입금액이 계산 결과와 비슷합니다',
+  'The deposited amount is similar to the calculated result',
+  '入账金额与计算结果相近',
+  'Số tiền nhận được gần giống với kết quả tính toán',
+);
+const _lessThanExpected = _S(
+  '받아야 할 금액보다 적게 들어왔습니다',
+  'You received less than what you should have',
+  '收到的金额少于应得金额',
+  'Số tiền nhận được ít hơn số tiền đáng lẽ phải nhận',
+);
+const _moreThanCalculated = _S(
+  '계산 결과보다 많이 들어왔습니다',
+  'You received more than the calculated result',
+  '收到的金额多于计算结果',
+  'Số tiền nhận được nhiều hơn kết quả tính toán',
+);
+const _gapLabel = _S('차액', 'Difference', '差额', 'Chênh lệch');
+const _aiDiagnosisPositive = _S(
+  '🤖 왜 더 받아야 하는지 AI 진단 보기',
+  '🤖 See AI diagnosis on why you should receive more',
+  '🤖 查看AI诊断：为什么应该多收到',
+  '🤖 Xem chẩn đoán AI về lý do bạn nên nhận nhiều hơn',
+);
+const _aiDiagnosisNegative = _S(
+  '🤖 왜 차이가 나는지 AI 진단 보기',
+  '🤖 See AI diagnosis on why there is a difference',
+  '🤖 查看AI诊断：为什么会有差异',
+  '🤖 Xem chẩn đoán AI về lý do có sự chênh lệch',
+);
+const _aiDiagnosisTitle = _S(
+  '🤖 AI 맞춤 진단',
+  '🤖 AI Custom Diagnosis',
+  '🤖 AI定制诊断',
+  '🤖 Chẩn đoán AI tùy chỉnh',
+);
+const _autoMapComplaint = _S(
+  '📄 진정서에 내 기록 자동 매핑하기',
+  '📄 Auto-fill my records into the complaint',
+  '📄 自动将我的记录映射到申诉书',
+  '📄 Tự động điền hồ sơ của tôi vào đơn tố cáo',
+);
+const _findNearbyOrgs = _S(
+  '📍 내 근처 관할 기관 찾기',
+  '📍 Find nearby authorities',
+  '📍 查找我附近的管辖机构',
+  '📍 Tìm cơ quan quản lý gần tôi',
+);
+const _severanceHeader = _S(
+  '🏆 예상 퇴직금 (별도)',
+  '🏆 Estimated severance pay (separate)',
+  '🏆 预计退休金（另计）',
+  '🏆 Trợ cấp thôi việc dự kiến (tính riêng)',
+);
+const _daysEmployedSuffix = _S(
+  '일 재직',
+  ' days employed',
+  '天在职',
+  ' ngày làm việc',
+);
+const _severanceNote = _S(
+  '임금과 별개로, 퇴직할 때 한 번 받는 돈입니다.',
+  'This is a one-time payment received upon resignation, separate from wages.',
+  '与工资无关，是离职时一次性领取的钱。',
+  'Đây là khoản tiền nhận một lần khi nghỉ việc, tách biệt với lương.',
+);
+const _severanceExplainTitle = _S(
+  '💬 퇴직금, 왜 그리고 얼마나 받아야 하는지 보기',
+  '💬 See why and how much severance pay you should receive',
+  '💬 查看为什么以及应获得多少退休金',
+  '💬 Xem lý do và số tiền trợ cấp thôi việc bạn nên nhận',
+);
+const _severanceNotEligibleTitle = _S(
+  '예상 퇴직금 (현재는 요건 미충족)',
+  'Estimated severance pay (requirements not yet met)',
+  '预计退休金（目前不符合条件）',
+  'Trợ cấp thôi việc dự kiến (hiện chưa đủ điều kiện)',
+);
+const _formulaDetailTitle = _S(
+  '📐 법률 수식 상세보기',
+  '📐 View detailed legal formulas',
+  '📐 查看详细法律公式',
+  '📐 Xem chi tiết công thức pháp lý',
+);
+const _formulaHourly = _S(
+  '• 통상시급: (월급/연봉) ÷ 월 유급시간(주 40시간 기준 209시간 등)',
+  '• Ordinary hourly wage: (monthly/annual pay) ÷ monthly paid hours (e.g. 209 hours for a 40-hour week)',
+  '• 通常时薪：（月薪/年薪）÷ 每月有薪时间（以每周40小时为准约209小时等）',
+  '• Lương giờ thông thường: (lương tháng/năm) ÷ số giờ có lương trong tháng (ví dụ 209 giờ với tuần 40 giờ)',
+);
+const _formulaWeekly = _S(
+  '• 주휴수당: (주 소정근로시간 ÷ 40) × 8h × 통상시급 × 4.345주',
+  '• Weekly paid holiday allowance: (weekly contracted hours ÷ 40) × 8h × ordinary hourly wage × 4.345 weeks',
+  '• 周休津贴：（每周约定工作时间 ÷ 40）× 8小时 × 通常时薪 × 4.345周',
+  '• Phụ cấp ngày nghỉ có lương hàng tuần: (giờ làm việc theo hợp đồng hàng tuần ÷ 40) × 8h × lương giờ thông thường × 4.345 tuần',
+);
+const _formulaExtra = _S(
+  '• 가산수당: 5인 이상 사업장 연장 1.5배 · 야간 0.5배(가산분) · 휴일 1.5배',
+  '• Extra pay: 1.5× overtime, 0.5× night (additional portion), 1.5× holiday at workplaces with 5+ employees',
+  '• 加成津贴：5人以上企业延长劳动1.5倍·夜间0.5倍（加成部分）·假日1.5倍',
+  '• Phụ cấp thêm: 1.5 lần làm thêm giờ, 0.5 lần ban đêm (phần thêm), 1.5 lần ngày lễ tại nơi có từ 5 nhân viên trở lên',
+);
+const _formulaSeverance = _S(
+  '• 퇴직금: 1일 평균임금 × 30일 × (재직일수 ÷ 365), 평균임금이 통상임금보다 낮으면 통상임금 적용',
+  '• Severance pay: average daily wage × 30 days × (days employed ÷ 365); if the average wage is lower than the ordinary wage, the ordinary wage applies',
+  '• 退休金：日平均工资 × 30天 ×（在职天数 ÷ 365），若平均工资低于通常工资则适用通常工资',
+  '• Trợ cấp thôi việc: lương bình quân 1 ngày × 30 ngày × (số ngày làm việc ÷ 365); nếu lương bình quân thấp hơn lương thông thường thì áp dụng lương thông thường',
+);
+const _legalNoticeTitle = _S(
+  '⚠ 이 금액은 참고용 예상액입니다 (법적 고지)',
+  '⚠ This amount is a reference estimate (legal notice)',
+  '⚠ 此金额仅为参考估算值（法律声明）',
+  '⚠ Số tiền này chỉ là ước tính tham khảo (thông báo pháp lý)',
+);
+const _legalNoticeBody = _S(
+  '본 계산기는 근로기준법 표준 공식을 적용한 추정치입니다. 사업장의 특수 근로조건에 따라 차이가 발생할 수 있으며, 법적 확정 효력을 갖지 않습니다. 정확한 체불액은 근로감독관 조사에서 산정됩니다.',
+  'This calculator provides an estimate based on standard Labor Standards Act formulas. Actual amounts may differ depending on the workplace\'s specific conditions, and this has no legally binding effect. The exact unpaid amount is determined through an investigation by a labor inspector.',
+  '本计算器是应用《劳动基准法》标准公式得出的估算值。根据工作场所的特殊劳动条件可能会有所不同，不具有法律确定效力。准确的拖欠金额将在劳动监督官调查中确定。',
+  'Máy tính này đưa ra ước tính dựa trên công thức tiêu chuẩn của Luật Tiêu chuẩn Lao động. Số tiền thực tế có thể khác nhau tùy theo điều kiện lao động đặc thù của nơi làm việc và không có hiệu lực pháp lý xác định. Số tiền nợ lương chính xác sẽ được xác định qua điều tra của thanh tra lao động.',
+);
+
+String _formatWonOrText(num value, _S zeroText, AppLanguage lang) =>
+    value > 0 ? formatWon(value, lang) : zeroText.of(lang);
 
 /// 계산 결과 카드. 프론트엔드_계산기_최종.html(v6)의 resultHTML()을 그대로 옮겼다.
 class WageResultCard extends StatelessWidget {
@@ -10,38 +216,42 @@ class WageResultCard extends StatelessWidget {
     super.key,
     required this.input,
     required this.result,
+    required this.language,
     required this.onOpenWageNavigator,
     required this.onFindNearbyOrgs,
   });
 
   final WageCalcInput input;
   final WageCalcResult result;
+  final AppLanguage language;
   final VoidCallback onOpenWageNavigator;
   final VoidCallback onFindNearbyOrgs;
 
   void _openHelp(BuildContext context, String key) {
-    final entry = buildHelpDict()[key];
+    final entry = buildHelpDict(language)[key];
     if (entry == null) return;
-    showWageHelp(context, entry.title, entry.body(context));
+    showWageHelp(context, entry.title, entry.body(context), language);
   }
 
   void _openAiDiagnosis(BuildContext context) {
     showWageHelp(
       context,
-      '🤖 AI 맞춤 진단',
+      _aiDiagnosisTitle.of(language),
       RichNote(
-        explainGap(input, result),
+        explainGap(input, result, language),
         style: const TextStyle(
           fontSize: 11.5,
           color: AppColors.textSecondary,
           height: 1.7,
         ),
       ),
+      language,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final lang = language;
     final r = result;
     final gapVal = r.gapValue;
     final isZero = gapVal.abs() < 10000;
@@ -59,9 +269,9 @@ class WageResultCard extends StatelessWidget {
             color: const Color(0xFFFEF3E2),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Text(
-            '⚠ 입력값 기준 추정치',
-            style: TextStyle(
+          child: Text(
+            _watermark.of(lang),
+            style: const TextStyle(
               fontSize: 9.5,
               fontWeight: FontWeight.w800,
               color: Color(0xFFB45309),
@@ -85,7 +295,7 @@ class WageResultCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      '계산 결과 (${input.periodLabel()})',
+                      '${_resultTitle(lang)} (${input.periodLabel(lang)})',
                       style: const TextStyle(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w700,
@@ -94,7 +304,7 @@ class WageResultCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '$wageCalcYear년 고시',
+                    _noticeYearText(lang),
                     style: const TextStyle(
                       fontSize: 10,
                       color: Color(0xFF8FA9CC),
@@ -104,35 +314,41 @@ class WageResultCard extends StatelessWidget {
               ),
               const Divider(height: 18, color: Color(0x17FFFFFF)),
               _ResRow(
-                label: '기본급',
-                value: formatWon(r.baseTotal),
+                label: _basePay.of(lang),
+                value: formatWon(r.baseTotal, lang),
                 onHelp: () => _openHelp(context, 'logic_base'),
               ),
               if (!r.weeklyIncluded)
                 _ResRow(
-                  label: '주휴수당',
-                  value: r.weeklyPayTotal > 0
-                      ? formatWon(r.weeklyPayTotal)
-                      : '해당없음',
+                  label: _weeklyAllowance.of(lang),
+                  value: _formatWonOrText(
+                    r.weeklyPayTotal,
+                    _notApplicable,
+                    lang,
+                  ),
                   zero: r.weeklyPayTotal <= 0,
                   onHelp: () => _openHelp(context, 'logic_week'),
                 ),
               _ResRow(
-                label: '연장근로수당',
-                value: r.otPay > 0 ? formatWon(r.otPay) : '0원',
+                label: _overtimeAllowance.of(lang),
+                value: r.otPay > 0
+                    ? formatWon(r.otPay, lang)
+                    : formatWon(0, lang),
                 zero: r.otPay <= 0,
                 onHelp: () => _openHelp(context, 'ot_info'),
               ),
               _ResRow(
-                label: '야간근로수당',
-                value: r.ntPay > 0 ? formatWon(r.ntPay) : '0원',
+                label: _nightAllowance.of(lang),
+                value: r.ntPay > 0
+                    ? formatWon(r.ntPay, lang)
+                    : formatWon(0, lang),
                 zero: r.ntPay <= 0,
                 onHelp: () => _openHelp(context, 'nt_info'),
               ),
               if (r.holPay > 0)
                 _ResRow(
-                  label: '휴일근로수당',
-                  value: formatWon(r.holPay),
+                  label: _holidayAllowance.of(lang),
+                  value: formatWon(r.holPay, lang),
                   onHelp: () => _openHelp(context, 'hol_info'),
                 ),
 
@@ -149,9 +365,9 @@ class WageResultCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Text(
-                          '세전 총액',
-                          style: TextStyle(
+                        Text(
+                          _grossTotal.of(lang),
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFFE8C88A),
                             fontWeight: FontWeight.w600,
@@ -163,7 +379,7 @@ class WageResultCard extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      formatWon(r.gross),
+                      formatWon(r.gross, lang),
                       style: const TextStyle(
                         fontSize: 18,
                         color: Colors.white,
@@ -175,46 +391,54 @@ class WageResultCard extends StatelessWidget {
               ),
 
               if (input.tax == TaxMethod.unknown) ...[
-                const _SubHead('🛡 4대보험으로 공제된다면'),
+                _SubHead(_ifFourInsurance.of(lang)),
                 _ResRow(
-                  label: taxLabelOf(TaxMethod.four, insuranceRate()),
-                  value: '− ${formatWon(r.taxAmtFour!)}',
+                  label: taxLabelOf(TaxMethod.four, insuranceRate(), lang),
+                  value: '− ${formatWon(r.taxAmtFour!, lang)}',
                   onHelp: () => _openHelp(context, 'tax_info'),
                 ),
                 if (input.roomOn)
                   _ResRow(
-                    label: '숙식비 공제',
-                    value: '− ${formatWon(r.roomAmtTotal)}',
+                    label: _roomDeduction.of(lang),
+                    value: '− ${formatWon(r.roomAmtTotal, lang)}',
                   ),
-                _NetRow(label: '예상 실수령액', value: formatWon(r.netFour!)),
-                const _SubHead('🧾 3.3% 사업소득으로 공제된다면'),
+                _NetRow(
+                  label: _expectedNet.of(lang),
+                  value: formatWon(r.netFour!, lang),
+                ),
+                _SubHead(_ifBizTax.of(lang)),
                 _ResRow(
-                  label: '세금 공제 (사업소득세 3.3%)',
-                  value: '− ${formatWon(r.taxAmtBiz!)}',
+                  label: _bizTaxDeduction.of(lang),
+                  value: '− ${formatWon(r.taxAmtBiz!, lang)}',
                 ),
                 if (input.roomOn)
                   _ResRow(
-                    label: '숙식비 공제',
-                    value: '− ${formatWon(r.roomAmtTotal)}',
+                    label: _roomDeduction.of(lang),
+                    value: '− ${formatWon(r.roomAmtTotal, lang)}',
                   ),
-                _NetRow(label: '예상 실수령액', value: formatWon(r.netBiz!)),
+                _NetRow(
+                  label: _expectedNet.of(lang),
+                  value: formatWon(r.netBiz!, lang),
+                ),
               ] else ...[
                 _ResRow(
-                  label: taxLabelOf(input.tax, r.taxRate),
-                  value: r.taxAmt! > 0 ? '− ${formatWon(r.taxAmt!)}' : '0원',
+                  label: taxLabelOf(input.tax, r.taxRate, lang),
+                  value: r.taxAmt! > 0
+                      ? '− ${formatWon(r.taxAmt!, lang)}'
+                      : formatWon(0, lang),
                   zero: r.taxAmt! <= 0,
                   onHelp: () => _openHelp(context, 'tax_info'),
                 ),
                 _ResRow(
-                  label: '숙식비 공제',
+                  label: _roomDeduction.of(lang),
                   value: r.roomAmtTotal > 0
-                      ? '− ${formatWon(r.roomAmtTotal)}'
-                      : '0원',
+                      ? '− ${formatWon(r.roomAmtTotal, lang)}'
+                      : formatWon(0, lang),
                   zero: r.roomAmtTotal <= 0,
                 ),
                 _NetRow(
-                  label: '예상 실수령액',
-                  value: formatWon(r.net!),
+                  label: _expectedNet.of(lang),
+                  value: formatWon(r.net!, lang),
                   onHelp: () => _openHelp(context, 'logic_net'),
                 ),
               ],
@@ -224,9 +448,8 @@ class WageResultCard extends StatelessWidget {
 
         if (r.payBelowMin)
           RedNotice(
-            title: '⚠ 최저임금보다 낮습니다',
-            body:
-                '적용 통상시급 ${formatWon(r.hourly)}이 $wageCalcYear년 최저임금 ${formatWon(minWage().$1)}에 미달합니다.',
+            title: _belowMinTitle.of(lang),
+            body: _payBelowMinBody(r, lang),
           ),
 
         // 차액 카드 + AI 진단
@@ -253,8 +476,10 @@ class WageResultCard extends StatelessWidget {
             children: [
               Text(
                 isZero
-                    ? '입금액이 계산 결과와 비슷합니다'
-                    : (isPos ? '받아야 할 금액보다 적게 들어왔습니다' : '계산 결과보다 많이 들어왔습니다'),
+                    ? _similarAmount.of(lang)
+                    : (isPos
+                          ? _lessThanExpected.of(lang)
+                          : _moreThanCalculated.of(lang)),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
@@ -269,17 +494,17 @@ class WageResultCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    '차액',
-                    style: TextStyle(
+                  Text(
+                    _gapLabel.of(lang),
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
                   ),
                   Text(
                     isZero
-                        ? '±0원'
-                        : '${gapVal > 0 ? '+' : '−'}${formatWon(gapVal.abs())}',
+                        ? '±${formatWon(0, lang)}'
+                        : '${gapVal > 0 ? '+' : '−'}${formatWon(gapVal.abs(), lang)}',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
@@ -311,8 +536,8 @@ class WageResultCard extends StatelessWidget {
                     ),
                     child: Text(
                       isPos
-                          ? '🤖 왜 더 받아야 하는지 AI 진단 보기'
-                          : '🤖 왜 차이가 나는지 AI 진단 보기',
+                          ? _aiDiagnosisPositive.of(lang)
+                          : _aiDiagnosisNegative.of(lang),
                       style: const TextStyle(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w800,
@@ -338,9 +563,9 @@ class WageResultCard extends StatelessWidget {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 11),
                   ),
-                  child: const Text(
-                    '📄 진정서에 내 기록 자동 매핑하기',
-                    style: TextStyle(
+                  child: Text(
+                    _autoMapComplaint.of(lang),
+                    style: const TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w700,
                     ),
@@ -356,9 +581,9 @@ class WageResultCard extends StatelessWidget {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 11),
                   ),
-                  child: const Text(
-                    '📍 내 근처 관할 기관 찾기',
-                    style: TextStyle(
+                  child: Text(
+                    _findNearbyOrgs.of(lang),
+                    style: const TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w700,
                     ),
@@ -391,7 +616,7 @@ class WageResultCard extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              '🏆 예상 퇴직금 (별도) · ${r.days}일 재직',
+                              '${_severanceHeader.of(lang)} · ${r.days}${_daysEmployedSuffix.of(lang)}',
                               style: const TextStyle(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w700,
@@ -406,7 +631,7 @@ class WageResultCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      formatWon(r.severance),
+                      formatWon(r.severance, lang),
                       style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
@@ -416,9 +641,9 @@ class WageResultCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  '임금과 별개로, 퇴직할 때 한 번 받는 돈입니다.',
-                  style: TextStyle(
+                Text(
+                  _severanceNote.of(lang),
+                  style: const TextStyle(
                     fontSize: 10.5,
                     color: Color(0xFF0F766E),
                     height: 1.55,
@@ -428,51 +653,24 @@ class WageResultCard extends StatelessWidget {
             ),
           ),
           MoreBox(
-            title: '💬 퇴직금, 왜 그리고 얼마나 받아야 하는지 보기',
-            child: RichNote(severanceNarrative(input, result)),
+            title: _severanceExplainTitle.of(lang),
+            child: RichNote(severanceNarrative(input, result, lang)),
           ),
         ] else if (input.hireDate != null) ...[
           MoreBox(
-            title: '예상 퇴직금 (현재는 요건 미충족)',
-            child: RichNote(severanceNarrative(input, result)),
+            title: _severanceNotEligibleTitle.of(lang),
+            child: RichNote(severanceNarrative(input, result, lang)),
           ),
         ],
 
         // 법률 수식 상세
         MoreBox(
-          title: '📐 법률 수식 상세보기',
+          title: _formulaDetailTitle.of(lang),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '• 통상시급: (월급/연봉) ÷ 월 유급시간(주 40시간 기준 209시간 등)',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: AppColors.textSecondary,
-                  height: 1.6,
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                '• 주휴수당: (주 소정근로시간 ÷ 40) × 8h × 통상시급 × 4.345주',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: AppColors.textSecondary,
-                  height: 1.6,
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                '• 가산수당: 5인 이상 사업장 연장 1.5배 · 야간 0.5배(가산분) · 휴일 1.5배',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: AppColors.textSecondary,
-                  height: 1.6,
-                ),
-              ),
-              const SizedBox(height: 6),
               Text(
-                '• 세금: 4대보험 근로자부담 약 ${(insuranceRate() * 100).toStringAsFixed(2)}% 또는 사업소득세 3.3%',
+                _formulaHourly.of(lang),
                 style: const TextStyle(
                   fontSize: 11,
                   color: AppColors.textSecondary,
@@ -480,9 +678,36 @@ class WageResultCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
-                '• 퇴직금: 1일 평균임금 × 30일 × (재직일수 ÷ 365), 평균임금이 통상임금보다 낮으면 통상임금 적용',
-                style: TextStyle(
+              Text(
+                _formulaWeekly.of(lang),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _formulaExtra.of(lang),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _formulaTaxText(lang),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _formulaSeverance.of(lang),
+                style: const TextStyle(
                   fontSize: 11,
                   color: AppColors.textSecondary,
                   height: 1.6,
@@ -494,11 +719,10 @@ class WageResultCard extends StatelessWidget {
 
         // 법적 고지
         MoreBox(
-          title: '⚠ 이 금액은 참고용 예상액입니다 (법적 고지)',
-          child: const Text(
-            '본 계산기는 근로기준법 표준 공식을 적용한 추정치입니다. 사업장의 특수 근로조건에 따라 차이가 발생할 수 있으며, 법적 확정 효력을 갖지 않습니다. '
-            '정확한 체불액은 근로감독관 조사에서 산정됩니다.',
-            style: TextStyle(
+          title: _legalNoticeTitle.of(lang),
+          child: Text(
+            _legalNoticeBody.of(lang),
+            style: const TextStyle(
               fontSize: 11,
               color: AppColors.textSecondary,
               height: 1.6,
@@ -507,6 +731,45 @@ class WageResultCard extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _resultTitle(AppLanguage lang) => switch (lang) {
+    AppLanguage.ko => '계산 결과',
+    AppLanguage.en => 'Calculation result',
+    AppLanguage.zh => '计算结果',
+    AppLanguage.vi => 'Kết quả tính toán',
+  };
+
+  String _noticeYearText(AppLanguage lang) => switch (lang) {
+    AppLanguage.ko => '$wageCalcYear년 고시',
+    AppLanguage.en => '$wageCalcYear notice',
+    AppLanguage.zh => '$wageCalcYear年公告',
+    AppLanguage.vi => 'Công bố năm $wageCalcYear',
+  };
+
+  String _payBelowMinBody(WageCalcResult r, AppLanguage lang) {
+    final hourly = formatWon(r.hourly, lang);
+    final mw = formatWon(minWage().$1, lang);
+    return switch (lang) {
+      AppLanguage.ko => '적용 통상시급 $hourly이 $wageCalcYear년 최저임금 $mw에 미달합니다.',
+      AppLanguage.en =>
+        'The applied ordinary hourly wage of $hourly is below the $wageCalcYear minimum wage of $mw.',
+      AppLanguage.zh => '适用的通常时薪 $hourly 低于 $wageCalcYear 年最低工资 $mw。',
+      AppLanguage.vi =>
+        'Lương giờ thông thường áp dụng $hourly thấp hơn lương tối thiểu năm $wageCalcYear là $mw.',
+    };
+  }
+
+  String _formulaTaxText(AppLanguage lang) {
+    final pct = (insuranceRate() * 100).toStringAsFixed(2);
+    return switch (lang) {
+      AppLanguage.ko => '• 세금: 4대보험 근로자부담 약 $pct% 또는 사업소득세 3.3%',
+      AppLanguage.en =>
+        '• Tax: about $pct% employee share of the 4 major insurances, or 3.3% business income tax',
+      AppLanguage.zh => '• 税款：四大保险员工负担约$pct%，或事业所得税3.3%',
+      AppLanguage.vi =>
+        '• Thuế: khoảng $pct% phần người lao động đóng trong 4 loại bảo hiểm, hoặc thuế thu nhập kinh doanh 3.3%',
+    };
   }
 }
 

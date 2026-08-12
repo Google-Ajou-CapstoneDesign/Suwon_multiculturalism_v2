@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import '../../../core/app_language.dart';
 import '../../../theme/app_colors.dart';
 import '../models/ai_response.dart';
 import 'recommended_org_card.dart';
 
 /// AI 응답 렌더링: 사실 답변(FactAnswer) / 위험 안내(RiskNotice+라우팅 버튼) / 추천기관 카드.
+/// TODO(backend): factAnswer/riskNotice는 아직 백엔드가 항상 한국어로만 생성한다 —
+/// 요청에 언어를 실어 보내 응답 자체를 다국어로 받으려면 /api/chat 쪽 작업이 필요하다.
+/// 이 카드가 다루는 건 프론트엔드가 직접 그리는 버튼·안내 문구뿐이다.
 class AiResponseCard extends StatelessWidget {
-  const AiResponseCard({super.key, required this.response, required this.onRoutingTap});
+  const AiResponseCard({
+    super.key,
+    required this.response,
+    required this.language,
+    required this.onRoutingTap,
+  });
 
   final AiResponse response;
+  final AppLanguage language;
   final ValueChanged<RoutingTarget> onRoutingTap;
 
   @override
@@ -31,7 +41,11 @@ class AiResponseCard extends StatelessWidget {
             ),
             child: Text(
               response.factAnswer!,
-              style: const TextStyle(fontSize: 13, color: AppColors.textPrimary, height: 1.4),
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textPrimary,
+                height: 1.4,
+              ),
             ),
           ),
         if (response.riskNotice != null)
@@ -46,12 +60,20 @@ class AiResponseCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.warning_amber_rounded, size: 16, color: AppColors.amberText),
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  size: 16,
+                  color: AppColors.amberText,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     response.riskNotice!,
-                    style: const TextStyle(fontSize: 11, color: AppColors.amberText, height: 1.4),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.amberText,
+                      height: 1.4,
+                    ),
                   ),
                 ),
               ],
@@ -68,14 +90,22 @@ class AiResponseCard extends StatelessWidget {
                   backgroundColor: AppColors.secondary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 icon: const Icon(Icons.arrow_forward, size: 16),
-                label: Text(response.routingTarget!.label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                label: Text(
+                  response.routingTarget!.labelOf(language),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ),
-        RecommendedOrgCard(orgs: response.recommendedOrgs),
+        RecommendedOrgCard(orgs: response.recommendedOrgs, language: language),
       ],
     );
   }

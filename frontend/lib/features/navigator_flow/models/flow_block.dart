@@ -1,3 +1,5 @@
+import '../../../core/app_language.dart';
+
 /// 임금체불/산재 내비게이터의 단계별 콘텐츠 블록.
 /// 프론트엔드_구상_확장.html의 FLOWS 데이터 구조(opt/notice/check/raw/fill/tracker)를
 /// 그대로 옮긴 것 — 화면(NavigatorFlowScreen)은 이 블록 타입만 보고 렌더링을 분기한다.
@@ -11,38 +13,50 @@ class OptionsBlock extends FlowBlock {
 }
 
 class FlowOption {
-  const FlowOption({required this.emoji, required this.title, required this.subtitle});
+  const FlowOption({
+    required this.emoji,
+    required this.title,
+    required this.subtitle,
+  });
   final String emoji;
-  final String title;
-  final String subtitle;
+  final L10nText title;
+  final L10nText subtitle;
 }
 
 enum NoticeTone { amber, blue, teal }
 
 class NoticeBlock extends FlowBlock {
-  const NoticeBlock({required this.tone, required this.title, required this.body});
+  const NoticeBlock({
+    required this.tone,
+    required this.title,
+    required this.body,
+  });
   final NoticeTone tone;
-  final String title;
-  final String body;
+  final L10nText title;
+  final L10nText body;
 }
 
 class ChecklistBlock extends FlowBlock {
   const ChecklistBlock(this.items);
-  final List<String> items;
+  final List<L10nText> items;
 }
 
 /// 자유 서술형(5W1H) 입력 — 가공 없이 원문 그대로 서식에 옮겨진다는 것을 전제로 한다.
 class RawTextBlock extends FlowBlock {
   const RawTextBlock(this.placeholder);
-  final String placeholder;
+  final L10nText placeholder;
 }
 
 enum FillTag { auto, raw, blank }
 
 class FlowFillRow {
-  const FlowFillRow({required this.label, required this.value, required this.tag});
-  final String label;
-  final String value;
+  const FlowFillRow({
+    required this.label,
+    required this.value,
+    required this.tag,
+  });
+  final L10nText label;
+  final L10nText value;
   final FillTag tag;
 }
 
@@ -58,9 +72,13 @@ class TrackerBlock extends FlowBlock {
 }
 
 class FlowStep {
-  const FlowStep({required this.title, required this.lead, required this.blocks});
-  final String title;
-  final String lead;
+  const FlowStep({
+    required this.title,
+    required this.lead,
+    required this.blocks,
+  });
+  final L10nText title;
+  final L10nText lead;
   final List<FlowBlock> blocks;
 }
 
@@ -73,16 +91,20 @@ class TrackStage {
     required this.watchOutFor,
   });
 
-  final String label;
-  final String whatHappens;
-  final String documentsNeeded;
-  final String watchOutFor;
+  final L10nText label;
+  final L10nText whatHappens;
+  final L10nText documentsNeeded;
+  final L10nText watchOutFor;
 }
 
 enum FlowAccent { amber, teal }
 
 class FlowDefinition {
-  const FlowDefinition({required this.accent, required this.steps, required this.track});
+  const FlowDefinition({
+    required this.accent,
+    required this.steps,
+    required this.track,
+  });
   final FlowAccent accent;
   final List<FlowStep> steps;
   final List<TrackStage> track;

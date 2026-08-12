@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 /// 표지든 목차든 항상 같은 크기·모서리 둥근 사각형 안에 들어가고, 전환 시에는
 /// 오른쪽 북마크 쪽을 책등(spine) 삼아 페이지를 넘기는 듯한 3D 회전으로 바뀐다.
 class BookPageSwitcher extends StatelessWidget {
-  const BookPageSwitcher({super.key, required this.pageKey, required this.child});
+  const BookPageSwitcher({
+    super.key,
+    required this.pageKey,
+    required this.child,
+  });
 
   /// 이 값이 바뀔 때만 넘기는 애니메이션이 트리거된다(표지="cover", 목차="toc-A" 등).
   final Object pageKey;
@@ -21,7 +25,11 @@ class BookPageSwitcher extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(_radius),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.22), blurRadius: 26, offset: const Offset(0, 14)),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.22),
+              blurRadius: 26,
+              offset: const Offset(0, 14),
+            ),
           ],
         ),
         child: ClipRRect(
@@ -35,8 +43,10 @@ class BookPageSwitcher extends StatelessWidget {
               // 프레임을 정확히 꽉 채우게 한다(안 그러면 짧은 페이지가 프레임보다 작게 보일 수 있음).
               return Stack(
                 children: [
-                  for (final previous in previousChildren) Positioned.fill(child: previous),
-                  if (currentChild != null) Positioned.fill(child: currentChild),
+                  for (final previous in previousChildren)
+                    Positioned.fill(child: previous),
+                  if (currentChild != null)
+                    Positioned.fill(child: currentChild),
                 ],
               );
             },

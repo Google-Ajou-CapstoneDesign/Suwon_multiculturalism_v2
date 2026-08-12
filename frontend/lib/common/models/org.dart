@@ -3,9 +3,9 @@ class Org {
   const Org({required this.name, required this.distanceKm});
 
   factory Org.fromJson(Map<String, dynamic> json) => Org(
-        name: json['name'] as String,
-        distanceKm: (json['distanceKm'] as num).toDouble(),
-      );
+    name: json['name'] as String,
+    distanceKm: (json['distanceKm'] as num).toDouble(),
+  );
 
   final String name;
   final double distanceKm;

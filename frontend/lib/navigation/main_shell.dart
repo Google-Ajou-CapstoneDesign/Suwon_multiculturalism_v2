@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../core/app_language.dart';
+import '../core/user_profile_controller.dart';
 import '../features/ai_guide/widgets/ai_chat_sheet.dart';
 import '../features/encyclopedia/screens/encyclopedia_home_screen.dart';
 import '../features/home/screens/home_screen.dart';
@@ -29,7 +31,7 @@ class _TabSpec {
     required this.action,
     this.pageIndex,
   });
-  final String label;
+  final L10nText label;
   final IconData? icon;
   final IconData? activeIcon;
   final _NavAction action;
@@ -45,29 +47,42 @@ class _MainShellState extends State<MainShell> {
 
   final _tabs = const [
     _TabSpec(
-      label: '홈',
+      label: L10nText(ko: '홈', en: 'Home', zh: '首页', vi: 'Trang chủ'),
       icon: Icons.home_outlined,
       activeIcon: Icons.home,
       action: _NavAction.page,
       pageIndex: 0,
     ),
     _TabSpec(
-      label: '백과사전',
+      label: L10nText(
+        ko: '백과사전',
+        en: 'Encyclopedia',
+        zh: '百科全书',
+        vi: 'Cẩm nang',
+      ),
       icon: Icons.menu_book_outlined,
       activeIcon: Icons.menu_book,
       action: _NavAction.page,
       pageIndex: 2,
     ),
-    _TabSpec(label: '캘린더', action: _NavAction.worklogToggle),
     _TabSpec(
-      label: '임금계산기',
+      label: L10nText(ko: '캘린더', en: 'Calendar', zh: '日历', vi: 'Lịch'),
+      action: _NavAction.worklogToggle,
+    ),
+    _TabSpec(
+      label: L10nText(
+        ko: '임금계산기',
+        en: 'Wage calc.',
+        zh: '工资计算',
+        vi: 'Tính lương',
+      ),
       icon: Icons.calculate_outlined,
       activeIcon: Icons.calculate,
       action: _NavAction.page,
       pageIndex: 1,
     ),
     _TabSpec(
-      label: '설정',
+      label: L10nText(ko: '설정', en: 'Settings', zh: '设置', vi: 'Cài đặt'),
       icon: Icons.settings_outlined,
       activeIcon: Icons.settings,
       action: _NavAction.page,
@@ -252,6 +267,7 @@ class _BottomTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = UserProfileScope.of(context).language;
     final centerIndex = tabs.indexWhere(
       (t) => t.action == _NavAction.worklogToggle,
     );
@@ -282,7 +298,7 @@ class _BottomTabBar extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                tab.label,
+                                tab.label.of(lang),
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
@@ -315,7 +331,7 @@ class _BottomTabBar extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            tab.label,
+                            tab.label.of(lang),
                             style: TextStyle(
                               fontSize: 10,
                               color: color,

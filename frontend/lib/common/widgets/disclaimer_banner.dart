@@ -3,7 +3,11 @@ import '../../theme/app_colors.dart';
 
 /// 법률 판단이 아님을 알리는 고지문 배너. Amber 배경으로 고정.
 class DisclaimerBanner extends StatelessWidget {
-  const DisclaimerBanner({super.key, required this.message, this.icon = Icons.info_outline});
+  const DisclaimerBanner({
+    super.key,
+    required this.message,
+    this.icon = Icons.info_outline,
+  });
 
   final String message;
   final IconData icon;
@@ -26,7 +30,11 @@ class DisclaimerBanner extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(fontSize: 12, color: AppColors.amberText, height: 1.4),
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.amberText,
+                height: 1.4,
+              ),
             ),
           ),
         ],

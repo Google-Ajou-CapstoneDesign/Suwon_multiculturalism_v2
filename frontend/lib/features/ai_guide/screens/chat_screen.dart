@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/api_config.dart';
+import '../../../core/app_language.dart';
+import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
 import '../../worklog/screens/accident_navigator_screen.dart';
 import '../../worklog/screens/wage_navigator_screen.dart';
@@ -7,6 +9,42 @@ import '../models/ai_response.dart';
 import '../models/chat_message.dart';
 import '../services/chat_api_service.dart';
 import '../widgets/ai_response_card.dart';
+
+class _ChatStrings {
+  _ChatStrings._();
+
+  static const title = L10nText(
+    ko: 'AI 가이드',
+    en: 'AI Guide',
+    zh: 'AI引导',
+    vi: 'Trợ lý AI',
+  );
+  static const close = L10nText(ko: '닫기', en: 'Close', zh: '关闭', vi: 'Đóng');
+  static const emptyTitle = L10nText(
+    ko: '무엇이든 물어보세요',
+    en: 'Ask me anything',
+    zh: '请随时提问',
+    vi: 'Hỏi bất cứ điều gì',
+  );
+  static const emptySubtitle = L10nText(
+    ko: '임금·체불, 산업재해, 근로계약서 등 노동 관련 궁금한 점을 편하게 물어보세요.',
+    en: 'Feel free to ask about wages, unpaid pay, workplace injuries, employment contracts, and other labor topics.',
+    zh: '关于工资、欠薪、工伤、劳动合同等劳动相关问题，请随时提问。',
+    vi: 'Hãy thoải mái hỏi về lương, nợ lương, tai nạn lao động, hợp đồng lao động và các vấn đề lao động khác.',
+  );
+  static const inputHint = L10nText(
+    ko: '메시지를 입력하세요',
+    en: 'Type a message',
+    zh: '请输入消息',
+    vi: 'Nhập tin nhắn',
+  );
+  static const serverError = L10nText(
+    ko: '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.',
+    en: 'Could not connect to the server. Please try again shortly.',
+    zh: '无法连接服务器，请稍后重试。',
+    vi: 'Không thể kết nối máy chủ. Vui lòng thử lại sau.',
+  );
+}
 
 /// AI 가이드 챗봇. 라이트 라우팅 기반 안내 화면.
 /// 하단 탭이 아니라 우측 하단 AI 버블 → 슬라이드업 시트로 진입한다(AiChatSheet).
@@ -65,10 +103,12 @@ class _ChatScreenState extends State<ChatScreen> {
       // ApiConfig.baseUrl(디버그 콘솔에 출력)이 의도한 배포 주소가 맞는지부터 확인할 것 —
       // dart-define 없이 실행하면 로컬 기본값(localhost:8080)으로 떨어져 항상 여기로 온다.
       debugPrint('POST /api/chat 실패 (baseUrl=${ApiConfig.baseUrl}): $e');
+      if (!mounted) return;
+      final lang = UserProfileScope.of(context).language;
       setState(
         () => _messages.add(
-          const ChatMessage.bot(
-            AiResponse(riskNotice: '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.'),
+          ChatMessage.bot(
+            AiResponse(riskNotice: _ChatStrings.serverError.of(lang)),
           ),
         ),
       );
@@ -99,16 +139,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = UserProfileScope.of(context).language;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI 가이드'),
+        title: Text(_ChatStrings.title.of(lang)),
         automaticallyImplyLeading: false,
         actions: [
           if (widget.onClose != null)
             IconButton(
               onPressed: widget.onClose,
               icon: const Icon(Icons.close),
-              tooltip: '닫기',
+              tooltip: _ChatStrings.close.of(lang),
             ),
         ],
       ),
@@ -116,7 +158,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: _messages.isEmpty
-                ? const _EmptyState()
+                ? _EmptyState(language: lang)
                 : ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(16),
@@ -129,6 +171,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             ? _UserBubble(text: message.text!)
                             : AiResponseCard(
                                 response: message.aiResponse!,
+                                language: lang,
                                 onRoutingTap: _openRouting,
                               ),
                       );
@@ -139,6 +182,7 @@ class _ChatScreenState extends State<ChatScreen> {
             controller: _controller,
             onSend: _send,
             isSending: _isSending,
+            language: lang,
           ),
         ],
       ),
@@ -147,7 +191,8 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+  const _EmptyState({required this.language});
+  final AppLanguage language;
 
   @override
   Widget build(BuildContext context) {
@@ -168,19 +213,19 @@ class _EmptyState extends StatelessWidget {
               child: const Text('🧭', style: TextStyle(fontSize: 22)),
             ),
             const SizedBox(height: 14),
-            const Text(
-              '무엇이든 물어보세요',
-              style: TextStyle(
+            Text(
+              _ChatStrings.emptyTitle.of(language),
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
-              '임금·체불, 산업재해, 근로계약서 등 노동 관련 궁금한 점을 편하게 물어보세요.',
+            Text(
+              _ChatStrings.emptySubtitle.of(language),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 11.5,
                 color: AppColors.textMuted,
                 height: 1.5,
@@ -229,10 +274,12 @@ class _ChatInputBar extends StatelessWidget {
     required this.controller,
     required this.onSend,
     required this.isSending,
+    required this.language,
   });
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool isSending;
+  final AppLanguage language;
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +298,9 @@ class _ChatInputBar extends StatelessWidget {
                 child: TextField(
                   controller: controller,
                   enabled: !isSending,
-                  decoration: const InputDecoration(hintText: '메시지를 입력하세요'),
+                  decoration: InputDecoration(
+                    hintText: _ChatStrings.inputHint.of(language),
+                  ),
                   onSubmitted: (_) => onSend(),
                 ),
               ),

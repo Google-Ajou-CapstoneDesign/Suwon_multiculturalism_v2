@@ -34,23 +34,43 @@ class CategoryTocPage extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(width: 9, height: 9, decoration: BoxDecoration(color: group.color, shape: BoxShape.circle)),
+                  Container(
+                    width: 9,
+                    height: 9,
+                    decoration: BoxDecoration(
+                      color: group.color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                   const SizedBox(width: 7),
                   Text(
                     group.name.of(language),
-                    style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: AppColors.textSecondary, letterSpacing: 0.4),
+                    style: const TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textSecondary,
+                      letterSpacing: 0.4,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 7),
               Text(
                 group.title.of(language),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.textPrimary, letterSpacing: -0.4),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.4,
+                ),
               ),
               const SizedBox(height: 5),
               Text(
                 EncyclopediaStrings.itemCount(language, group.itemIds.length),
-                style: const TextStyle(fontSize: 10.5, color: AppColors.textMuted),
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  color: AppColors.textMuted,
+                ),
               ),
             ],
           ),
@@ -70,7 +90,10 @@ class CategoryTocPage extends StatelessWidget {
                   onToggleStar: () => onToggleStar(group.itemIds[i]),
                 ),
               for (final skeletonId in group.skeletonIds)
-                _SkeletonRow(item: categoryById[skeletonId]!, language: language),
+                _SkeletonRow(
+                  item: categoryById[skeletonId]!,
+                  language: language,
+                ),
             ],
           ),
         ),
@@ -106,14 +129,20 @@ class _TocRow extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 4),
-        decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFEEF2F7)))),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: Color(0xFFEEF2F7))),
+        ),
         child: Row(
           children: [
             SizedBox(
               width: 18,
               child: Text(
                 index.toString().padLeft(2, '0'),
-                style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: AppColors.textMuted),
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textMuted,
+                ),
               ),
             ),
             const SizedBox(width: 10),
@@ -121,7 +150,10 @@ class _TocRow extends StatelessWidget {
               width: 32,
               height: 32,
               alignment: Alignment.center,
-              decoration: BoxDecoration(color: group.backgroundTint, borderRadius: BorderRadius.circular(9)),
+              decoration: BoxDecoration(
+                color: group.backgroundTint,
+                borderRadius: BorderRadius.circular(9),
+              ),
               child: Icon(item.icon, size: 16, color: group.color),
             ),
             const SizedBox(width: 10),
@@ -131,18 +163,32 @@ class _TocRow extends StatelessWidget {
                 children: [
                   Text(
                     item.name.of(language),
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   if (sub != null) ...[
                     const SizedBox(height: 3),
-                    Text(sub, style: const TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                    Text(
+                      sub,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
                   ],
                 ],
               ),
             ),
             IconButton(
               onPressed: onToggleStar,
-              icon: Icon(starred ? Icons.star : Icons.star_border, size: 18, color: starred ? AppColors.accent : AppColors.textMuted),
+              icon: Icon(
+                starred ? Icons.star : Icons.star_border,
+                size: 18,
+                color: starred ? AppColors.accent : AppColors.textMuted,
+              ),
               constraints: const BoxConstraints(),
               padding: const EdgeInsets.all(6),
             ),
@@ -167,17 +213,32 @@ class _SkeletonRow extends StatelessWidget {
       opacity: 0.55,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 4),
-        decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFEEF2F7)))),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: Color(0xFFEEF2F7))),
+        ),
         child: Row(
           children: [
-            const SizedBox(width: 18, child: Text('–', style: TextStyle(fontSize: 10.5, color: AppColors.textMuted))),
+            const SizedBox(
+              width: 18,
+              child: Text(
+                '–',
+                style: TextStyle(fontSize: 10.5, color: AppColors.textMuted),
+              ),
+            ),
             const SizedBox(width: 10),
             Container(
               width: 32,
               height: 32,
               alignment: Alignment.center,
-              decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(9)),
-              child: const Icon(Icons.add, size: 16, color: AppColors.textMuted),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(9),
+              ),
+              child: const Icon(
+                Icons.add,
+                size: 16,
+                color: AppColors.textMuted,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -186,21 +247,38 @@ class _SkeletonRow extends StatelessWidget {
                 children: [
                   Text(
                     item.name.of(language),
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   if (sub != null) ...[
                     const SizedBox(height: 3),
-                    Text(sub, style: const TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                    Text(
+                      sub,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
                   ],
                 ],
               ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: AppColors.border)),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: AppColors.border),
+              ),
               child: Text(
                 EncyclopediaStrings.soonBadge.of(language),
-                style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: AppColors.textMuted),
+                style: const TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textMuted,
+                ),
               ),
             ),
           ],

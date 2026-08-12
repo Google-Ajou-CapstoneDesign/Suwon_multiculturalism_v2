@@ -9,7 +9,8 @@ class WorkLogController extends ChangeNotifier {
   }
 
   DateTime _focusedMonth = DateUtils.dateOnly(DateTime.now());
-  DateTime get focusedMonth => DateTime(_focusedMonth.year, _focusedMonth.month);
+  DateTime get focusedMonth =>
+      DateTime(_focusedMonth.year, _focusedMonth.month);
 
   DateTime _selectedDay = DateUtils.dateOnly(DateTime.now());
   DateTime get selectedDay => _selectedDay;
@@ -26,7 +27,9 @@ class WorkLogController extends ChangeNotifier {
       final isOvertime = i == 1 || i == 3;
       _records[day] = DailyWorkRecord(
         clockIn: const TimeOfDay(hour: 8, minute: 0),
-        clockOut: isOvertime ? const TimeOfDay(hour: 20, minute: 30) : const TimeOfDay(hour: 17, minute: 0),
+        clockOut: isOvertime
+            ? const TimeOfDay(hour: 20, minute: 30)
+            : const TimeOfDay(hour: 17, minute: 0),
         breakMinutes: 60,
         isOvertime: isOvertime,
         isRisk: i == 4,
@@ -35,11 +38,13 @@ class WorkLogController extends ChangeNotifier {
     }
   }
 
-  DailyWorkRecord recordFor(DateTime day) => _records[DateUtils.dateOnly(day)] ?? DailyWorkRecord.empty;
+  DailyWorkRecord recordFor(DateTime day) =>
+      _records[DateUtils.dateOnly(day)] ?? DailyWorkRecord.empty;
 
   DailyWorkRecord get selectedRecord => recordFor(_selectedDay);
 
-  bool hasRecord(DateTime day) => _records.containsKey(DateUtils.dateOnly(day)) && recordFor(day).hasEntry;
+  bool hasRecord(DateTime day) =>
+      _records.containsKey(DateUtils.dateOnly(day)) && recordFor(day).hasEntry;
 
   bool isOvertimeDay(DateTime day) => recordFor(day).isOvertime;
 
@@ -60,7 +65,9 @@ class WorkLogController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSelectedRecord(DailyWorkRecord Function(DailyWorkRecord current) update) {
+  void updateSelectedRecord(
+    DailyWorkRecord Function(DailyWorkRecord current) update,
+  ) {
     final key = _selectedDay;
     _records[key] = update(_records[key] ?? DailyWorkRecord.empty);
     notifyListeners();

@@ -5,7 +5,11 @@ import '../../theme/app_colors.dart';
 /// 화면 가운데에 [maxContentWidth] 폭으로 고정하고 나머지 영역은 배경으로 채운다.
 /// 실제 모바일 기기(화면 폭이 [maxContentWidth] 이하)에서는 아무 효과가 없다.
 class WebCenteredFrame extends StatelessWidget {
-  const WebCenteredFrame({super.key, required this.child, this.maxContentWidth = 480});
+  const WebCenteredFrame({
+    super.key,
+    required this.child,
+    this.maxContentWidth = 480,
+  });
 
   final Widget child;
   final double maxContentWidth;
@@ -20,7 +24,10 @@ class WebCenteredFrame extends StatelessWidget {
           child: DecoratedBox(
             decoration: BoxDecoration(
               boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.10), blurRadius: 24),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.10),
+                  blurRadius: 24,
+                ),
               ],
             ),
             child: child,

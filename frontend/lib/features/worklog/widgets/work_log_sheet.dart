@@ -1,8 +1,214 @@
 import 'package:flutter/material.dart';
+import '../../../core/app_language.dart';
+import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
 import '../controllers/work_log_controller.dart';
 import '../screens/accident_navigator_screen.dart';
 import '../screens/wage_navigator_screen.dart';
+
+/// 근무기록장 UI 문구.
+class _WorkLogStrings {
+  _WorkLogStrings._();
+
+  static const title = L10nText(
+    ko: '근무기록장',
+    en: 'Work Log',
+    zh: '工作记录本',
+    vi: 'Nhật ký làm việc',
+  );
+  static const subtitle = L10nText(
+    ko: '매일의 기록이 가장 확실한 증거가 됩니다',
+    en: 'Daily records are your strongest evidence',
+    zh: '每天的记录就是最确凿的证据',
+    vi: 'Ghi chép hằng ngày là bằng chứng chắc chắn nhất',
+  );
+  static const close = L10nText(ko: '닫기', en: 'Close', zh: '关闭', vi: 'Đóng');
+  static const tapHint = L10nText(
+    ko: '날짜를 탭하면 그날의 출퇴근 기록을 확인하고 수정할 수 있어요',
+    en: "Tap a date to check and edit that day's clock-in/out record",
+    zh: '点击日期即可查看并修改当天的上下班记录',
+    vi: 'Chạm vào ngày để xem và chỉnh sửa giờ vào ca/tan ca hôm đó',
+  );
+
+  static const legendLogged = L10nText(
+    ko: '기록 완료',
+    en: 'Recorded',
+    zh: '已记录',
+    vi: 'Đã ghi nhận',
+  );
+  static const legendOvertime = L10nText(
+    ko: '연장·야간',
+    en: 'Overtime/night',
+    zh: '加班·夜班',
+    vi: 'Tăng ca/làm đêm',
+  );
+  static const legendRisk = L10nText(
+    ko: '급여 미지급 의심',
+    en: 'Possible unpaid wages',
+    zh: '疑似欠薪',
+    vi: 'Nghi ngờ chưa trả lương',
+  );
+
+  static const breakTimeTitle = L10nText(
+    ko: '휴게시간',
+    en: 'Break time',
+    zh: '休息时间',
+    vi: 'Thời gian nghỉ',
+  );
+  static const cancel = L10nText(ko: '취소', en: 'Cancel', zh: '取消', vi: 'Hủy');
+  static const confirm = L10nText(
+    ko: '확인',
+    en: 'Confirm',
+    zh: '确认',
+    vi: 'Xác nhận',
+  );
+
+  static const gpsVerified = L10nText(
+    ko: '📍 위치 인증 완료',
+    en: '📍 Location verified',
+    zh: '📍 位置认证完成',
+    vi: '📍 Đã xác minh vị trí',
+  );
+  static const gpsUnverified = L10nText(
+    ko: '📍 사업장 외부 기록',
+    en: '📍 Recorded outside workplace',
+    zh: '📍 工作场所外记录',
+    vi: '📍 Ghi nhận ngoài nơi làm việc',
+  );
+
+  static const clockIn = L10nText(
+    ko: '출근',
+    en: 'Clock in',
+    zh: '上班',
+    vi: 'Vào ca',
+  );
+  static const clockOut = L10nText(
+    ko: '퇴근',
+    en: 'Clock out',
+    zh: '下班',
+    vi: 'Tan ca',
+  );
+  static const breakLabel = L10nText(
+    ko: '휴게',
+    en: 'Break',
+    zh: '休息',
+    vi: 'Nghỉ',
+  );
+
+  static const actualWorkedTime = L10nText(
+    ko: '실근무시간',
+    en: 'Actual hours worked',
+    zh: '实际工作时长',
+    vi: 'Thời gian làm việc thực tế',
+  );
+
+  static const photoAttach = L10nText(
+    ko: '📷 타임스탬프 사진',
+    en: '📷 Timestamped photo',
+    zh: '📷 时间戳照片',
+    vi: '📷 Ảnh có dấu thời gian',
+  );
+  static const payslipAttach = L10nText(
+    ko: '📎 급여명세서 첨부',
+    en: '📎 Attach payslip',
+    zh: '📎 附加工资单',
+    vi: '📎 Đính kèm phiếu lương',
+  );
+
+  static const memoHint = L10nText(
+    ko: '오늘 있었던 일을 적어두세요 (예: 사장님이 30분 더 일하라고 함)',
+    en: 'Write down what happened today (e.g. "Boss asked me to work 30 minutes extra")',
+    zh: '记下今天发生的事（例如：老板让我多干30分钟）',
+    vi: 'Ghi lại những gì đã xảy ra hôm nay (VD: chủ bảo làm thêm 30 phút)',
+  );
+
+  static const nextStepsLabel = L10nText(
+    ko: '기록이 쌓였다면',
+    en: 'Once you have records',
+    zh: '记录积累之后',
+    vi: 'Khi đã có đủ ghi chép',
+  );
+
+  static const wageEntryTitle = L10nText(
+    ko: '임금체불 진정 내비게이터',
+    en: 'Unpaid Wage Navigator',
+    zh: '拖欠工资申诉导航',
+    vi: 'Hướng dẫn khiếu nại nợ lương',
+  );
+  static const wageEntrySubtitle = L10nText(
+    ko: '단계별로 진정서까지 안내',
+    en: 'Step by step, all the way to the report',
+    zh: '逐步引导直到提交申诉书',
+    vi: 'Hướng dẫn từng bước đến khi nộp đơn',
+  );
+  static const injuryEntryTitle = L10nText(
+    ko: '산재처리 신청 내비게이터',
+    en: 'Workplace Injury Navigator',
+    zh: '工伤申报导航',
+    vi: 'Hướng dẫn yêu cầu bồi thường tai nạn lao động',
+  );
+  static const injuryEntrySubtitle = L10nText(
+    ko: '단계별로 요양급여 신청까지',
+    en: 'Step by step, all the way to the benefit claim',
+    zh: '逐步引导直到申请疗养补偿',
+    vi: 'Hướng dẫn từng bước đến khi yêu cầu trợ cấp',
+  );
+
+  static const _monthNamesEn = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  /// 연·월 표기 — intl 없이 언어별로 손으로 조합한다.
+  static String monthLabel(AppLanguage lang, DateTime month) {
+    switch (lang) {
+      case AppLanguage.ko:
+        return '${month.year}년 ${month.month}월';
+      case AppLanguage.en:
+        return '${_monthNamesEn[month.month - 1]} ${month.year}';
+      case AppLanguage.zh:
+        return '${month.year}年${month.month}月';
+      case AppLanguage.vi:
+        return 'Tháng ${month.month}, ${month.year}';
+    }
+  }
+
+  static const _weekdayLabelsKo = ['일', '월', '화', '수', '목', '금', '토'];
+  static const _weekdayLabelsEn = [
+    'Sun',
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+  ];
+  static const _weekdayLabelsZh = ['日', '一', '二', '三', '四', '五', '六'];
+  static const _weekdayLabelsVi = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+
+  static List<String> weekdayLabels(AppLanguage lang) {
+    switch (lang) {
+      case AppLanguage.ko:
+        return _weekdayLabelsKo;
+      case AppLanguage.en:
+        return _weekdayLabelsEn;
+      case AppLanguage.zh:
+        return _weekdayLabelsZh;
+      case AppLanguage.vi:
+        return _weekdayLabelsVi;
+    }
+  }
+}
 
 /// 하단 가운데 "오늘" 버튼으로 여닫는 근무기록장 시트.
 /// 화면 전체를 덮지 않고 하단 탭바는 남겨둔다 — 달력 버튼을 다시 눌러 닫을 수 있게 하기 위함.
@@ -25,7 +231,7 @@ class _WorkLogSheetState extends State<WorkLogSheet> {
     super.dispose();
   }
 
-  void _openDayRecord(DateTime day) {
+  void _openDayRecord(DateTime day, AppLanguage language) {
     _controller.selectDay(day);
     showModalBottomSheet<void>(
       context: context,
@@ -54,6 +260,7 @@ class _WorkLogSheetState extends State<WorkLogSheet> {
                         child: _DailyHookBody(
                           controller: _controller,
                           scrollController: scrollController,
+                          language: language,
                         ),
                       ),
                     ],
@@ -69,6 +276,7 @@ class _WorkLogSheetState extends State<WorkLogSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = UserProfileScope.of(context).language;
     return IgnorePointer(
       ignoring: !widget.isOpen,
       child: AnimatedSlide(
@@ -85,16 +293,17 @@ class _WorkLogSheetState extends State<WorkLogSheet> {
                 return Column(
                   children: [
                     const _Grabber(),
-                    _Header(onClose: widget.onClose),
+                    _Header(onClose: widget.onClose, language: lang),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
                             _CalendarBlock(
                               controller: _controller,
-                              onDayTap: _openDayRecord,
+                              onDayTap: (day) => _openDayRecord(day, lang),
+                              language: lang,
                             ),
-                            const _TapHint(),
+                            _TapHint(language: lang),
                           ],
                         ),
                       ),
@@ -111,7 +320,8 @@ class _WorkLogSheetState extends State<WorkLogSheet> {
 }
 
 class _TapHint extends StatelessWidget {
-  const _TapHint();
+  const _TapHint({required this.language});
+  final AppLanguage language;
 
   @override
   Widget build(BuildContext context) {
@@ -124,14 +334,14 @@ class _TapHint extends StatelessWidget {
           border: Border.all(color: AppColors.border),
           borderRadius: BorderRadius.circular(13),
         ),
-        child: const Row(
+        child: Row(
           children: [
-            Text('👆', style: TextStyle(fontSize: 18)),
-            SizedBox(width: 10),
+            const Text('👆', style: TextStyle(fontSize: 18)),
+            const SizedBox(width: 10),
             Expanded(
               child: Text(
-                '날짜를 탭하면 그날의 출퇴근 기록을 확인하고 수정할 수 있어요',
-                style: TextStyle(
+                _WorkLogStrings.tapHint.of(language),
+                style: const TextStyle(
                   fontSize: 11.5,
                   color: AppColors.textSecondary,
                   height: 1.5,
@@ -163,8 +373,9 @@ class _Grabber extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onClose});
+  const _Header({required this.onClose, required this.language});
   final VoidCallback onClose;
+  final AppLanguage language;
 
   @override
   Widget build(BuildContext context) {
@@ -180,14 +391,20 @@ class _Header extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '근무기록장',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                Text(
+                  _WorkLogStrings.title.of(language),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 const SizedBox(height: 3),
-                const Text(
-                  '매일의 기록이 가장 확실한 증거가 됩니다',
-                  style: TextStyle(fontSize: 10.5, color: AppColors.textMuted),
+                Text(
+                  _WorkLogStrings.subtitle.of(language),
+                  style: const TextStyle(
+                    fontSize: 10.5,
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -202,9 +419,9 @@ class _Header extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text(
-              '닫기',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+            child: Text(
+              _WorkLogStrings.close.of(language),
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -214,17 +431,21 @@ class _Header extends StatelessWidget {
 }
 
 class _CalendarBlock extends StatelessWidget {
-  const _CalendarBlock({required this.controller, required this.onDayTap});
+  const _CalendarBlock({
+    required this.controller,
+    required this.onDayTap,
+    required this.language,
+  });
   final WorkLogController controller;
   final ValueChanged<DateTime> onDayTap;
-
-  static const _weekdayLabels = ['일', '월', '화', '수', '목', '금', '토'];
+  final AppLanguage language;
 
   @override
   Widget build(BuildContext context) {
     final month = controller.focusedMonth;
     final daysInMonth = DateUtils.getDaysInMonth(month.year, month.month);
     final leadingBlanks = DateTime(month.year, month.month, 1).weekday % 7;
+    final weekdayLabels = _WorkLogStrings.weekdayLabels(language);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
@@ -250,7 +471,7 @@ class _CalendarBlock extends StatelessWidget {
               SizedBox(
                 width: 96,
                 child: Text(
-                  '${month.year}년 ${month.month}월',
+                  _WorkLogStrings.monthLabel(language, month),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 13.5,
@@ -280,7 +501,7 @@ class _CalendarBlock extends StatelessWidget {
                   : AppColors.textMuted;
               return Expanded(
                 child: Text(
-                  _weekdayLabels[i],
+                  weekdayLabels[i],
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 9.5,
@@ -319,9 +540,15 @@ class _CalendarBlock extends StatelessWidget {
             spacing: 11,
             runSpacing: 4,
             children: [
-              _LegendDot(color: AppColors.secondary, label: '기록 완료'),
-              _LegendDot(color: AppColors.accent, label: '연장·야간'),
-              _LegendRiskBox(label: '급여 미지급 의심'),
+              _LegendDot(
+                color: AppColors.secondary,
+                label: _WorkLogStrings.legendLogged.of(language),
+              ),
+              _LegendDot(
+                color: AppColors.accent,
+                label: _WorkLogStrings.legendOvertime.of(language),
+              ),
+              _LegendRiskBox(label: _WorkLogStrings.legendRisk.of(language)),
             ],
           ),
           const SizedBox(height: 4),
@@ -469,9 +696,14 @@ class _LegendRiskBox extends StatelessWidget {
 }
 
 class _DailyHookBody extends StatelessWidget {
-  const _DailyHookBody({required this.controller, this.scrollController});
+  const _DailyHookBody({
+    required this.controller,
+    this.scrollController,
+    required this.language,
+  });
   final WorkLogController controller;
   final ScrollController? scrollController;
+  final AppLanguage language;
 
   Future<void> _pickTime(
     BuildContext context, {
@@ -498,12 +730,15 @@ class _DailyHookBody extends StatelessWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('휴게시간', style: TextStyle(fontSize: 15)),
+              title: Text(
+                _WorkLogStrings.breakTimeTitle.of(language),
+                style: const TextStyle(fontSize: 15),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '$value분',
+                    '${value}m',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -515,7 +750,7 @@ class _DailyHookBody extends StatelessWidget {
                     min: 0,
                     max: 120,
                     divisions: 12,
-                    label: '$value분',
+                    label: '${value}m',
                     onChanged: (v) => setState(() => value = v.round()),
                   ),
                 ],
@@ -523,11 +758,11 @@ class _DailyHookBody extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('취소'),
+                  child: Text(_WorkLogStrings.cancel.of(language)),
                 ),
                 FilledButton(
                   onPressed: () => Navigator.of(context).pop(value),
-                  child: const Text('확인'),
+                  child: Text(_WorkLogStrings.confirm.of(language)),
                 ),
               ],
             );
@@ -585,7 +820,9 @@ class _DailyHookBody extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      record.gpsVerified ? '📍 위치 인증 완료' : '📍 사업장 외부 기록',
+                      record.gpsVerified
+                          ? _WorkLogStrings.gpsVerified.of(language)
+                          : _WorkLogStrings.gpsUnverified.of(language),
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
@@ -599,19 +836,19 @@ class _DailyHookBody extends StatelessWidget {
               ),
               const SizedBox(height: 11),
               _TimeRow(
-                label: '출근',
+                label: _WorkLogStrings.clockIn.of(language),
                 value: _fmtTime(record.clockIn),
                 onTap: () => _pickTime(context, isClockIn: true),
               ),
               const SizedBox(height: 8),
               _TimeRow(
-                label: '퇴근',
+                label: _WorkLogStrings.clockOut.of(language),
                 value: _fmtTime(record.clockOut),
                 onTap: () => _pickTime(context, isClockIn: false),
               ),
               const SizedBox(height: 8),
               _TimeRow(
-                label: '휴게',
+                label: _WorkLogStrings.breakLabel.of(language),
                 value: '${record.breakMinutes}m',
                 onTap: () => _pickBreakMinutes(context),
               ),
@@ -628,9 +865,9 @@ class _DailyHookBody extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      '실근무시간',
-                      style: TextStyle(
+                    Text(
+                      _WorkLogStrings.actualWorkedTime.of(language),
+                      style: const TextStyle(
                         fontSize: 11,
                         color: AppColors.primary,
                         fontWeight: FontWeight.w600,
@@ -651,11 +888,17 @@ class _DailyHookBody extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: _AttachButton(label: '📷 타임스탬프 사진', onTap: () {}),
+                    child: _AttachButton(
+                      label: _WorkLogStrings.photoAttach.of(language),
+                      onTap: () {},
+                    ),
                   ),
                   const SizedBox(width: 7),
                   Expanded(
-                    child: _AttachButton(label: '📎 급여명세서 첨부', onTap: () {}),
+                    child: _AttachButton(
+                      label: _WorkLogStrings.payslipAttach.of(language),
+                      onTap: () {},
+                    ),
                   ),
                 ],
               ),
@@ -671,7 +914,7 @@ class _DailyHookBody extends StatelessWidget {
                     controller.updateSelectedRecord((r) => r.copyWith(memo: v)),
                 style: const TextStyle(fontSize: 12),
                 decoration: InputDecoration(
-                  hintText: '오늘 있었던 일을 적어두세요 (예: 사장님이 30분 더 일하라고 함)',
+                  hintText: _WorkLogStrings.memoHint.of(language),
                   hintStyle: const TextStyle(
                     fontSize: 11,
                     color: AppColors.textMuted,
@@ -689,9 +932,9 @@ class _DailyHookBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 14),
-        const Text(
-          '기록이 쌓였다면',
-          style: TextStyle(
+        Text(
+          _WorkLogStrings.nextStepsLabel.of(language),
+          style: const TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             color: AppColors.textMuted,
@@ -705,8 +948,8 @@ class _DailyHookBody extends StatelessWidget {
               child: _EntryCard(
                 gradient: const [Color(0xFFE08A1E), Color(0xFFB45309)],
                 emoji: '💸',
-                title: '임금체불 진정 내비게이터',
-                subtitle: '단계별로 진정서까지 안내',
+                title: _WorkLogStrings.wageEntryTitle.of(language),
+                subtitle: _WorkLogStrings.wageEntrySubtitle.of(language),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => const WageNavigatorScreen(),
@@ -719,8 +962,8 @@ class _DailyHookBody extends StatelessWidget {
               child: _EntryCard(
                 gradient: const [Color(0xFF12A594), Color(0xFF0B7267)],
                 emoji: '⛑️',
-                title: '산재처리 신청 내비게이터',
-                subtitle: '단계별로 요양급여 신청까지',
+                title: _WorkLogStrings.injuryEntryTitle.of(language),
+                subtitle: _WorkLogStrings.injuryEntrySubtitle.of(language),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => const AccidentNavigatorScreen(),

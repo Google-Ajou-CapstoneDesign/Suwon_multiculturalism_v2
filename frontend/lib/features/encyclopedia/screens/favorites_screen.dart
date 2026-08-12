@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../common/widgets/app_card.dart';
+import '../../../core/app_language.dart';
+import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
 import '../controllers/encyclopedia_controller.dart';
-import '../../../core/app_language.dart';
 import '../models/category_item.dart';
 import '../models/encyclopedia_strings.dart';
 import 'category_detail_screen.dart';
@@ -15,39 +16,66 @@ class FavoritesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = UserProfileScope.of(context).language;
+
     return ListenableBuilder(
       listenable: controller,
       builder: (context, _) {
-        final lang = controller.language;
         final starredItems = controller.starredItems.toList();
         final starredGroups = controller.starredGroups.toList();
 
         return Scaffold(
-          appBar: AppBar(title: Text(EncyclopediaStrings.favoritesTitle.of(lang))),
+          appBar: AppBar(
+            title: Text(EncyclopediaStrings.favoritesTitle.of(lang)),
+          ),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               Text(
                 EncyclopediaStrings.favoritesSubtitle.of(lang),
-                style: const TextStyle(fontSize: 11.5, color: AppColors.textMuted, height: 1.5),
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  color: AppColors.textMuted,
+                  height: 1.5,
+                ),
               ),
               const SizedBox(height: 18),
               Text(
                 EncyclopediaStrings.favoritesItemsLabel.of(lang),
-                style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: AppColors.textMuted, letterSpacing: 0.6),
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textMuted,
+                  letterSpacing: 0.6,
+                ),
               ),
               const SizedBox(height: 8),
               if (starredItems.isEmpty)
                 _EmptyBox(text: EncyclopediaStrings.favoritesEmpty.of(lang))
               else
-                for (final id in starredItems) _FavoriteItemCard(id: id, language: lang, controller: controller),
+                for (final id in starredItems)
+                  _FavoriteItemCard(
+                    id: id,
+                    language: lang,
+                    controller: controller,
+                  ),
               const SizedBox(height: 18),
               Text(
                 EncyclopediaStrings.favoritesGroupsLabel.of(lang),
-                style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: AppColors.textMuted, letterSpacing: 0.6),
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textMuted,
+                  letterSpacing: 0.6,
+                ),
               ),
               const SizedBox(height: 8),
-              for (final groupId in starredGroups) _FavoriteGroupCard(groupId: groupId, language: lang, controller: controller),
+              for (final groupId in starredGroups)
+                _FavoriteGroupCard(
+                  groupId: groupId,
+                  language: lang,
+                  controller: controller,
+                ),
             ],
           ),
         );
@@ -64,14 +92,29 @@ class _EmptyBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(11)),
-      child: Text(text, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11.5, color: AppColors.textMuted, height: 1.6)),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(11),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 11.5,
+          color: AppColors.textMuted,
+          height: 1.6,
+        ),
+      ),
     );
   }
 }
 
 class _FavoriteItemCard extends StatelessWidget {
-  const _FavoriteItemCard({required this.id, required this.language, required this.controller});
+  const _FavoriteItemCard({
+    required this.id,
+    required this.language,
+    required this.controller,
+  });
   final int id;
   final AppLanguage language;
   final EncyclopediaController controller;
@@ -101,7 +144,10 @@ class _FavoriteItemCard extends StatelessWidget {
               width: 32,
               height: 32,
               alignment: Alignment.center,
-              decoration: BoxDecoration(color: group.backgroundTint, borderRadius: BorderRadius.circular(9)),
+              decoration: BoxDecoration(
+                color: group.backgroundTint,
+                borderRadius: BorderRadius.circular(9),
+              ),
               child: Icon(item.icon, size: 16, color: group.color),
             ),
             const SizedBox(width: 10),
@@ -109,10 +155,22 @@ class _FavoriteItemCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.name.of(language), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  Text(
+                    item.name.of(language),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   if (sub != null) ...[
                     const SizedBox(height: 3),
-                    Text(sub, style: const TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                    Text(
+                      sub,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
                   ],
                 ],
               ),
@@ -126,7 +184,11 @@ class _FavoriteItemCard extends StatelessWidget {
 }
 
 class _FavoriteGroupCard extends StatelessWidget {
-  const _FavoriteGroupCard({required this.groupId, required this.language, required this.controller});
+  const _FavoriteGroupCard({
+    required this.groupId,
+    required this.language,
+    required this.controller,
+  });
   final CategoryGroupId groupId;
   final AppLanguage language;
   final EncyclopediaController controller;
@@ -148,10 +210,17 @@ class _FavoriteGroupCard extends StatelessWidget {
               width: 32,
               height: 32,
               alignment: Alignment.center,
-              decoration: BoxDecoration(color: group.backgroundTint, borderRadius: BorderRadius.circular(9)),
+              decoration: BoxDecoration(
+                color: group.backgroundTint,
+                borderRadius: BorderRadius.circular(9),
+              ),
               child: Text(
                 groupId.name.toUpperCase(),
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: group.color),
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  color: group.color,
+                ),
               ),
             ),
             const SizedBox(width: 10),
@@ -159,9 +228,21 @@ class _FavoriteGroupCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(group.title.of(language), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  Text(
+                    group.title.of(language),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 3),
-                  Text(group.name.of(language), style: const TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                  Text(
+                    group.name.of(language),
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -19,8 +19,8 @@ class StepIndicator extends StatelessWidget {
         final color = isDone
             ? AppColors.secondary
             : isNow
-                ? AppColors.accent
-                : AppColors.border;
+            ? AppColors.accent
+            : AppColors.border;
 
         return Expanded(
           child: Row(

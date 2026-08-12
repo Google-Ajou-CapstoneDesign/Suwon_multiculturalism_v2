@@ -22,28 +22,71 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   static const _totalSteps = 3;
 
   static const _titles = [
-    L10nText(ko: '어떤 언어로 볼까요?', en: 'Which language do you read?', vi: 'Bạn đọc bằng ngôn ngữ nào?'),
-    L10nText(ko: '체류자격을 알려주세요', en: 'What is your status of stay?', vi: 'Tư cách lưu trú của bạn là gì?'),
-    L10nText(ko: '서류를 미리 넣어두세요', en: 'Store your documents now', vi: 'Hãy lưu giấy tờ trước'),
+    L10nText(
+      ko: '어떤 언어로 볼까요?',
+      en: 'Which language do you read?',
+      zh: '想用哪种语言查看？',
+      vi: 'Bạn đọc bằng ngôn ngữ nào?',
+    ),
+    L10nText(
+      ko: '체류자격을 알려주세요',
+      en: 'What is your status of stay?',
+      zh: '请告诉我们您的居留资格',
+      vi: 'Tư cách lưu trú của bạn là gì?',
+    ),
+    L10nText(
+      ko: '서류를 미리 넣어두세요',
+      en: 'Store your documents now',
+      zh: '请提前保存好证件资料',
+      vi: 'Hãy lưu giấy tờ trước',
+    ),
   ];
 
   static const _subtitles = [
     L10nText(
       ko: '어떤 언어를 골라도 한국어 표기는 함께 보여드립니다. 기관에서 그대로 말할 수 있도록요.',
       en: 'Whichever you pick, the Korean term stays alongside — so you can say it as-is at an office.',
+      zh: '无论选择哪种语言，都会同时显示韩语原文，方便您在机构窗口照原文说出来。',
       vi: 'Dù chọn ngôn ngữ nào, thuật ngữ tiếng Hàn vẫn hiện kèm để bạn nói nguyên văn tại cơ quan.',
     ),
     L10nText(
       ko: '백과사전 첫 화면의 MY VISA 카드가 이 값으로 맞춰집니다.',
       en: 'Your MY VISA card is set from this.',
+      zh: '百科全书首页的MY VISA卡片将根据此设置显示。',
       vi: 'Thẻ MY VISA sẽ được thiết lập theo giá trị này.',
     ),
     L10nText(
       ko: '근로계약서와 임금명세서는 나중에 가장 강한 증거가 됩니다. 지금 넣어두면 잃어버리지 않습니다.',
       en: 'Your contract and payslips become the strongest evidence later. Store them now so you do not lose them.',
+      zh: '劳动合同和工资单日后将成为最有力的证据。现在保存好，以免遗失。',
       vi: 'Hợp đồng và phiếu lương sau này là chứng cứ mạnh nhất. Lưu ngay để không bị mất.',
     ),
   ];
+
+  static const _skipLabel = L10nText(
+    ko: '건너뛰기',
+    en: 'Skip',
+    zh: '跳过',
+    vi: 'Bỏ qua',
+  );
+  static const _prevLabel = L10nText(
+    ko: '이전',
+    en: 'Back',
+    zh: '上一步',
+    vi: 'Trước',
+  );
+  static const _nextLabel = L10nText(
+    ko: '다음',
+    en: 'Next',
+    zh: '下一步',
+    vi: 'Tiếp',
+  );
+  static const _startLabel = L10nText(
+    ko: '시작하기',
+    en: 'Get started',
+    zh: '开始使用',
+    vi: 'Bắt đầu',
+  );
 
   void _next() {
     if (_step < _totalSteps - 1) {
@@ -74,7 +117,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(18, 22, 18, 15),
-              decoration: const BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: AppColors.border))),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                border: Border(bottom: BorderSide(color: AppColors.border)),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -83,9 +129,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       return Expanded(
                         child: Container(
                           height: 3,
-                          margin: EdgeInsets.only(right: i < _totalSteps - 1 ? 5 : 0),
+                          margin: EdgeInsets.only(
+                            right: i < _totalSteps - 1 ? 5 : 0,
+                          ),
                           decoration: BoxDecoration(
-                            color: i <= _step ? AppColors.primary : AppColors.border,
+                            color: i <= _step
+                                ? AppColors.primary
+                                : AppColors.border,
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -93,9 +143,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     }),
                   ),
                   const SizedBox(height: 14),
-                  Text(_titles[_step].of(lang), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.textPrimary, height: 1.3)),
+                  Text(
+                    _titles[_step].of(lang),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                      height: 1.3,
+                    ),
+                  ),
                   const SizedBox(height: 6),
-                  Text(_subtitles[_step].of(lang), style: const TextStyle(fontSize: 11.5, color: AppColors.textMuted, height: 1.5)),
+                  Text(
+                    _subtitles[_step].of(lang),
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      color: AppColors.textMuted,
+                      height: 1.5,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -104,14 +169,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 duration: const Duration(milliseconds: 200),
                 child: switch (_step) {
                   0 => _LanguageStep(key: const ValueKey(0), profile: profile),
-                  1 => _VisaStep(key: const ValueKey(1), profile: profile, language: lang),
-                  _ => _VaultStep(key: const ValueKey(2), profile: profile, language: lang),
+                  1 => _VisaStep(
+                    key: const ValueKey(1),
+                    profile: profile,
+                    language: lang,
+                  ),
+                  _ => _VaultStep(
+                    key: const ValueKey(2),
+                    profile: profile,
+                    language: lang,
+                  ),
                 },
               ),
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(16, 11, 16, 16),
-              decoration: const BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: AppColors.border))),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                border: Border(top: BorderSide(color: AppColors.border)),
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -122,9 +198,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         foregroundColor: AppColors.textSecondary,
                         side: BorderSide.none,
                         backgroundColor: const Color(0xFFF1F5F9),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(11),
+                        ),
                       ),
-                      child: Text(_step == 0 ? '건너뛰기' : '이전', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                      child: Text(
+                        (_step == 0 ? _skipLabel : _prevLabel).of(lang),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -136,9 +220,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(11),
+                        ),
                       ),
-                      child: Text(_step == _totalSteps - 1 ? '시작하기' : '다음', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                      child: Text(
+                        (_step == _totalSteps - 1 ? _startLabel : _nextLabel)
+                            .of(lang),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -208,11 +301,22 @@ class _VaultStep extends StatelessWidget {
       children: [
         _VaultPickCard(
           emoji: '📄',
-          title: const L10nText(ko: '근로계약서 넣기', en: 'Add your employment contract', vi: 'Thêm hợp đồng lao động').of(language),
-          doneLabel: const L10nText(ko: '보관됨', en: 'Stored', vi: 'Đã lưu').of(language),
+          title: const L10nText(
+            ko: '근로계약서 넣기',
+            en: 'Add your employment contract',
+            zh: '添加劳动合同',
+            vi: 'Thêm hợp đồng lao động',
+          ).of(language),
+          doneLabel: const L10nText(
+            ko: '보관됨',
+            en: 'Stored',
+            zh: '已保存',
+            vi: 'Đã lưu',
+          ).of(language),
           idleLabel: const L10nText(
             ko: '사진 · PDF · 카카오톡 캡처 모두 됩니다',
             en: 'Photo, PDF or a KakaoTalk screenshot all work',
+            zh: '支持照片、PDF、KakaoTalk截图等各种格式',
             vi: 'Ảnh, PDF hay ảnh chụp KakaoTalk đều được',
           ).of(language),
           done: profile.contractStored,
@@ -221,11 +325,22 @@ class _VaultStep extends StatelessWidget {
         const SizedBox(height: 9),
         _VaultPickCard(
           emoji: '🧾',
-          title: const L10nText(ko: '임금명세서 넣기', en: 'Add a payslip', vi: 'Thêm phiếu lương').of(language),
-          doneLabel: const L10nText(ko: '보관됨', en: 'Stored', vi: 'Đã lưu').of(language),
+          title: const L10nText(
+            ko: '임금명세서 넣기',
+            en: 'Add a payslip',
+            zh: '添加工资单',
+            vi: 'Thêm phiếu lương',
+          ).of(language),
+          doneLabel: const L10nText(
+            ko: '보관됨',
+            en: 'Stored',
+            zh: '已保存',
+            vi: 'Đã lưu',
+          ).of(language),
           idleLabel: const L10nText(
             ko: '사진 · PDF · 카카오톡 캡처 모두 됩니다',
             en: 'Photo, PDF or a KakaoTalk screenshot all work',
+            zh: '支持照片、PDF、KakaoTalk截图等各种格式',
             vi: 'Ảnh, PDF hay ảnh chụp KakaoTalk đều được',
           ).of(language),
           done: profile.payslipStored,
@@ -234,14 +349,23 @@ class _VaultStep extends StatelessWidget {
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: const Color(0xFFEAF7F5), border: Border.all(color: const Color(0xFFB4E0D9)), borderRadius: BorderRadius.circular(11)),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEAF7F5),
+            border: Border.all(color: const Color(0xFFB4E0D9)),
+            borderRadius: BorderRadius.circular(11),
+          ),
           child: Text(
             const L10nText(
               ko: '💡 여기서 넣은 서류는 임금체불·산재 신고 때 가장 먼저 요구되는 증거입니다. 실제 업로드는 근무기록장 탭에서도 언제든 할 수 있어요.',
               en: '💡 Documents you store here are the first evidence asked for when filing a wage or injury claim. You can always upload for real from the Work log tab.',
+              zh: '💡 在这里保存的资料是申报欠薪、工伤时最先被要求提供的证据。您也可以随时在工作记录本标签页中进行实际上传。',
               vi: '💡 Giấy tờ lưu ở đây là bằng chứng đầu tiên được yêu cầu khi khiếu nại nợ lương hoặc tai nạn lao động. Bạn luôn có thể tải lên thật từ tab Nhật ký làm việc.',
             ).of(language),
-            style: const TextStyle(fontSize: 11, color: Color(0xFF0F766E), height: 1.6),
+            style: const TextStyle(
+              fontSize: 11,
+              color: Color(0xFF0F766E),
+              height: 1.6,
+            ),
           ),
         ),
       ],
@@ -250,7 +374,13 @@ class _VaultStep extends StatelessWidget {
 }
 
 class _PickRow extends StatelessWidget {
-  const _PickRow({required this.code, required this.title, required this.subtitle, required this.selected, required this.onTap});
+  const _PickRow({
+    required this.code,
+    required this.title,
+    required this.subtitle,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String code;
   final String title;
@@ -268,7 +398,10 @@ class _PickRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
         decoration: BoxDecoration(
           color: selected ? const Color(0xFFF3F7FF) : Colors.white,
-          border: Border.all(color: selected ? AppColors.primary : AppColors.border, width: selected ? 1.5 : 1),
+          border: Border.all(
+            color: selected ? AppColors.primary : AppColors.border,
+            width: selected ? 1.5 : 1,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -276,23 +409,48 @@ class _PickRow extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
               constraints: const BoxConstraints(minWidth: 40),
-              decoration: BoxDecoration(color: selected ? AppColors.primary : AppColors.textMuted, borderRadius: BorderRadius.circular(5)),
-              child: Text(code, textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white)),
+              decoration: BoxDecoration(
+                color: selected ? AppColors.primary : AppColors.textMuted,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Text(
+                code,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
             ),
             const SizedBox(width: 11),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 3),
-                    Text(subtitle!, style: const TextStyle(fontSize: 10.5, color: AppColors.textMuted)),
+                    Text(
+                      subtitle!,
+                      style: const TextStyle(
+                        fontSize: 10.5,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
                   ],
                 ],
               ),
             ),
-            if (selected) const Icon(Icons.check, size: 16, color: AppColors.primary),
+            if (selected)
+              const Icon(Icons.check, size: 16, color: AppColors.primary),
           ],
         ),
       ),
@@ -327,7 +485,9 @@ class _VaultPickCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 13),
         decoration: BoxDecoration(
           color: done ? const Color(0xFFEAF7F5) : const Color(0xFFFBFDFF),
-          border: Border.all(color: done ? const Color(0xFFB4E0D9) : const Color(0xFFC6D2E2)),
+          border: Border.all(
+            color: done ? const Color(0xFFB4E0D9) : const Color(0xFFC6D2E2),
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -336,13 +496,21 @@ class _VaultPickCard extends StatelessWidget {
             const SizedBox(height: 7),
             Text(
               done ? '$title ✓' : title,
-              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: done ? const Color(0xFF0B7267) : AppColors.textPrimary),
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: done ? const Color(0xFF0B7267) : AppColors.textPrimary,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               done ? doneLabel : idleLabel,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 10.5, color: AppColors.textMuted, height: 1.5),
+              style: const TextStyle(
+                fontSize: 10.5,
+                color: AppColors.textMuted,
+                height: 1.5,
+              ),
             ),
           ],
         ),

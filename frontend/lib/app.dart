@@ -15,7 +15,8 @@ class LocalBridgeApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       // 웹처럼 뷰포트가 넓을 때 모바일 UI를 가운데 정렬해 보여준다.
-      builder: (context, child) => WebCenteredFrame(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) =>
+          WebCenteredFrame(child: child ?? const SizedBox.shrink()),
       home: const AppEntryFlow(),
     );
   }
