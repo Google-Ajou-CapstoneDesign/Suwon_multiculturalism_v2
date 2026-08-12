@@ -13,11 +13,12 @@ from typing import Optional
 
 from google.adk.agents import Agent
 from google.adk.events import Event
+from google.adk.models import Gemini
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
-from ..core.genai_client import get_model_name
+from ..core.genai_client import get_model_name, resolve_client_kwargs
 from .tools import build_tools
 
 logger = logging.getLogger(__name__)
@@ -74,7 +75,12 @@ async def run_agent(
 
     agent = Agent(
         name="local_bridge_agent",
-        model=get_model_name(),
+        # 모델 이름 문자열만 주면 ADK가 core.genai_client와 무관하게 자체
+        # 기본값(GOOGLE_GENAI_USE_VERTEXAI 환경변수 부재 시 Developer API/API
+        # 키 모드)으로 클라이언트를 만들어버린다 — get_genai_client()와 동일한
+        # 규칙(resolve_client_kwargs)을 명시적으로 넘겨 환경변수 설정 누락에
+        # 안전하게 만든다.
+        model=Gemini(model=get_model_name(), client_kwargs=resolve_client_kwargs()),
         instruction=_SYSTEM_INSTRUCTION,
         tools=build_tools(uid=uid),
         # 모델이 사고 과정(thought)을 함께 반환하게 한다 — 모델이 지원하지 않으면
