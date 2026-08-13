@@ -19,6 +19,11 @@ class ChatRequest(CamelModel):
     history: List[ChatTurn] = []
     visa_group: Optional[Literal["E-9", "H-2", "D-2"]] = None
     lifecycle_stage: Optional[str] = None
+    # 프론트엔드(AppLanguage)의 현재 언어 설정. 메시지 자체가 어떤 언어로
+    # 쓰였든, 답변은 항상 이 설정을 따라야 한다 — 모델이 메시지 언어만 보고
+    # 자동 판단하게 두면(예: 한국어로 짧게 쓴 질문) 설정과 다른 언어로 답하는
+    # 경우가 있었다.
+    language: Literal["ko", "en", "zh", "vi"] = "ko"
 
 
 class RoutingTarget(CamelModel):

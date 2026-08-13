@@ -41,3 +41,17 @@ async def test_genai_exception_falls_back_to_keywords(monkeypatch):
 
     assert response.routing_target.module == "module1"
     assert response.routing_target.category_id == "contract_check"
+
+
+async def test_fallback_answer_follows_app_language_setting(monkeypatch):
+    # genai/에이전트 둘 다 없는 테스트 환경 → 정적 폴백 문구로 응답한다.
+    # 이때도 request.language(프론트엔드 앱 설정)를 따라야 한다 — 메시지 자체는
+    # 한국어로 쓰여 있어도 답변은 language에 지정된 언어여야 한다.
+    monkeypatch.setattr(chat_service, "get_genai_client", lambda: None)
+
+    response = await chat_service.answer(
+        ChatRequest(message="지난달 임금을 못 받았어요", language="en")
+    )
+
+    assert response.fact_answer == chat_service._CONTENT["wage"]["fact_answer"]["en"]
+    assert response.fact_answer != chat_service._CONTENT["wage"]["fact_answer"]["ko"]

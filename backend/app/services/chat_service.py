@@ -45,46 +45,81 @@ class IntentClassification(BaseModel):
     intent: Intent
 
 
+Language = Literal["ko", "en", "zh", "vi"]
+
+# 프론트엔드(AppLanguage)와 동일한 4개 언어. 에이전트 호출이 실패했을 때 나가는
+# 사전 검수 문구라 개수가 적어(7개) 여기서 직접 4개 언어를 다 채워둔다 —
+# 에이전트 정상 경로는 pipeline.run_agent()에 넘긴 language로 처리된다.
+_L = Dict[Language, str]
+
+
 class _ContentEntry(TypedDict):
     keywords: List[str]
-    fact_answer: Optional[str]
-    risk_notice: Optional[str]
+    fact_answer: Optional[_L]
+    risk_notice: Optional[_L]
     routing_target: Optional[RoutingTarget]
 
 
-_META_FALLBACK_ANSWER = (
-    "저는 수원시 이주노동자·유학생의 노동 상담을 돕는 AI 도우미예요. "
-    "임금체불, 산업재해, 근로계약서 등 궁금한 점을 편하게 물어보세요."
-)
-_OFF_TOPIC_ANSWER = (
-    "이 서비스는 수원시 이주노동자·유학생의 노동 상담(임금체불·산업재해·근로계약 등)을 돕는 곳이에요. "
-    "요청하신 내용은 제가 도와드리기 어려운 주제라 정중히 양해 부탁드려요."
-)
+def _pick(text: Optional[_L], language: Language) -> Optional[str]:
+    if text is None:
+        return None
+    return text.get(language) or text["ko"]
+
+
+_META_FALLBACK_ANSWER: _L = {
+    "ko": "저는 수원시 이주노동자·유학생의 노동 상담을 돕는 AI 도우미예요. 임금체불, 산업재해, 근로계약서 등 궁금한 점을 편하게 물어보세요.",
+    "en": "I'm an AI assistant helping migrant workers and international students in Suwon with labor questions. Feel free to ask about unpaid wages, workplace injuries, employment contracts, and more.",
+    "zh": "我是帮助水原市外籍劳动者和留学生解决劳动咨询问题的AI助手。欢迎随时咨询拖欠工资、工伤、劳动合同等问题。",
+    "vi": "Tôi là trợ lý AI hỗ trợ tư vấn lao động cho người lao động nước ngoài và du học sinh tại Suwon. Hãy thoải mái hỏi về nợ lương, tai nạn lao động, hợp đồng lao động và các vấn đề khác.",
+}
+_OFF_TOPIC_ANSWER: _L = {
+    "ko": "이 서비스는 수원시 이주노동자·유학생의 노동 상담(임금체불·산업재해·근로계약 등)을 돕는 곳이에요. 요청하신 내용은 제가 도와드리기 어려운 주제라 정중히 양해 부탁드려요.",
+    "en": "This service helps migrant workers and international students in Suwon with labor topics (unpaid wages, workplace injuries, employment contracts, etc). I'm afraid I can't help with what you asked — thank you for understanding.",
+    "zh": "本服务专门帮助水原市外籍劳动者和留学生解决劳动相关问题（拖欠工资、工伤、劳动合同等）。您咨询的内容不在我能协助的范围内，敬请谅解。",
+    "vi": "Dịch vụ này hỗ trợ tư vấn lao động (nợ lương, tai nạn lao động, hợp đồng lao động, v.v.) cho người lao động nước ngoài và du học sinh tại Suwon. Rất tiếc tôi không thể hỗ trợ nội dung bạn vừa hỏi, mong bạn thông cảm.",
+}
 
 _CONTENT: Dict[Intent, _ContentEntry] = {
     "wage": {
         "keywords": ["임금", "체불", "월급", "급여"],
-        "fact_answer": (
-            "근로기준법상 사용자는 퇴직·지급일로부터 14일 이내에 임금을 지급해야 해요. "
-            "이미 기간이 지났다면 진정 제기가 가능해요."
-        ),
-        "risk_notice": (
-            "즉시 대응이 필요한 사안으로 보여요. 정확한 판단은 AI가 아닌 아래 네비게이터·전문가를 통해 확인해 주세요."
-        ),
+        "fact_answer": {
+            "ko": "근로기준법상 사용자는 퇴직·지급일로부터 14일 이내에 임금을 지급해야 해요. 이미 기간이 지났다면 진정 제기가 가능해요.",
+            "en": "Under the Labor Standards Act, employers must pay wages within 14 days of resignation or the payment date. If that period has already passed, you can file a complaint.",
+            "zh": "根据《劳动基准法》，雇主须在离职或发薪日起14天内支付工资。如果已超过该期限，您可以提出申诉。",
+            "vi": "Theo Luật Tiêu chuẩn Lao động, người sử dụng lao động phải trả lương trong vòng 14 ngày kể từ ngày nghỉ việc hoặc ngày trả lương. Nếu đã quá thời hạn, bạn có thể nộp đơn khiếu nại.",
+        },
+        "risk_notice": {
+            "ko": "즉시 대응이 필요한 사안으로 보여요. 정확한 판단은 AI가 아닌 아래 네비게이터·전문가를 통해 확인해 주세요.",
+            "en": "This looks like it needs immediate attention. Please confirm the details with the navigator/expert below rather than relying only on AI.",
+            "zh": "这似乎是需要立即处理的事项。请通过下方的导航工具或专家进行确认，而非仅依赖AI判断。",
+            "vi": "Đây có vẻ là vấn đề cần xử lý ngay. Vui lòng xác nhận với chuyên gia/công cụ điều hướng bên dưới thay vì chỉ dựa vào AI.",
+        },
         "routing_target": RoutingTarget(module="module3-wage"),
     },
     "accident": {
         "keywords": ["산재", "다쳤", "부상", "사고"],
-        "fact_answer": "업무 중 다쳤다면 산재보험으로 치료비를 처리할 수 있어요. 사업주의 공상 처리 요구는 거절할 수 있어요.",
-        "risk_notice": "사고 사실관계 정리가 필요해 보여요. 산재 대응 네비게이터에서 증빙을 정리해 드릴게요.",
+        "fact_answer": {
+            "ko": "업무 중 다쳤다면 산재보험으로 치료비를 처리할 수 있어요. 사업주의 공상 처리 요구는 거절할 수 있어요.",
+            "en": "If you were injured at work, medical costs can be covered by industrial accident insurance. You can refuse an employer's request to handle it as a private injury instead.",
+            "zh": "如果在工作中受伤，可以通过工伤保险处理治疗费用。您可以拒绝雇主要求以私伤方式处理的要求。",
+            "vi": "Nếu bị thương trong khi làm việc, chi phí điều trị có thể được xử lý qua bảo hiểm tai nạn lao động. Bạn có thể từ chối yêu cầu của người sử dụng lao động muốn xử lý như tai nạn cá nhân.",
+        },
+        "risk_notice": {
+            "ko": "사고 사실관계 정리가 필요해 보여요. 산재 대응 네비게이터에서 증빙을 정리해 드릴게요.",
+            "en": "It looks like the facts of the accident need to be organized. The workplace-injury navigator can help you put together the evidence.",
+            "zh": "看起来需要整理事故的事实经过。工伤应对导航工具可以帮助您整理相关证据。",
+            "vi": "Có vẻ cần sắp xếp lại các tình tiết vụ tai nạn. Công cụ điều hướng ứng phó tai nạn lao động sẽ giúp bạn tổng hợp bằng chứng.",
+        },
         "routing_target": RoutingTarget(module="module3-accident"),
     },
     "contract": {
         "keywords": ["계약서", "근로계약"],
-        "fact_answer": (
-            "근로계약서에는 임금·근무시간·휴게시간 등 11개 필수 확인 항목이 있어요. "
-            "백과사전 탭의 체크리스트에서 확인할 수 있어요."
-        ),
+        "fact_answer": {
+            "ko": "근로계약서에는 임금·근무시간·휴게시간 등 11개 필수 확인 항목이 있어요. 백과사전 탭의 체크리스트에서 확인할 수 있어요.",
+            "en": "An employment contract has 11 required items to check, including wages, working hours, and break time. You can review them in the checklist under the Encyclopedia tab.",
+            "zh": "劳动合同中有工资、工作时间、休息时间等11项必须确认的内容。您可以在百科全书标签的检查清单中查看。",
+            "vi": "Hợp đồng lao động có 11 mục bắt buộc cần kiểm tra như lương, giờ làm việc, giờ nghỉ. Bạn có thể xem trong danh sách kiểm tra ở tab Bách khoa toàn thư.",
+        },
         "risk_notice": None,
         "routing_target": RoutingTarget(module="module1", category_id="contract_check"),
     },
@@ -187,8 +222,9 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
         or _classify_with_keywords(request.message)
     )
     content = _CONTENT[intent]
+    language: Language = request.language
 
-    fact_answer = content["fact_answer"]
+    fact_answer = _pick(content["fact_answer"], language)
     # risk_notice/routing_target은 예전엔 intent만 보고 무조건 채웠다 — 그러면
     # 가벼운 질문에도 매번 경고문구·네비게이터 버튼이 떴다. 이제는 에이전트가
     # flag_urgent_action 도구로 "지금 안내가 필요한 상황인지" 직접 판단한
@@ -205,23 +241,24 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
                 visa_group=request.visa_group,
                 lifecycle_stage=request.lifecycle_stage,
                 history=request.history,
+                language=language,
             )
             fact_answer = agent_result.text
             if agent_result.urgent:
-                risk_notice = content["risk_notice"]
+                risk_notice = _pick(content["risk_notice"], language)
                 routing_target = content["routing_target"]
             if agent_result.orgs:
                 orgs = agent_result.orgs
         except Exception as exc:
             log_exception_summary(logger, "에이전트 응답 생성 실패 — 사전 검수 문구로 폴백합니다.", exc)
             logger.exception("에이전트 응답 생성 실패 전체 트레이스백")
-            fact_answer = content["fact_answer"]
+            fact_answer = _pick(content["fact_answer"], language)
             # 에이전트가 아예 실패하면 "지금 안내가 필요한 상황인지" 판단을
             # 대신해줄 수 없으니, wage/accident/contract는 예전처럼 intent 기반
             # 고정 안내로 안전하게 폴백한다(과소 안내보다는 과다 안내가 낫다).
             # meta는 애초에 경고·라우팅이 없는 카테고리라 그대로 둔다.
             if intent != "meta":
-                risk_notice = content["risk_notice"]
+                risk_notice = _pick(content["risk_notice"], language)
                 routing_target = content["routing_target"]
                 orgs = DEFAULT_ORGS[:2]
 

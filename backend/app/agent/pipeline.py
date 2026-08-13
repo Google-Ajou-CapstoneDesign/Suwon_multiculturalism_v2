@@ -8,6 +8,7 @@
 """
 
 import logging
+import re
 import uuid
 from dataclasses import dataclass, field
 from typing import List, Optional
@@ -36,11 +37,17 @@ _SYSTEM_INSTRUCTION = """당신은 수원시 이주노동자·유학생을 돕�
 - "위법입니다", "무조건 이깁니다"처럼 단정적인 법적 결론을 내리지 말고, 확인된
   사실과 다음 행동(진정 제기, 네비게이터 이용, 기관 문의 등)을 안내하세요.
 - 확실하지 않은 정보는 지어내지 말고, 백과사전 탭이나 관련 기관 문의를 안내하세요.
-- 사용자의 언어로 최대한 친절하고 상세하게 답변하세요.
-- 메시지 맨 앞 대괄호에 오늘 날짜·요일·시각이 함께 주어집니다. "내일", "이번
-  주말"처럼 상대적인 시점을 판단하거나, 기관 이용시간(예: "평일 09:00~18:00")을
-  보고 지금·내일 이용 가능한지 판단할 때 이 정보를 기준으로 삼으세요 — 당신의
-  기억 속 날짜가 아니라 항상 이 값을 써야 합니다.
+- 최대한 친절하고 상세하게 답변하세요.
+- 메시지 맨 앞 대괄호에 오늘 날짜·요일·시각과 함께 "답변 언어(앱 설정)"이 주어집니다.
+  "내일", "이번 주말"처럼 상대적인 시점을 판단하거나, 기관 이용시간(예: "평일
+  09:00~18:00")을 보고 지금·내일 이용 가능한지 판단할 때 날짜 정보를 기준으로
+  삼으세요 — 당신의 기억 속 날짜가 아니라 항상 이 값을 써야 합니다. 답변 언어는
+  반드시 이 대괄호에 명시된 언어를 따르세요 — 사용자가 메시지를 다른 언어로
+  썼더라도(예: 한국어로 짧게 물어봐도) 지정된 언어로만 답변해야 합니다. 단, 이
+  대괄호 자체는 당신만 보는 참고용 컨텍스트입니다. 답변 텍스트 맨 앞이나 어디에도
+  이 대괄호, 날짜, 요일, 시각, "답변 언어" 문구를 그대로(혹은 다른 말로
+  바꿔서라도) 출력하지 마세요 — 사용자에게는 곧바로 지정된 언어의 답변 내용만
+  보여야 합니다.
 
 도구 호출:
 - 임금·체불과 관련된 날짜/금액 수치를 안내할 때는 반드시 calculate_wage 도구를
@@ -56,6 +63,17 @@ _SYSTEM_INSTRUCTION = """당신은 수원시 이주노동자·유학생을 돕�
 """
 
 _session_service = InMemorySessionService()
+
+# 지시문에도 "이 대괄호를 답변에 쓰지 말라"고 못박아뒀지만, 모델이 가끔
+# "[2026-08-13 (수요일) 12:54 기준(한국시간)]" 같은 날짜 컨텍스트를 (원문
+# 그대로든 살짝 바꿔 말하든) 답변 맨 앞에 그대로 옮겨 적는 경우가 있어 방어적으로
+# 한 번 더 걸러낸다. "기준(한국시간)"은 우리가 주입하는 컨텍스트에만 등장하는
+# 고정 문구라 오탐 없이 식별할 수 있다.
+_LEADING_TIME_CONTEXT_RE = re.compile(r"^\[[^\]]*기준\(한국시간\)[^\]]*\]\s*")
+
+
+def _strip_leaked_context(text: str) -> str:
+    return _LEADING_TIME_CONTEXT_RE.sub("", text, count=1).lstrip()
 
 
 @dataclass
@@ -93,6 +111,14 @@ def _log_agent_event(event: Event) -> None:
         logger.info("✅ [%s] 도구 결과: %s → %s", event.author, response.name, response.response)
 
 
+_LANGUAGE_NAMES = {
+    "ko": "한국어",
+    "en": "English",
+    "zh": "中文(简体)",
+    "vi": "Tiếng Việt",
+}
+
+
 async def run_agent(
     *,
     message: str,
@@ -100,6 +126,7 @@ async def run_agent(
     visa_group: Optional[str],
     lifecycle_stage: Optional[str],
     history: Optional[List[ChatTurn]] = None,
+    language: Optional[str] = None,
 ) -> AgentResult:
     """Tools를 갖춘 Gemini 에이전트를 한 번 실행해 답변과 에이전트의 판단(AgentResult)을 반환한다."""
 
@@ -141,6 +168,11 @@ async def run_agent(
         context_lines.append(f"체류자격: {visa_group}")
     if lifecycle_stage:
         context_lines.append(f"생애주기 단계: {lifecycle_stage}")
+    # 메시지 자체가 어떤 언어로 쓰였든(예: 한국어로 짧게 물어봐도), 프론트엔드
+    # 앱 언어 설정을 따라 답변 언어를 강제한다 — 메시지 언어만 보고 자동
+    # 판단하게 두면 설정과 다른 언어로 답하는 경우가 있었다.
+    language_name = _LANGUAGE_NAMES.get(language or "ko", _LANGUAGE_NAMES["ko"])
+    context_lines.append(f"답변 언어(앱 설정): {language_name} — 메시지의 언어와 달라도 반드시 이 언어로만 답변")
     context_prefix = f"[{' / '.join(context_lines)}]\n"
 
     # 매 요청마다 새 세션을 만들어 돌리므로(아래 create_session) 에이전트에게는
@@ -182,7 +214,7 @@ async def run_agent(
                 if part.text and not part.thought
             ]
 
-    final_text = "".join(final_text_parts).strip()
+    final_text = _strip_leaked_context("".join(final_text_parts).strip())
     if not final_text:
         raise RuntimeError("에이전트가 최종 응답을 생성하지 못했습니다.")
     return AgentResult(text=final_text, urgent=urgent, orgs=found_orgs)
