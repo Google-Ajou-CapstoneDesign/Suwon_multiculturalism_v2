@@ -3,8 +3,8 @@ import '../../../core/app_language.dart';
 
 enum CategoryGroupId { a, b, c }
 
-/// 백과사전 카테고리 1개. id는 향후 콘텐츠 확장(전체 20개 항목) 때도
-/// 그대로 재사용할 수 있도록 프론트엔드_구상.html의 번호를 그대로 따른다.
+/// 백과사전 카테고리 1개. html_files/생활백과사전.html의 12개 항목(그룹당 4개)
+/// 그대로를 옮긴 것이라 id는 그 순서를 그대로 따른다(1~4=A, 5~8=B, 9~12=C).
 class CategoryItem {
   const CategoryItem({
     required this.id,
@@ -29,7 +29,7 @@ class CategoryGroupData {
     required this.name,
     required this.title,
     required this.itemIds,
-    required this.skeletonIds,
+    this.skeletonIds = const [],
   });
 
   final CategoryGroupId id;
@@ -48,140 +48,111 @@ class CategoryGroupData {
   final List<int> itemIds;
 
   /// 아직 콘텐츠가 없는 "준비 중" 항목 — 목차엔 노출하되 탭할 수 없다.
+  /// 지금은 그룹당 4개 항목이 전부 채워져 있어 비어 있다.
   final List<int> skeletonIds;
 }
 
 const Map<int, CategoryItem> categoryById = {
+  // ── Group A · 필수 행정 ──────────────────────────────────────────
   1: CategoryItem(
     id: 1,
     icon: Icons.badge_outlined,
     group: CategoryGroupId.a,
-    name: L10nText(
-      ko: '외국인등록증(ARC) 발급',
-      en: 'Alien Registration Card (ARC)',
-      zh: '外国人登录证（ARC）办理',
-      vi: 'Thẻ đăng ký người nước ngoài (ARC)',
-    ),
+    name: L10nText(ko: '등록증', en: 'ARC', zh: '外国人登录证', vi: 'Thẻ đăng ký'),
   ),
   2: CategoryItem(
     id: 2,
     icon: Icons.assignment_ind_outlined,
     group: CategoryGroupId.a,
-    name: L10nText(
-      ko: '비자 관리 & 체류 연장',
-      en: 'Visa management & extension of stay',
-      zh: '签证管理与居留延长',
-      vi: 'Quản lý visa & gia hạn cư trú',
-    ),
+    name: L10nText(ko: '비자', en: 'Visa', zh: '签证', vi: 'Visa'),
   ),
   3: CategoryItem(
     id: 3,
-    icon: Icons.signal_cellular_alt,
+    icon: Icons.work_outline,
     group: CategoryGroupId.a,
     name: L10nText(
-      ko: '통신 개통',
-      en: 'Getting a phone plan',
-      zh: '开通通讯（手机）',
-      vi: 'Đăng ký điện thoại',
+      ko: '취업수속',
+      en: 'Employment procedures',
+      zh: '就业手续',
+      vi: 'Thủ tục việc làm',
     ),
   ),
-  5: CategoryItem(
-    id: 5,
-    icon: Icons.support_agent,
+  4: CategoryItem(
+    id: 4,
+    icon: Icons.assignment_outlined,
     group: CategoryGroupId.a,
     name: L10nText(
-      ko: '긴급 신고·통역지원',
-      en: 'Emergency calls & interpreting',
-      zh: '紧急报案与口译支援',
-      vi: 'Gọi khẩn cấp & phiên dịch',
+      ko: '체류신고',
+      en: 'Residence reporting',
+      zh: '居留申报',
+      vi: 'Khai báo cư trú',
     ),
+  ),
+
+  // ── Group B · 생활 정착 ──────────────────────────────────────────
+  5: CategoryItem(
+    id: 5,
+    icon: Icons.local_hospital_outlined,
+    group: CategoryGroupId.b,
+    name: L10nText(ko: '병원', en: 'Hospitals', zh: '医院', vi: 'Bệnh viện'),
   ),
   6: CategoryItem(
     id: 6,
-    icon: Icons.account_balance_outlined,
+    icon: Icons.health_and_safety_outlined,
     group: CategoryGroupId.b,
-    name: L10nText(
-      ko: '은행 계좌·송금',
-      en: 'Bank account & sending money',
-      zh: '银行账户与汇款',
-      vi: 'Tài khoản ngân hàng & chuyển tiền',
-    ),
+    name: L10nText(ko: '보험', en: 'Insurance', zh: '保险', vi: 'Bảo hiểm'),
   ),
   7: CategoryItem(
     id: 7,
     icon: Icons.apartment_outlined,
     group: CategoryGroupId.b,
-    name: L10nText(
-      ko: '주거',
-      en: 'Housing & dormitories',
-      zh: '住房与宿舍',
-      vi: 'Nhà ở & ký túc xá',
-    ),
+    name: L10nText(ko: '주거', en: 'Housing', zh: '住房', vi: 'Nhà ở'),
   ),
+  8: CategoryItem(
+    id: 8,
+    icon: Icons.directions_bus_outlined,
+    group: CategoryGroupId.b,
+    name: L10nText(ko: '교통', en: 'Transportation', zh: '交通', vi: 'Giao thông'),
+  ),
+
+  // ── Group C · 노동 권익 ──────────────────────────────────────────
   9: CategoryItem(
     id: 9,
-    icon: Icons.local_hospital_outlined,
-    group: CategoryGroupId.b,
+    icon: Icons.fact_check_outlined,
+    group: CategoryGroupId.c,
     name: L10nText(
-      ko: '의료·건강보험',
-      en: 'Healthcare & insurance',
-      zh: '医疗与健康保险',
-      vi: 'Y tế & bảo hiểm sức khỏe',
+      ko: '근로계약서',
+      en: 'Employment contract',
+      zh: '劳动合同',
+      vi: 'Hợp đồng lao động',
     ),
   ),
   10: CategoryItem(
     id: 10,
-    icon: Icons.school_outlined,
-    group: CategoryGroupId.b,
-    name: L10nText(
-      ko: '한국어 학습',
-      en: 'Learning Korean',
-      zh: '学习韩语',
-      vi: 'Học tiếng Hàn',
-    ),
+    icon: Icons.payments_outlined,
+    group: CategoryGroupId.c,
+    name: L10nText(ko: '임금체불', en: 'Unpaid wages', zh: '拖欠工资', vi: 'Nợ lương'),
   ),
   11: CategoryItem(
     id: 11,
-    icon: Icons.fact_check_outlined,
+    icon: Icons.medical_services_outlined,
     group: CategoryGroupId.c,
     name: L10nText(
-      ko: '근로계약서 체크리스트',
-      en: 'Employment contract checklist',
-      zh: '劳动合同检查清单',
-      vi: 'Danh mục kiểm tra hợp đồng',
+      ko: '산업재해',
+      en: 'Workplace injury',
+      zh: '工伤',
+      vi: 'Tai nạn lao động',
     ),
   ),
-  14: CategoryItem(
-    id: 14,
-    icon: Icons.edit_calendar_outlined,
+  12: CategoryItem(
+    id: 12,
+    icon: Icons.support_agent,
     group: CategoryGroupId.c,
     name: L10nText(
-      ko: '근무기록장 작성법',
-      en: 'Keeping a work log',
-      zh: '工作记录本填写方法',
-      vi: 'Cách ghi nhật ký làm việc',
-    ),
-  ),
-  15: CategoryItem(
-    id: 15,
-    icon: Icons.swap_horiz,
-    group: CategoryGroupId.c,
-    name: L10nText(
-      ko: '사업장 변경 제도',
-      en: 'Changing workplaces',
-      zh: '更换工作单位制度',
-      vi: 'Chuyển đổi nơi làm việc',
-    ),
-  ),
-  17: CategoryItem(
-    id: 17,
-    icon: Icons.gavel_outlined,
-    group: CategoryGroupId.c,
-    name: L10nText(
-      ko: '권리구제 지원제도',
-      en: 'Legal support programs',
-      zh: '权益救济支援制度',
-      vi: 'Chương trình hỗ trợ pháp lý',
+      ko: '상담기관',
+      en: 'Support organizations',
+      zh: '咨询机构',
+      vi: 'Cơ quan tư vấn',
     ),
   ),
 };
@@ -199,8 +170,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
       zh: '必办行政·认证',
       vi: 'Thủ tục bắt buộc',
     ),
-    itemIds: [1, 2, 3],
-    skeletonIds: [5],
+    itemIds: [1, 2, 3, 4],
   ),
   CategoryGroupId.b: CategoryGroupData(
     id: CategoryGroupId.b,
@@ -214,8 +184,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
       zh: '生活安顿',
       vi: 'Ổn định cuộc sống',
     ),
-    itemIds: [6, 7, 9],
-    skeletonIds: [10],
+    itemIds: [5, 6, 7, 8],
   ),
   CategoryGroupId.c: CategoryGroupData(
     id: CategoryGroupId.c,
@@ -229,15 +198,15 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
       zh: '劳动权益',
       vi: 'Quyền lợi lao động',
     ),
-    itemIds: [11, 14, 17],
-    skeletonIds: [15],
+    itemIds: [9, 10, 11, 12],
   ),
 };
 
-/// 표지의 "자주 보는 항목" 3칩 — (categoryId, 줄바꿈 포함 짧은 라벨)
+/// 표지의 "자주 보는 항목" 3칩 — (categoryId, 줄바꿈 포함 짧은 라벨).
+/// html_files/생활백과사전.html 홈 화면의 퀵버튼(계약서 체크·ARC 발급·권리구제)과 동일하게 맞췄다.
 const quickAccessChips = [
   (
-    11,
+    9,
     L10nText(
       ko: '계약서\n체크',
       en: 'Contract\ncheck',
@@ -255,12 +224,12 @@ const quickAccessChips = [
     ),
   ),
   (
-    17,
+    10,
     L10nText(
-      ko: '권리구제\n제도',
-      en: 'Legal\nsupport',
-      zh: '权益救济\n制度',
-      vi: 'Hỗ trợ\npháp lý',
+      ko: '임금체불\n대응',
+      en: 'Unpaid wage\nresponse',
+      zh: '拖欠工资\n应对',
+      vi: 'Ứng phó\nnợ lương',
     ),
   ),
 ];

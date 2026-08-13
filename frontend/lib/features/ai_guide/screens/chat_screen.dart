@@ -89,6 +89,10 @@ class _ChatScreenState extends State<ChatScreen> {
     final text = _controller.text.trim();
     if (text.isEmpty || _isSending) return;
 
+    // 지금까지의 대화(직전 턴들)를 먼저 스냅샷 떠둔다 — 새 사용자 메시지를
+    // 리스트에 추가하기 전이라야 "현재 메시지 이전까지의 이력"이 된다.
+    final history = List<ChatMessage>.unmodifiable(_messages);
+
     setState(() {
       _messages.add(ChatMessage.user(text));
       _isSending = true;
@@ -97,7 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollToBottom();
 
     try {
-      final response = await _chatApi.send(text);
+      final response = await _chatApi.send(text, history: history);
       setState(() => _messages.add(ChatMessage.bot(response)));
     } catch (e) {
       // ApiConfig.baseUrl(디버그 콘솔에 출력)이 의도한 배포 주소가 맞는지부터 확인할 것 —

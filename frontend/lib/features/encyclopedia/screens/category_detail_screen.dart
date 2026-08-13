@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../../common/widgets/app_card.dart';
+import '../../../common/widgets/rich_note.dart';
 import '../../../theme/app_colors.dart';
 import '../../../core/app_language.dart';
 import '../models/category_detail.dart';
 import '../models/category_item.dart';
 import '../models/encyclopedia_strings.dart';
-import 'sub_document_screen.dart';
 
-/// 카테고리 상세 화면. categoryDetailById에 콘텐츠가 있으면 5단 카드+체크리스트를,
-/// 없으면(아직 검수 전인 항목) "2차 단계에서 채웁니다" 안내만 보여준다.
+/// 카테고리 상세 화면. categoryDetailById에 콘텐츠가 있으면 "책 쪽"(BookPage)
+/// 여러 개를 순서대로 보여주고, 없으면(아직 검수 전인 항목) "2차 단계에서
+/// 채웁니다" 안내만 보여준다.
 class CategoryDetailScreen extends StatefulWidget {
   const CategoryDetailScreen({
     super.key,
@@ -30,17 +31,18 @@ class CategoryDetailScreen extends StatefulWidget {
 class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
   late bool _starred = widget.starred;
 
-  final _checked = <int>{};
-
   @override
   Widget build(BuildContext context) {
     final item = categoryById[widget.categoryId]!;
+    final group = categoryGroups[item.group]!;
     final detail = categoryDetailById[widget.categoryId];
     final sub = widget.language == AppLanguage.ko ? null : item.name.ko;
 
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        backgroundColor: group.color,
+        foregroundColor: Colors.white,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -54,7 +56,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 sub,
                 style: const TextStyle(
                   fontSize: 10.5,
-                  color: AppColors.textMuted,
+                  color: Color(0xB8FFFFFF),
                 ),
               ),
           ],
@@ -67,11 +69,12 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             },
             icon: Icon(
               _starred ? Icons.star : Icons.star_border,
-              color: _starred ? AppColors.accent : AppColors.textMuted,
+              color: _starred ? const Color(0xFFFDE047) : Colors.white,
             ),
           ),
         ],
       ),
+      backgroundColor: group.backgroundTint,
       body: detail == null
           ? Center(
               child: Padding(
@@ -87,241 +90,327 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 ),
               ),
             )
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-              children: [
-                for (final step in detail.steps) ...[
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _StepLabel(
-                          text: detailStepCaptions[step.captionIndex].of(
-                            widget.language,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          step.text.of(widget.language),
-                          style: const TextStyle(fontSize: 14, height: 1.45),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                ],
-                if (detail.hasGuidePhotos) ...[
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _StepLabel(
-                          text: detailStepCaptions[4].of(widget.language),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: List.generate(3, (i) {
-                            return Expanded(
-                              child: Container(
-                                margin: EdgeInsets.only(right: i < 2 ? 8 : 0),
-                                height: 72,
-                                decoration: BoxDecoration(
-                                  color: AppColors.border.withValues(
-                                    alpha: 0.4,
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Icon(
-                                  Icons.image_outlined,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                ],
-                if (detail.subDocuments.isNotEmpty) ...[
-                  Text(
-                    EncyclopediaStrings.subDocumentsTitle.of(widget.language),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  AppCard(
-                    padding: EdgeInsets.zero,
-                    child: Column(
-                      children: [
-                        for (var i = 0; i < detail.subDocuments.length; i++)
-                          _SubDocumentRow(
-                            index: i + 1,
-                            doc: detail.subDocuments[i],
-                            language: widget.language,
-                            isLast: i == detail.subDocuments.length - 1,
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => SubDocumentScreen(
-                                  doc: detail.subDocuments[i],
-                                  language: widget.language,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-                if (detail.checklist.isNotEmpty) ...[
-                  Text(
-                    EncyclopediaStrings.checklistTitle.of(widget.language),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  AppCard(
-                    padding: EdgeInsets.zero,
-                    child: Column(
-                      children: [
-                        for (var i = 0; i < detail.checklist.length; i++)
-                          CheckboxListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 13,
-                            ),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            value: _checked.contains(i),
-                            title: Text(
-                              detail.checklist[i].of(widget.language),
-                              style: const TextStyle(fontSize: 12.5),
-                            ),
-                            onChanged: (v) => setState(() {
-                              if (v ?? false) {
-                                _checked.add(i);
-                              } else {
-                                _checked.remove(i);
-                              }
-                            }),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
+          : ListView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+              itemCount: detail.pages.length,
+              itemBuilder: (context, i) => _BookPageSection(
+                page: detail.pages[i],
+                pageNumber: i + 1,
+                totalPages: detail.pages.length,
+                groupColor: group.color,
+                language: widget.language,
+              ),
             ),
     );
   }
 }
 
-class _SubDocumentRow extends StatelessWidget {
-  const _SubDocumentRow({
-    required this.index,
-    required this.doc,
+class _BookPageSection extends StatelessWidget {
+  const _BookPageSection({
+    required this.page,
+    required this.pageNumber,
+    required this.totalPages,
+    required this.groupColor,
     required this.language,
-    required this.isLast,
-    required this.onTap,
   });
 
-  final int index;
-  final SubDocument doc;
+  final BookPage page;
+  final int pageNumber;
+  final int totalPages;
+  final Color groupColor;
   final AppLanguage language;
-  final bool isLast;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: isLast ? Colors.transparent : const Color(0xFFF1F5F9),
-            ),
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 22,
-              height: 22,
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                color: AppColors.blueBg,
-                shape: BoxShape.circle,
-              ),
-              child: Text(
-                '$index',
-                style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 26,
+                height: 26,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: groupColor,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '$pageNumber',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
                 ),
               ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  page.title.of(language),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border(left: BorderSide(color: groupColor, width: 4)),
             ),
-            const SizedBox(width: 10),
-            Expanded(
+            child: Text(
+              page.summary.of(language),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: groupColor,
+                height: 1.45,
+              ),
+            ),
+          ),
+          const SizedBox(height: 11),
+          if (page.form != null)
+            _FormPreviewCard(
+              form: page.form!,
+              groupColor: groupColor,
+              language: language,
+            ),
+          for (final block in page.blocks) ...[
+            AppCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    doc.title.of(language),
+                    block.title.of(language),
                     style: const TextStyle(
                       fontSize: 12.5,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 3),
-                  Text(
-                    doc.description.of(language),
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppColors.textMuted,
+                  const SizedBox(height: 7),
+                  for (final bullet in block.bullets)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 1),
+                            child: Text(
+                              '•',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: groupColor,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: RichNote(
+                              bullet.of(language),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
                 ],
               ),
             ),
-            const Icon(
-              Icons.chevron_right,
-              size: 18,
-              color: AppColors.textMuted,
-            ),
+            const SizedBox(height: 10),
           ],
-        ),
+          if (pageNumber < totalPages)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Divider(color: AppColors.border.withValues(alpha: 0.6)),
+            ),
+        ],
       ),
     );
   }
 }
 
-class _StepLabel extends StatelessWidget {
-  const _StepLabel({required this.text});
-  final String text;
+/// 관공서 서식(진정서·신청서) 미리보기 카드. 항목마다 자동입력/직접입력/
+/// 그대로 옮김 여부를 색으로 구분해 실제 서식을 채울 때 헷갈리지 않게 한다.
+class _FormPreviewCard extends StatelessWidget {
+  const _FormPreviewCard({
+    required this.form,
+    required this.groupColor,
+    required this.language,
+  });
+
+  final FormPreview form;
+  final Color groupColor;
+  final AppLanguage language;
+
+  static const _tagColors = {
+    'auto': Color(0xFF2563EB),
+    'blank': Color(0xFFDC2626),
+    'raw': Color(0xFF6B7280),
+  };
+
+  L10nText _tagLabel(String tag) {
+    switch (tag) {
+      case 'auto':
+        return EncyclopediaStrings.formTagAuto;
+      case 'blank':
+        return EncyclopediaStrings.formTagBlank;
+      default:
+        return EncyclopediaStrings.formTagRaw;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: AppColors.blueBg,
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: AppColors.primary,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: groupColor.withValues(alpha: 0.08),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(10),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  form.title.of(language),
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                    color: groupColor,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  form.subtitle.of(language),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final row in form.rows)
+                  row.isSection
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 4),
+                          child: Row(
+                            children: [
+                              Text(
+                                row.sectionTitle!.of(language),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  row.sectionSub!.of(language),
+                                  style: const TextStyle(
+                                    fontSize: 10.5,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 96,
+                                child: Text(
+                                  row.label!.of(language),
+                                  style: const TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  row.value!.of(language),
+                                  style: const TextStyle(
+                                    fontSize: 11.5,
+                                    color: AppColors.textSecondary,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color:
+                                      (_tagColors[row.tag] ??
+                                              _tagColors['raw']!)
+                                          .withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  _tagLabel(row.tag ?? 'raw').of(language),
+                                  style: TextStyle(
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.w700,
+                                    color:
+                                        _tagColors[row.tag] ??
+                                        _tagColors['raw'],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

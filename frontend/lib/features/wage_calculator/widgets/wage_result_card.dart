@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../common/widgets/rich_note.dart';
 import '../../../core/app_language.dart';
 import '../../../theme/app_colors.dart';
 import '../models/wage_diagnosis.dart';

@@ -10,7 +10,7 @@ class EncyclopediaController extends ChangeNotifier {
   CategoryGroupId? get openGroup => _openGroup;
   bool get isCoverShowing => _openGroup == null;
 
-  final Set<int> _starredItems = {1, 11};
+  final Set<int> _starredItems = {1, 9};
   Set<int> get starredItems => Set.unmodifiable(_starredItems);
 
   final Set<CategoryGroupId> _starredGroups = {CategoryGroupId.c};

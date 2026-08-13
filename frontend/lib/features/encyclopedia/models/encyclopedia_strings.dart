@@ -35,12 +35,6 @@ class EncyclopediaStrings {
     zh: '未设置居留资格 — 请在设置中登记',
     vi: 'Chưa đặt tư cách lưu trú — hãy đăng ký trong Cài đặt',
   );
-  static const subDocumentsTitle = L10nText(
-    ko: '하위 문서',
-    en: 'Related documents',
-    zh: '相关文件',
-    vi: 'Tài liệu liên quan',
-  );
   static const visaNote = L10nText(
     ko: '연장 절차 확인하기 →',
     en: 'Check renewal steps →',
@@ -64,12 +58,6 @@ class EncyclopediaStrings {
     en: 'Coming soon',
     zh: '准备中',
     vi: 'Sắp có',
-  );
-  static const checklistTitle = L10nText(
-    ko: '준비 서류 체크리스트',
-    en: 'Documents to prepare',
-    zh: '备齐材料检查清单',
-    vi: 'Giấy tờ cần chuẩn bị',
   );
   static const notReady = L10nText(
     ko: '이 항목은 2차 단계에서 채웁니다.',
@@ -106,6 +94,24 @@ class EncyclopediaStrings {
     en: 'Nothing saved yet.\nTap ☆ on any item to keep it here.',
     zh: '还没有收藏的项目。\n请在列表中点击☆收藏常用项目。',
     vi: 'Chưa lưu mục nào.\nNhấn ☆ ở mục bất kỳ để lưu tại đây.',
+  );
+  static const formTagAuto = L10nText(
+    ko: '자동입력',
+    en: 'Auto-filled',
+    zh: '自动填写',
+    vi: 'Tự động điền',
+  );
+  static const formTagBlank = L10nText(
+    ko: '직접입력',
+    en: 'You fill in',
+    zh: '需自行填写',
+    vi: 'Tự nhập',
+  );
+  static const formTagRaw = L10nText(
+    ko: '그대로 옮김',
+    en: 'Copied as-is',
+    zh: '原样填写',
+    vi: 'Chép nguyên văn',
   );
   static String itemCount(AppLanguage lang, int n) {
     switch (lang) {
