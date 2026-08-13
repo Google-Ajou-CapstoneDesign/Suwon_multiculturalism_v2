@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
+import '../controllers/form_values_controller.dart';
+import '../controllers/wage_calc_scratch_controller.dart';
 import '../models/flow_block.dart';
+import '../widgets/flow_accordion.dart';
+import '../widgets/flow_content_blocks.dart';
+import '../widgets/flow_tracker.dart';
+import '../widgets/form_editor.dart';
+import '../widgets/pdf_actions_section.dart';
+import '../widgets/wage_calc_section.dart';
 
 const _stepLabel = L10nText(
   ko: '이 단계는',
@@ -35,6 +43,18 @@ const _prevLabel = L10nText(
   zh: '上一步',
   vi: 'Quay lại',
 );
+const _markCompleteLabel = L10nText(
+  ko: '✓ 이 단계 완료로 표시',
+  en: '✓ Mark this stage complete',
+  zh: '✓ 标记此阶段完成',
+  vi: '✓ Đánh dấu hoàn thành giai đoạn này',
+);
+const _undoCompleteLabel = L10nText(
+  ko: '완료 표시를 취소합니다',
+  en: 'Undo complete',
+  zh: '取消完成标记',
+  vi: 'Bỏ đánh dấu hoàn thành',
+);
 
 /// 임금체불/산재 내비게이터 공용 엔진. 프론트엔드_구상_확장.html의 `.sheet.down`
 /// 내비게이터 플로우(nf-head/stepper/nf-body/nf-foot + tracker/pop) 형식을 그대로 옮겼다.
@@ -60,6 +80,15 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
   final _checkedItems = <int, Set<int>>{};
   final _rawControllers = <int, TextEditingController>{};
 
+  /// 트래커에서 사용자가 직접 "완료로 표시"한 단계 — 세션 한정 상태(재시작 시 초기화),
+  /// UserProfileController/EncyclopediaController와 동일한 인메모리 컨벤션을 따른다.
+  final _completedStages = <int>{};
+
+  /// 진정서/신청서 서식 입력값 — 화면 인스턴스당 하나, 세션 한정.
+  late final _formValues = FormValuesController();
+  late final _wageScratch = WageCalcScratchController();
+  final _importedSources = <ImportSource>{};
+
   Color get _accentColor => widget.definition.accent == FlowAccent.amber
       ? AppColors.accent
       : AppColors.secondary;
@@ -75,14 +104,17 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
     for (final c in _rawControllers.values) {
       c.dispose();
     }
+    _formValues.dispose();
+    _wageScratch.dispose();
     super.dispose();
   }
 
   TextEditingController _rawControllerFor(int stepIndex) =>
       _rawControllers.putIfAbsent(stepIndex, TextEditingController.new);
 
-  void _openTrackerPop(TrackStage stage) {
+  void _openTrackerPop(int stageIndex) {
     final lang = UserProfileScope.of(context).language;
+    final stage = widget.definition.track[stageIndex];
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -90,61 +122,113 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 22),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            final done = _completedStages.contains(stageIndex);
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 22),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      stage.label.of(lang),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.textPrimary,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          stage.label.of(lang),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close, size: 18),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  PopBlock(
+                    label: _stepLabel.of(lang),
+                    value: stage.whatHappens.of(lang),
+                  ),
+                  PopBlock(
+                    label: _documentsLabel.of(lang),
+                    value: stage.documentsNeeded.of(lang),
+                  ),
+                  PopBlock(
+                    label: _watchOutLabel.of(lang),
+                    value: stage.watchOutFor.of(lang),
+                  ),
+                  if (stage.extra != null)
+                    PopBlock(label: '', value: stage.extra!.of(lang)),
+                  const SizedBox(height: 14),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          if (!_completedStages.add(stageIndex)) {
+                            _completedStages.remove(stageIndex);
+                          }
+                        });
+                        setSheetState(() {});
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: done
+                            ? AppColors.textMuted
+                            : AppColors.secondary,
+                        side: BorderSide(
+                          color: done ? AppColors.border : AppColors.secondary,
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 11),
+                      ),
+                      child: Text(
+                        (done ? _undoCompleteLabel : _markCompleteLabel).of(
+                          lang,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close, size: 18),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
                 ],
               ),
-              const SizedBox(height: 4),
-              _PopBlock(
-                label: _stepLabel.of(lang),
-                value: stage.whatHappens.of(lang),
-              ),
-              _PopBlock(
-                label: _documentsLabel.of(lang),
-                value: stage.documentsNeeded.of(lang),
-              ),
-              _PopBlock(
-                label: _watchOutLabel.of(lang),
-                value: stage.watchOutFor.of(lang),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
+  void _goToStep(int index) {
+    setState(
+      () => _stepIndex = index.clamp(0, widget.definition.steps.length - 1),
+    );
+  }
+
   void _next() {
+    // 경위 서술 단계(RawTextBlock)를 지나칠 때 원문 그대로 서식의 'content'
+    // 필드로 옮긴다 — FormFieldSpec.tag가 raw인 필드는 이렇게 손대지 않고
+    // 그대로 옮겨진다는 게 보장돼야 한다.
+    final rawController = _rawControllers[_stepIndex];
+    if (rawController != null) {
+      _formValues.setValue('content', rawController.text);
+    }
     if (_stepIndex == widget.definition.steps.length - 1) {
       Navigator.of(context).pop();
       return;
     }
-    setState(() => _stepIndex++);
+    _goToStep(_stepIndex + 1);
   }
 
-  void _prev() => setState(() => _stepIndex--);
+  void _prev() => _goToStep(_stepIndex - 1);
 
   @override
   Widget build(BuildContext context) {
@@ -210,18 +294,18 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 11),
       child: switch (block) {
-        OptionsBlock(:final items) => _OptionsList(
+        OptionsBlock(:final items) => OptionsList(
           items: items,
           lang: lang,
           selectedIndex: _selectedOption[_stepIndex],
           onSelect: (i) => setState(() => _selectedOption[_stepIndex] = i),
         ),
-        NoticeBlock(:final tone, :final title, :final body) => _NoticeBox(
+        NoticeBlock(:final tone, :final title, :final body) => NoticeBox(
           tone: tone,
           title: title.of(lang),
           body: body.of(lang),
         ),
-        ChecklistBlock(:final items) => _ChecklistCard(
+        ChecklistBlock(:final items) => ChecklistCard(
           items: items,
           lang: lang,
           checked: _checkedItems[_stepIndex] ?? const {},
@@ -251,19 +335,152 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
             ),
           ),
         ),
-        FillCardBlock(:final rows) => _FillCard(rows: rows, lang: lang),
-        TrackerBlock(:final now) => _TrackerCard(
+        FillCardBlock(:final rows) => FillCard(rows: rows, lang: lang),
+        TrackerBlock(:final now) => TrackerCard(
           title: widget.title.of(lang),
           accentColor: _accentColor,
           stages: widget.definition.track,
           lang: lang,
           now: now,
+          completedStages: _completedStages,
           onTapStage: _openTrackerPop,
         ),
+        ListBlock(:final items, :final numbered) => ListBlockView(
+          items: items,
+          numbered: numbered,
+          lang: lang,
+        ),
+        OrgCardBlock(
+          :final name,
+          :final subtitle,
+          :final phone,
+          :final legalBasis,
+          :final tags,
+        ) =>
+          OrgCardView(
+            name: name,
+            subtitle: subtitle,
+            phone: phone,
+            legalBasis: legalBasis,
+            tags: tags,
+            lang: lang,
+          ),
+        AccordionBlock(:final items) => AccordionList(
+          items: items,
+          lang: lang,
+          accentColor: _accentColor,
+        ),
+        LegendBlock() => LegendView(lang: lang),
+        EncyclopediaLinkBlock(:final label) => SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Text('📖'),
+            label: Text(label.of(lang)),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: _accentColor,
+              side: BorderSide(color: _accentColor),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+        ImportButtonsBlock(:final sources) => ImportButtonsRow(
+          sources: sources,
+          imported: _importedSources,
+          lang: lang,
+          onImport: _handleImport,
+        ),
+        FormEditBlock(:final sections) => FormEditorView(
+          sections: sections,
+          values: _formValues,
+          lang: lang,
+        ),
+        FormReviewBlock(:final sections) => FormReviewView(
+          sections: sections,
+          values: _formValues,
+          lang: lang,
+        ),
+        PdfActionsBlock(:final sections, :final documentTitle) =>
+          PdfActionsSection(
+            documentTitle: documentTitle,
+            sections: sections,
+            values: _formValues,
+            lang: lang,
+            filePrefix: widget.title.ko,
+          ),
+        WageCalcBlock() => WageCalcSection(
+          scratch: _wageScratch,
+          lang: lang,
+          accentColor: _accentColor,
+          onAdvance: _next,
+        ),
+        // 산재 플로우(2차 작업)에서 쓸 블록 — 임금 플로우에선 아직 등장하지 않는다.
+        MessageTemplateBlock() => const SizedBox.shrink(),
+        InjuryGuideBlock() => const SizedBox.shrink(),
       },
     );
   }
+
+  void _handleImport(ImportSource source) {
+    setState(() => _importedSources.add(source));
+    if (source == ImportSource.calcResult && _wageScratch.loaded) {
+      final input = _wageScratch.input;
+      _formValues.setValue('workers', input.size.name);
+      if (input.hireDate != null) {
+        _formValues.setValue(
+          'start',
+          input.hireDate!.toIso8601String().split('T').first,
+        );
+      }
+      if (input.leaveDate != null) {
+        _formValues.setValue(
+          'end',
+          input.leaveDate!.toIso8601String().split('T').first,
+        );
+        _formValues.setValue('resigned', 'resigned');
+      } else {
+        _formValues.setValue('resigned', 'working');
+      }
+    }
+    final lang = UserProfileScope.of(context).language;
+    _formValues.setValue(
+      'attach',
+      _importedSources.map((s) => _importSourceLabel(s).of(lang)).join(' · '),
+    );
+  }
 }
+
+const _attachWorkLogLabel = L10nText(
+  ko: '근무기록장',
+  en: 'Work log',
+  zh: '工作记录',
+  vi: 'Nhật ký làm việc',
+);
+const _attachPayslipLabel = L10nText(
+  ko: '임금명세서',
+  en: 'Payslip',
+  zh: '工资单',
+  vi: 'Phiếu lương',
+);
+const _attachCalcLabel = L10nText(
+  ko: '계산기 데이터',
+  en: 'Calculator data',
+  zh: '计算器数据',
+  vi: 'Dữ liệu máy tính lương',
+);
+const _attachProfileLabel = L10nText(
+  ko: '프로필 정보',
+  en: 'Profile info',
+  zh: '个人资料',
+  vi: 'Thông tin hồ sơ',
+);
+
+L10nText _importSourceLabel(ImportSource source) => switch (source) {
+  ImportSource.workLog => _attachWorkLogLabel,
+  ImportSource.payslip => _attachPayslipLabel,
+  ImportSource.calcResult => _attachCalcLabel,
+  ImportSource.profile => _attachProfileLabel,
+};
 
 class _FlowHeader extends StatelessWidget {
   const _FlowHeader({
@@ -425,511 +642,6 @@ class _FlowFooter extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _OptionsList extends StatelessWidget {
-  const _OptionsList({
-    required this.items,
-    required this.lang,
-    required this.selectedIndex,
-    required this.onSelect,
-  });
-  final List<FlowOption> items;
-  final AppLanguage lang;
-  final int? selectedIndex;
-  final ValueChanged<int> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(items.length, (i) {
-        final item = items[i];
-        final selected = selectedIndex == i;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 9),
-          child: InkWell(
-            onTap: () => onSelect(i),
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.all(13),
-              decoration: BoxDecoration(
-                color: selected ? const Color(0xFFF3F7FF) : Colors.white,
-                border: Border.all(
-                  color: selected ? AppColors.primary : AppColors.border,
-                  width: selected ? 1.5 : 1,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(item.emoji, style: const TextStyle(fontSize: 17)),
-                  const SizedBox(width: 11),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.title.of(lang),
-                          style: const TextStyle(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                            height: 1.4,
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          item.subtitle.of(lang),
-                          style: const TextStyle(
-                            fontSize: 10.5,
-                            color: AppColors.textMuted,
-                            height: 1.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }),
-    );
-  }
-}
-
-class _NoticeBox extends StatelessWidget {
-  const _NoticeBox({
-    required this.tone,
-    required this.title,
-    required this.body,
-  });
-  final NoticeTone tone;
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    final (bg, border, titleColor, bodyColor) = switch (tone) {
-      NoticeTone.amber => (
-        const Color(0xFFFFF8EC),
-        const Color(0xFFF5D9A8),
-        const Color(0xFF92400E),
-        const Color(0xFFA16207),
-      ),
-      NoticeTone.blue => (
-        const Color(0xFFF0F5FF),
-        const Color(0xFFC9DBFA),
-        const Color(0xFF1E3A8A),
-        const Color(0xFF2A4C90),
-      ),
-      NoticeTone.teal => (
-        const Color(0xFFEAF7F5),
-        const Color(0xFFB4E0D9),
-        const Color(0xFF0B7267),
-        const Color(0xFF0F766E),
-      ),
-    };
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: bg,
-        border: Border.all(color: border),
-        borderRadius: BorderRadius.circular(11),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 11.5,
-              fontWeight: FontWeight.w700,
-              color: titleColor,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            body,
-            style: TextStyle(fontSize: 11, color: bodyColor, height: 1.6),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ChecklistCard extends StatelessWidget {
-  const _ChecklistCard({
-    required this.items,
-    required this.lang,
-    required this.checked,
-    required this.onToggle,
-  });
-  final List<L10nText> items;
-  final AppLanguage lang;
-  final Set<int> checked;
-  final ValueChanged<int> onToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: List.generate(items.length, (i) {
-          final isChecked = checked.contains(i);
-          return InkWell(
-            onTap: () => onToggle(i),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: i < items.length - 1
-                        ? const Color(0xFFF1F5F9)
-                        : Colors.transparent,
-                  ),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 14,
-                    height: 14,
-                    decoration: BoxDecoration(
-                      color: isChecked
-                          ? AppColors.secondary
-                          : Colors.transparent,
-                      border: Border.all(
-                        color: isChecked
-                            ? AppColors.secondary
-                            : const Color(0xFFCBD5E1),
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                    child: isChecked
-                        ? const Icon(Icons.check, size: 10, color: Colors.white)
-                        : null,
-                  ),
-                  const SizedBox(width: 9),
-                  Expanded(
-                    child: Text(
-                      items[i].of(lang),
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        color: Color(0xFF334155),
-                        height: 1.45,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-}
-
-class _FillCard extends StatelessWidget {
-  const _FillCard({required this.rows, required this.lang});
-  final List<FlowFillRow> rows;
-  final AppLanguage lang;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: List.generate(rows.length, (i) {
-          final row = rows[i];
-          final (
-            valueColor,
-            italic,
-            badgeBg,
-            badgeColor,
-            badgeLabel,
-          ) = switch (row.tag) {
-            FillTag.auto => (
-              const Color(0xFF0B7267),
-              false,
-              const Color(0xFFE6F6F4),
-              const Color(0xFF0B7267),
-              'AUTO',
-            ),
-            FillTag.raw => (
-              const Color(0xFF0F172A),
-              false,
-              const Color(0xFFEEF3FE),
-              const Color(0xFF1D4ED8),
-              'RAW',
-            ),
-            FillTag.blank => (
-              const Color(0xFFB9C4D2),
-              true,
-              const Color(0xFFF1F5F9),
-              const Color(0xFF94A3B8),
-              'BLANK',
-            ),
-          };
-
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: i < rows.length - 1
-                      ? const Color(0xFFF1F5F9)
-                      : Colors.transparent,
-                ),
-              ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 82,
-                  child: Text(
-                    row.label.of(lang),
-                    style: const TextStyle(
-                      fontSize: 10.5,
-                      color: AppColors.textMuted,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    row.value.of(lang),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: valueColor,
-                      fontWeight: row.tag == FillTag.auto
-                          ? FontWeight.w600
-                          : FontWeight.w400,
-                      fontStyle: italic ? FontStyle.italic : FontStyle.normal,
-                      height: 1.5,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 5,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: badgeBg,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    badgeLabel,
-                    style: TextStyle(
-                      fontSize: 8.5,
-                      fontWeight: FontWeight.w700,
-                      color: badgeColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
-      ),
-    );
-  }
-}
-
-class _TrackerCard extends StatelessWidget {
-  const _TrackerCard({
-    required this.title,
-    required this.accentColor,
-    required this.stages,
-    required this.lang,
-    required this.now,
-    required this.onTapStage,
-  });
-  final String title;
-  final Color accentColor;
-  final List<TrackStage> stages;
-  final AppLanguage lang;
-  final int now;
-  final ValueChanged<TrackStage> onTapStage;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              Text(
-                '${now + 1} / ${stages.length}',
-                style: const TextStyle(
-                  fontSize: 9.5,
-                  color: AppColors.textMuted,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 11),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(stages.length, (i) {
-                final done = i < now;
-                final isNow = i == now;
-                final color = done
-                    ? AppColors.secondary
-                    : (isNow ? AppColors.accent : const Color(0xFFCBD5E1));
-                return SizedBox(
-                  width: 58,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: 2,
-                              color: i == 0
-                                  ? Colors.transparent
-                                  : (i <= now
-                                        ? AppColors.secondary
-                                        : const Color(0xFFE2E8F0)),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      InkWell(
-                        onTap: () => onTapStage(stages[i]),
-                        borderRadius: BorderRadius.circular(20),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 24,
-                              height: 24,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: done || isNow
-                                    ? color
-                                    : const Color(0xFFCBD5E1),
-                                shape: BoxShape.circle,
-                                boxShadow: isNow
-                                    ? [
-                                        const BoxShadow(
-                                          color: Color(0xFFFDF0DC),
-                                          blurRadius: 0,
-                                          spreadRadius: 4,
-                                        ),
-                                      ]
-                                    : null,
-                              ),
-                              child: Text(
-                                done ? '✓' : '${i + 1}',
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              stages[i].label.of(lang),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              style: TextStyle(
-                                fontSize: 8.5,
-                                color: done || isNow
-                                    ? AppColors.textSecondary
-                                    : AppColors.textMuted,
-                                fontWeight: done || isNow
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
-                                height: 1.3,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PopBlock extends StatelessWidget {
-  const _PopBlock({required this.label, required this.value});
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textMuted,
-              letterSpacing: 0.4,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF334155),
-              height: 1.6,
             ),
           ),
         ],

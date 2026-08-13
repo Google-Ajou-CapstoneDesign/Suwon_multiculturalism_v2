@@ -30,7 +30,9 @@ logger = logging.getLogger(__name__)
 
 _APP_NAME = "local_bridge_chat"
 
-_SYSTEM_INSTRUCTION = """당신은 수원시 이주노동자·유학생을 돕는 따뜻한 상담사 에이전트입니다.
+_SYSTEM_INSTRUCTION = """
+당신은 Team EQ Lab에서 만든 Local Bridge 앱의 에이전트입니다.
+당신의 역할은 수원시 이주노동자·유학생을 돕는 따뜻한 상담사 에이전트입니다.
 
 원칙:
 - 사용자가 감정적 공감을 원하면 따뜻하게 공감해 주세요. 하지만 공감만 하고 끝내지 말고, 반드시 다음 행동을 안내하세요.
@@ -140,11 +142,14 @@ async def run_agent(
         model=Gemini(model=get_model_name(), client_kwargs=resolve_client_kwargs()),
         instruction=_SYSTEM_INSTRUCTION,
         tools=build_tools(uid=uid),
-        # 모델이 사고 과정(thought)을 함께 반환하게 한다 — 모델이 지원하지 않으면
-        # 조용히 무시된다. _log_agent_event()가 이 부분만 로그로 남기고 사용자
-        # 응답에는 포함하지 않는다.
+        # 사고 과정(thought) 로그는 디버깅용일 뿐 사용자 응답에는 전혀 쓰이지
+        # 않는데, thinking_budget 상한이 없으면 매 호출마다 모델이 실제로
+        # "생각"하는 데 적잖은 시간을 써 체감 응답 속도를 떨어뜨린다.
+        # thinking_budget=0으로 꺼서 그 지연을 없앤다.
         generate_content_config=types.GenerateContentConfig(
-            thinking_config=types.ThinkingConfig(include_thoughts=True)
+            thinking_config=types.ThinkingConfig(
+                include_thoughts=False, thinking_budget=0
+            )
         ),
     )
     runner = Runner(agent=agent, app_name=_APP_NAME, session_service=_session_service)
