@@ -21,6 +21,7 @@ from google.genai import types
 
 from ..core.genai_client import get_model_name, resolve_client_kwargs
 from ..core.time_utils import now_kst, weekday_kst_ko
+from ..schemas.chat import ChatTurn
 from ..schemas.org import Org
 from .tools import build_tools
 
@@ -98,6 +99,7 @@ async def run_agent(
     uid: Optional[str],
     visa_group: Optional[str],
     lifecycle_stage: Optional[str],
+    history: Optional[List[ChatTurn]] = None,
 ) -> AgentResult:
     """Tools를 갖춘 Gemini 에이전트를 한 번 실행해 답변과 에이전트의 판단(AgentResult)을 반환한다."""
 
@@ -141,8 +143,18 @@ async def run_agent(
         context_lines.append(f"생애주기 단계: {lifecycle_stage}")
     context_prefix = f"[{' / '.join(context_lines)}]\n"
 
+    # 매 요청마다 새 세션을 만들어 돌리므로(아래 create_session) 에이전트에게는
+    # ADK 세션 자체의 기억이 없다 — chat_service가 프론트엔드로부터 받은 직전
+    # 대화를 여기서 텍스트로 그대로 넣어줘야 "그럼 저는 어떻게 해야 하나요?"
+    # 같은 맥락 의존 후속 질문에 제대로 답할 수 있다.
+    history_block = "\n".join(
+        f"{'사용자' if turn.role == 'user' else '상담사'}: {turn.text}"
+        for turn in (history or [])[-6:]
+    )
+    history_prefix = f"[이전 대화]\n{history_block}\n\n" if history_block else ""
+
     new_message = types.Content(
-        role="user", parts=[types.Part(text=context_prefix + message)]
+        role="user", parts=[types.Part(text=history_prefix + context_prefix + message)]
     )
 
     final_text_parts: list[str] = []
