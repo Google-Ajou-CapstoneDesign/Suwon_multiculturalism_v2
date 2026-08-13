@@ -101,7 +101,13 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollToBottom();
 
     try {
-      final response = await _chatApi.send(text, history: history);
+      if (!mounted) return;
+      final language = UserProfileScope.of(context).language;
+      final response = await _chatApi.send(
+        text,
+        language: language,
+        history: history,
+      );
       setState(() => _messages.add(ChatMessage.bot(response)));
     } catch (e) {
       // ApiConfig.baseUrl(디버그 콘솔에 출력)이 의도한 배포 주소가 맞는지부터 확인할 것 —
