@@ -45,10 +45,16 @@ Google Cloud Run(Docker) 배포를 전제로 한 FastAPI 백엔드. 챗봇은 `g
 ```bash
 cp .env.example .env   # 로컬은 AUTH_DEV_BYPASS=true 로 인증 우회, genai는 미설정 시 키워드 폴백만 동작
 pip install -r requirements-dev.txt
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --port 8080
 ```
 
-`http://localhost:8000/docs` 에서 Swagger UI 확인 가능.
+`--port 8080`이 중요하다 — `frontend/lib/core/api_config.dart`의 기본값과
+`frontend/env/local.json`이 전부 `http://localhost:8080`을 가리키고 있어서, 포트를
+안 맞추면(uvicorn 기본값인 8000으로 띄우면) 프론트에서 보내는 요청이 전부 연결
+실패로 조용히 무시된다(예: 회원가입 시 Firebase Auth 계정은 생성되지만 그 다음
+`PUT /api/users/me` 호출이 실패해 Firestore에는 프로필이 저장되지 않는다).
+
+`http://localhost:8080/docs` 에서 Swagger UI 확인 가능.
 
 로컬에서 실제 Gemini 분류까지 테스트하려면 `.env`에 `GOOGLE_GENAI_USE_VERTEXAI=false`,
 `GEMINI_API_KEY`를 채우거나, `gcloud auth application-default login` 후
