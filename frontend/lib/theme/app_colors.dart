@@ -8,6 +8,9 @@ class AppColors {
   static const accent = Color(0xFFD97706); // Amber Orange
   static const background = Color(0xFFF8FAFC); // Clean Slate
 
+  /// 홈 화면 위젯 그리드의 헤드라인 텍스트 색(html_files/홈화면.html의 --navy).
+  static const navy = Color(0xFF132747);
+
   static const textPrimary = Color(0xFF1E293B);
   static const textSecondary = Color(0xFF64748B);
   static const textMuted = Color(0xFF94A3B8);

@@ -10,6 +10,7 @@ class WeatherInfo {
     required this.tempC,
     required this.lowC,
     required this.highC,
+    required this.feelsLikeC,
   });
 
   final L10nText location;
@@ -18,6 +19,12 @@ class WeatherInfo {
   final int tempC;
   final int lowC;
   final int highC;
+
+  /// 체감온도 — 33도 이상이면 홈 화면에 온열질환 주의 안내가 붙는다.
+  final int feelsLikeC;
+
+  /// 온열질환 주의를 띄울 기준(기상청 폭염특보 실무 기준과 동일하게 33도).
+  bool get heatWarning => feelsLikeC >= 33;
 
   static const mock = WeatherInfo(
     location: L10nText(
@@ -28,8 +35,9 @@ class WeatherInfo {
     ),
     emoji: '☀️',
     condition: L10nText(ko: '맑음', en: 'Clear', zh: '晴', vi: 'Trời quang'),
-    tempC: 27,
-    lowC: 21,
-    highC: 29,
+    tempC: 31,
+    lowC: 24,
+    highC: 33,
+    feelsLikeC: 34,
   );
 }

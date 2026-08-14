@@ -27,15 +27,43 @@ class WorkLogController extends ChangeNotifier {
       final isOvertime = i == 1 || i == 3;
       _records[day] = DailyWorkRecord(
         clockIn: const TimeOfDay(hour: 8, minute: 0),
-        clockOut: isOvertime
-            ? const TimeOfDay(hour: 20, minute: 30)
-            : const TimeOfDay(hour: 17, minute: 0),
+        // 오늘(i==0)은 아직 퇴근 전 "근무 중" 상태로 시드한다 — 홈 화면 위젯이
+        // 출근/퇴근 기록하기 버튼을 실제로 눌러볼 수 있는 데모가 되도록.
+        clockOut: i == 0
+            ? null
+            : (isOvertime
+                  ? const TimeOfDay(hour: 20, minute: 30)
+                  : const TimeOfDay(hour: 17, minute: 0)),
         breakMinutes: 60,
         isOvertime: isOvertime,
         isRisk: i == 4,
         gpsVerified: true,
       );
     }
+  }
+
+  /// 오늘 기록 — 홈 화면의 "오늘의 근무" 위젯이 직접 읽는다.
+  DailyWorkRecord get todayRecord => recordFor(today);
+
+  void clockInToday() {
+    final key = today;
+    final current = _records[key] ?? DailyWorkRecord.empty;
+    if (current.clockIn != null) return;
+    _records[key] = current.copyWith(
+      clockIn: TimeOfDay.fromDateTime(DateTime.now()),
+      gpsVerified: true,
+    );
+    notifyListeners();
+  }
+
+  void clockOutToday() {
+    final key = today;
+    final current = _records[key] ?? DailyWorkRecord.empty;
+    if (current.clockIn == null || current.clockOut != null) return;
+    _records[key] = current.copyWith(
+      clockOut: TimeOfDay.fromDateTime(DateTime.now()),
+    );
+    notifyListeners();
   }
 
   DailyWorkRecord recordFor(DateTime day) =>

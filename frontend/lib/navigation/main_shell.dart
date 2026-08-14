@@ -6,6 +6,7 @@ import '../features/encyclopedia/screens/encyclopedia_home_screen.dart';
 import '../features/home/screens/home_screen.dart';
 import '../features/settings/screens/settings_home_screen.dart';
 import '../features/wage_calculator/screens/wage_calculator_screen.dart';
+import '../features/worklog/controllers/work_log_controller.dart';
 import '../features/worklog/widgets/work_log_sheet.dart';
 import '../theme/app_colors.dart';
 
@@ -44,6 +45,15 @@ class _MainShellState extends State<MainShell> {
   int _activeIndex = 0;
   bool _worklogOpen = false;
   bool _aiChatOpen = false;
+
+  /// 홈 화면의 "오늘의 근무" 위젯과 근무기록장 시트가 같은 인스턴스를 공유한다.
+  final _workLogController = WorkLogController();
+
+  @override
+  void dispose() {
+    _workLogController.dispose();
+    super.dispose();
+  }
 
   final _tabs = const [
     _TabSpec(
@@ -92,14 +102,25 @@ class _MainShellState extends State<MainShell> {
 
   final _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
 
-  static const _rootScreens = [
-    HomeScreen(),
-    WageCalculatorScreen(),
-    EncyclopediaHomeScreen(),
-    SettingsHomeScreen(),
+  List<Widget> get _rootScreens => [
+    HomeScreen(
+      workLogController: _workLogController,
+      onOpenWorkLog: _openWorkLog,
+      onOpenAiChat: _toggleAiChat,
+    ),
+    const WageCalculatorScreen(),
+    const EncyclopediaHomeScreen(),
+    const SettingsHomeScreen(),
   ];
 
   bool get _anyOverlayOpen => _worklogOpen || _aiChatOpen;
+
+  void _openWorkLog() {
+    setState(() {
+      _closeAllOverlays();
+      _worklogOpen = true;
+    });
+  }
 
   void _closeAllOverlays() {
     _worklogOpen = false;
@@ -190,6 +211,7 @@ class _MainShellState extends State<MainShell> {
               child: WorkLogSheet(
                 isOpen: _worklogOpen,
                 onClose: () => setState(() => _worklogOpen = false),
+                controller: _workLogController,
               ),
             ),
             Positioned.fill(

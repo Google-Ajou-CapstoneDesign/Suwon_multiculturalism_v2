@@ -213,23 +213,26 @@ class _WorkLogStrings {
 /// 하단 가운데 "오늘" 버튼으로 여닫는 근무기록장 시트.
 /// 화면 전체를 덮지 않고 하단 탭바는 남겨둔다 — 달력 버튼을 다시 눌러 닫을 수 있게 하기 위함.
 class WorkLogSheet extends StatefulWidget {
-  const WorkLogSheet({super.key, required this.isOpen, required this.onClose});
+  const WorkLogSheet({
+    super.key,
+    required this.isOpen,
+    required this.onClose,
+    required this.controller,
+  });
 
   final bool isOpen;
   final VoidCallback onClose;
+
+  /// MainShell이 소유한 단일 인스턴스 — 홈 화면의 "오늘의 근무" 위젯과 상태를
+  /// 공유한다(홈에서 출근 기록하면 여기서도 바로 보여야 한다).
+  final WorkLogController controller;
 
   @override
   State<WorkLogSheet> createState() => _WorkLogSheetState();
 }
 
 class _WorkLogSheetState extends State<WorkLogSheet> {
-  final _controller = WorkLogController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  WorkLogController get _controller => widget.controller;
 
   void _openDayRecord(DateTime day, AppLanguage language) {
     _controller.selectDay(day);
