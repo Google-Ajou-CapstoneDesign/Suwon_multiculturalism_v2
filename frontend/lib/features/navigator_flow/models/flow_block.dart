@@ -169,15 +169,21 @@ class ImportButtonsBlock extends FlowBlock {
 }
 
 /// 실제 입력 가능한 서식 — wage_fields.dart/injury_fields.dart가 sections를 공급한다.
+/// documentTitle/formSubtitle을 채우면 실제 정부 서식처럼 상단에 "문서명 · 부제"
+/// 배너가 뜬다(html_files 원본의 .fdh 헤더).
 class FormEditBlock extends FlowBlock {
-  const FormEditBlock(this.sections);
+  const FormEditBlock(this.sections, {this.documentTitle, this.formSubtitle});
   final List<FormSection> sections;
+  final L10nText? documentTitle;
+  final L10nText? formSubtitle;
 }
 
 /// 같은 sections를 읽기 전용으로 다시 그린다(검토 단계).
 class FormReviewBlock extends FlowBlock {
-  const FormReviewBlock(this.sections);
+  const FormReviewBlock(this.sections, {this.documentTitle, this.formSubtitle});
   final List<FormSection> sections;
+  final L10nText? documentTitle;
+  final L10nText? formSubtitle;
 }
 
 /// 한국어 PDF/내 언어 PDF/미리보기 버튼 묶음 — FormEditBlock과 같은 sections를 공유한다.

@@ -6,6 +6,8 @@ import '../../../core/app_language.dart';
 import '../../../theme/app_colors.dart';
 import '../../wage_calculator/models/wage_diagnosis.dart';
 import '../controllers/wage_calc_scratch_controller.dart';
+import '../models/flow_block.dart' show NoticeTone;
+import 'flow_content_blocks.dart' show NoticeBox;
 
 const _sectionTitle = L10nText(
   ko: '체불액 예상 계산',
@@ -85,11 +87,35 @@ const _matchLabel = L10nText(
   zh: '✅ 计算结果与到账金额基本一致',
   vi: '✅ Kết quả khớp với số tiền đã nhận',
 );
-const _aiReasonLabel = L10nText(
-  ko: '🔍 AI 원인분석 · 왜 차이가 나는지 보기',
-  en: '🔍 AI breakdown · why the gap',
-  zh: '🔍 AI原因分析 · 查看差异原因',
-  vi: '🔍 Phân tích AI · vì sao chênh lệch',
+const _calcDiffLabel = L10nText(
+  ko: 'ℹ️ 계산 방식 차이로 보이는 금액',
+  en: 'ℹ️ Likely a calculation-method difference',
+  zh: 'ℹ️ 可能是计算方式差异',
+  vi: 'ℹ️ Có vẻ là khác biệt cách tính',
+);
+const _refEstimateTitle = L10nText(
+  ko: '⚠ 이 금액은 참고용 예상액입니다',
+  en: '⚠ This is a reference estimate',
+  zh: '⚠ 此金额仅供参考',
+  vi: '⚠ Số tiền này chỉ để tham khảo',
+);
+const _refEstimateBody = L10nText(
+  ko: '근로기준법 기본 공식을 적용한 추정치이며, 정확한 체불액은 근로감독관 조사에서 산정됩니다. 계산기 결과는 진정서로 자동으로 넘어가지 않습니다.',
+  en: "This applies the basic formulas of the Labor Standards Act; the confirmed amount is determined by a labor inspector. The result is not carried into the complaint automatically.",
+  zh: '此为适用《劳动基准法》基本公式的推算值，确切欠薪额由劳动监督官调查核定。计算结果不会自动带入申诉书。',
+  vi: 'Đây là ước tính theo công thức cơ bản của Luật Tiêu chuẩn Lao động, số chính thức do thanh tra lao động xác định. Kết quả không tự chuyển sang đơn.',
+);
+const _aiReasonLabelPos = L10nText(
+  ko: '🔍 AI 체불 원인 분석 · 왜 더 받아야 하는지 근거 보기',
+  en: '🔍 AI breakdown · why you may be owed more',
+  zh: '🔍 AI原因分析·查看应多收依据',
+  vi: '🔍 Phân tích AI · vì sao bạn nên nhận thêm',
+);
+const _aiReasonLabelOther = L10nText(
+  ko: '🔍 금액 차이 원인 보기',
+  en: '🔍 See why the amounts differ',
+  zh: '🔍 查看金额差异原因',
+  vi: '🔍 Xem lý do chênh lệch',
 );
 const _aiReasonTitle = L10nText(
   ko: 'AI 체불 원인 분석',
@@ -132,6 +158,42 @@ const _copiedLabel = L10nText(
   en: 'Copied',
   zh: '已复制',
   vi: 'Đã sao chép',
+);
+const _usageInfoLabel = L10nText(
+  ko: '💡 이용 안내',
+  en: '💡 How to use this',
+  zh: '💡 使用说明',
+  vi: '💡 Hướng dẫn sử dụng',
+);
+const _usageInfoBody = L10nText(
+  ko: '아래 문장을 복사해 사장님이나 담당자에게 카카오톡·문자로 보내보세요.',
+  en: 'Copy the message below and send it to your employer.',
+  zh: '复制以下内容发送给雇主或负责人。',
+  vi: 'Sao chép câu bên dưới và gửi cho chủ.',
+);
+const _viewTranslatedLabel = L10nText(
+  ko: '🌐 내 언어로 보기',
+  en: '🌐 View in my language',
+  zh: '🌐 查看我的语言版',
+  vi: '🌐 Xem bằng tiếng của tôi',
+);
+const _viewKoreanLabel = L10nText(
+  ko: '🇰🇷 한국어로 보기',
+  en: '🇰🇷 View in Korean',
+  zh: '🇰🇷 查看韩语版',
+  vi: '🇰🇷 Xem bằng tiếng Hàn',
+);
+const _dontSignTitle = L10nText(
+  ko: '⚠ 돈을 받기 전에는 서명하지 마세요',
+  en: '⚠ Do not sign anything before you are paid',
+  zh: '⚠ 收到钱之前不要签字',
+  vi: '⚠ Đừng ký gì trước khi nhận tiền',
+);
+const _dontSignBody = L10nText(
+  ko: "통장으로 실제 입금받기 전에는 '합의서'나 '진정 취하서'에 절대 서명하지 마세요.",
+  en: 'Never sign a settlement or withdrawal letter before the money actually arrives.',
+  zh: '在钱实际入账之前，切勿签署"和解书"或"撤诉书"。',
+  vi: "Tuyệt đối đừng ký 'thỏa thuận' hay 'đơn rút' trước khi tiền thực sự vào tài khoản.",
 );
 
 const _payTypeHourLabel = L10nText(
@@ -258,9 +320,13 @@ class _WageCalcSectionState extends State<WageCalcSection> {
     final gapText = result != null
         ? formatWon(result.gapValue.abs(), lang)
         : '';
-    final message = switch (lang) {
-      AppLanguage.ko =>
-        '사장님, 안녕하세요. 다름이 아니라 그동안 지급해주신 급여 내역을 법정 기준으로 계산해보니 약 $gapText의 차액이 확인되어 연락드렸습니다.\n\n혹시 계산 과정에서 누락이나 착오가 있으셨는지 바쁘시겠지만 한번 확인 부탁드립니다. 감사합니다.',
+    // 수신자(사장님)는 한국어 사용자이므로 기본 노출은 항상 한국어다 — 앱
+    // 언어 설정과 무관하게. "내 언어로 보기"는 보내기 전 뜻을 확인하려는
+    // 이용자 본인을 위한 토글일 뿐, 기본값을 바꾸지 않는다.
+    final messageKo =
+        '사장님, 안녕하세요. 다름이 아니라 그동안 지급해주신 급여 내역을 법정 기준으로 계산해보니 약 $gapText의 차액이 확인되어 연락드렸습니다.\n\n혹시 계산 과정에서 누락이나 착오가 있으셨는지 바쁘시겠지만 한번 확인 부탁드립니다. 감사합니다.';
+    final messageTranslated = switch (lang) {
+      AppLanguage.ko => messageKo,
       AppLanguage.en =>
         'Hello, I calculated my pay against the legal standard and found a gap of about $gapText. Could you please check for any error or omission when you have a moment? Thank you.',
       AppLanguage.zh =>
@@ -271,58 +337,123 @@ class _WageCalcSectionState extends State<WageCalcSection> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
+      // 이용안내·번역토글·서명주의 문구가 늘어나며 기본 바텀시트 높이를 넘을 수
+      // 있다 — isScrollControlled 없이는 넘치는 부분이 히트테스트되지 않는다.
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              _talkOptionTitle.of(lang),
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+      builder: (context) {
+        var showingTranslated = false;
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            final currentMessage = showingTranslated
+                ? messageTranslated
+                : messageKo;
+            return Padding(
+              padding: EdgeInsets.fromLTRB(
+                18,
+                16,
+                18,
+                24 + MediaQuery.of(context).viewInsets.bottom,
               ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                message,
-                style: const TextStyle(fontSize: 12, height: 1.6),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () async {
-                  await Clipboard.setData(ClipboardData(text: message));
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(_copiedLabel.of(lang)),
-                        duration: const Duration(seconds: 1),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _talkOptionTitle.of(lang),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
                       ),
-                    );
-                  }
-                },
-                child: Text(_copyLabel.of(lang)),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      _usageInfoLabel.of(lang),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _usageInfoBody.of(lang),
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        color: AppColors.textSecondary,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFC),
+                        border: Border.all(color: AppColors.border),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        currentMessage,
+                        style: const TextStyle(fontSize: 12, height: 1.6),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () async {
+                              await Clipboard.setData(
+                                ClipboardData(text: currentMessage),
+                              );
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(_copiedLabel.of(lang)),
+                                    duration: const Duration(seconds: 1),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Text(_copyLabel.of(lang)),
+                          ),
+                        ),
+                        if (lang != AppLanguage.ko) ...[
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => setSheetState(
+                                () => showingTranslated = !showingTranslated,
+                              ),
+                              child: Text(
+                                (showingTranslated
+                                        ? _viewKoreanLabel
+                                        : _viewTranslatedLabel)
+                                    .of(lang),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    NoticeBox(
+                      tone: NoticeTone.amber,
+                      title: _dontSignTitle.of(lang),
+                      body: _dontSignBody.of(lang),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -496,7 +627,10 @@ class _WageCalcSectionState extends State<WageCalcSection> {
                     padding: const EdgeInsets.symmetric(vertical: 11),
                   ),
                   child: Text(
-                    _aiReasonLabel.of(lang),
+                    (_gapKind(scratch.result!) == 'pos'
+                            ? _aiReasonLabelPos
+                            : _aiReasonLabelOther)
+                        .of(lang),
                     style: const TextStyle(fontSize: 12),
                   ),
                 ),
@@ -522,32 +656,59 @@ class _WageCalcSectionState extends State<WageCalcSection> {
     );
   }
 
+  /// 1만원 미만 차이는 반올림·계산 오차로 보고 일치("zero")로 처리한다.
+  /// 실입금액이 계산값보다 많으면 체불이 아니라 계산 방식 차이("neg")다.
+  String _gapKind(WageCalcResult r) {
+    final gap = r.gapValue;
+    if (gap.abs() < 10000) return 'zero';
+    return gap > 0 ? 'pos' : 'neg';
+  }
+
   Widget _buildReportCard(AppLanguage lang, WageCalcResult r) {
     final gap = r.gapValue;
-    return Container(
-      padding: const EdgeInsets.all(13),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F2947),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _reportRow(_expectedLabel.of(lang), formatWon(r.net ?? 0, lang)),
-          _reportRow(_receivedRowLabel.of(lang), formatWon(r.received, lang)),
-          const Divider(color: Colors.white24, height: 18),
-          if (gap > 0)
-            _reportRow(
-              _gapLabel.of(lang),
-              formatWon(gap, lang),
-              emphasize: true,
-            )
-          else if (gap < 0)
-            _reportRow(_matchLabel.of(lang), '', emphasize: false)
-          else
-            _reportRow(_matchLabel.of(lang), '', emphasize: false),
-        ],
-      ),
+    final kind = _gapKind(r);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F2947),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _reportRow(_expectedLabel.of(lang), formatWon(r.net ?? 0, lang)),
+              _reportRow(
+                _receivedRowLabel.of(lang),
+                formatWon(r.received, lang),
+              ),
+              const Divider(color: Colors.white24, height: 18),
+              if (kind == 'pos')
+                _reportRow(
+                  _gapLabel.of(lang),
+                  formatWon(gap, lang),
+                  emphasize: true,
+                )
+              else if (kind == 'neg')
+                _reportRow(
+                  _calcDiffLabel.of(lang),
+                  formatWon(gap.abs(), lang),
+                  emphasize: false,
+                )
+              else
+                _reportRow(_matchLabel.of(lang), '', emphasize: false),
+            ],
+          ),
+        ),
+        const SizedBox(height: 9),
+        NoticeBox(
+          tone: NoticeTone.amber,
+          title: _refEstimateTitle.of(lang),
+          body: _refEstimateBody.of(lang),
+        ),
+      ],
     );
   }
 

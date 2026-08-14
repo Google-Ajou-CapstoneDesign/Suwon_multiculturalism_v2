@@ -336,13 +336,17 @@ WageCalcResult calcWage(WageCalcInput c) {
 
   final otMul = over5 ? 1.5 : 1.0;
   final ntMul = over5 ? 0.5 : 0.0;
-  final holMul = over5 ? 1.5 : 1.0;
   final otH = c.otH < 0 ? 0.0 : c.otH;
   final ntH = c.nightH < 0 ? 0.0 : c.nightH;
   final holH = c.holH < 0 ? 0.0 : c.holH;
   final otPay = otH * hourly * otMul;
   final ntPay = ntH * hourly * ntMul;
-  final holPay = holH * hourly * holMul;
+  // 휴일근로: 8시간 이내 1.5배, 8시간 초과분 2.0배 (5인 미만 사업장은 전부 1.0배).
+  final holIn = holH < 8 ? holH : 8.0;
+  final holOut = holH > 8 ? holH - 8 : 0.0;
+  final holPay = over5
+      ? (holIn * hourly * 1.5 + holOut * hourly * 2.0)
+      : holH * hourly * 1.0;
 
   final gross = baseTotal + weeklyPayTotal + otPay + ntPay + holPay;
   final roomAmtTotal = c.roomOn
@@ -609,6 +613,19 @@ String severanceNarrative(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
 /// 조립할 뿐이다(법률 환각 방지: LLM이 새 판단을 만들지 않는다).
 String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
   final gapVal = r.gapValue;
+  // 1만원 미만 차이는 반올림·계산 오차로 보고 "체불/차이" 판정 대신 일치로 처리한다.
+  if (gapVal.abs() < 10000) {
+    return switch (lang) {
+      AppLanguage.ko =>
+        '계산 결과와 실제 받으신 금액이 거의 일치해요(차이 ${formatWon(gapVal.abs(), lang)} 미만). 지금 입력한 값으로는 특별히 의심되는 미지급이 없어요.',
+      AppLanguage.en =>
+        'The calculated amount and what you actually received are nearly identical (a difference under ${formatWon(gapVal.abs(), lang)}). Based on what you entered, nothing looks specifically unpaid.',
+      AppLanguage.zh =>
+        '计算结果与实际收到的金额基本一致（差额不足${formatWon(gapVal.abs(), lang)}）。根据目前输入的内容，没有特别可疑的欠薪项目。',
+      AppLanguage.vi =>
+        'Kết quả tính toán và số tiền bạn thực nhận gần như trùng khớp (chênh lệch dưới ${formatWon(gapVal.abs(), lang)}). Với dữ liệu đã nhập, không có khoản nào đáng nghi bị thiếu.',
+    };
+  }
   final parts = <String>[];
 
   if (gapVal > 0) {
@@ -631,24 +648,24 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
     if (!r.weeklyIncluded && r.weeklyPayTotal > 0) {
       parts.add(switch (lang) {
         AppLanguage.ko =>
-          '주휴수당 <b>${formatWon(r.weeklyPayTotal, lang)}</b>이 계산에 포함되어 있어요. 실제로 받으신 돈에 이 항목이 빠져 있다면, 당신은 이 금액만큼 더 받아야 해요.',
+          '주휴수당 <b>${formatWon(r.weeklyPayTotal, lang)}</b>이 계산에 포함되어 있어요. 실제로 받으신 돈에 이 항목이 빠져 있다면, 당신은 이 금액만큼 더 받아야 해요. (근로기준법 제55조)',
         AppLanguage.en =>
-          'The weekly paid-holiday allowance of <b>${formatWon(r.weeklyPayTotal, lang)}</b> is included in this calculation. If it is missing from what you actually received, you are owed this amount.',
+          'The weekly paid-holiday allowance of <b>${formatWon(r.weeklyPayTotal, lang)}</b> is included in this calculation. If it is missing from what you actually received, you are owed this amount. (Labor Standards Act Art.55)',
         AppLanguage.zh =>
-          '计算中包含了周休津贴<b>${formatWon(r.weeklyPayTotal, lang)}</b>。如果您实际收到的钱中没有这一项，您应当多获得这笔金额。',
+          '计算中包含了周休津贴<b>${formatWon(r.weeklyPayTotal, lang)}</b>。如果您实际收到的钱中没有这一项，您应当多获得这笔金额。（《劳动基准法》第55条）',
         AppLanguage.vi =>
-          'Phụ cấp ngày nghỉ có lương hàng tuần <b>${formatWon(r.weeklyPayTotal, lang)}</b> đã được tính vào kết quả này. Nếu khoản này bị thiếu trong số tiền bạn thực nhận, bạn cần được trả thêm đúng số tiền này.',
+          'Phụ cấp ngày nghỉ có lương hàng tuần <b>${formatWon(r.weeklyPayTotal, lang)}</b> đã được tính vào kết quả này. Nếu khoản này bị thiếu trong số tiền bạn thực nhận, bạn cần được trả thêm đúng số tiền này. (Điều 55 Luật Tiêu chuẩn Lao động)',
       });
     }
     if (r.otPay > 0) {
       final otNote = r.over5
           ? switch (lang) {
-              AppLanguage.ko => '5인 이상 사업장은 통상시급의 1.5배를 지급해야 해요.',
+              AppLanguage.ko => '5인 이상 사업장은 통상시급의 1.5배를 지급해야 해요. (근로기준법 제56조)',
               AppLanguage.en =>
-                'Workplaces with 5 or more employees must pay 1.5 times the ordinary hourly wage.',
-              AppLanguage.zh => '5人以上企业必须按通常时薪的1.5倍支付。',
+                'Workplaces with 5 or more employees must pay 1.5 times the ordinary hourly wage. (Labor Standards Act Art.56)',
+              AppLanguage.zh => '5人以上企业必须按通常时薪的1.5倍支付。（《劳动基准法》第56条）',
               AppLanguage.vi =>
-                'Nơi làm việc từ 5 người trở lên phải trả 1,5 lần lương giờ thông thường.',
+                'Nơi làm việc từ 5 người trở lên phải trả 1,5 lần lương giờ thông thường. (Điều 56 Luật Tiêu chuẩn Lao động)',
             }
           : switch (lang) {
               AppLanguage.ko => '5인 미만이라도 일한 시간만큼 통상임금(1.0배)은 지급되어야 해요.',
@@ -743,6 +760,18 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           'Vì chưa rõ quy mô doanh nghiệp, hiện tính theo hướng thận trọng là dưới 5 người (không có phụ cấp thêm). Nếu thực tế từ 5 người trở lên, bạn cần được nhận nhiều hơn số tiền đã tính ở đây.',
       });
     }
+    if (r.eligible) {
+      parts.add(switch (lang) {
+        AppLanguage.ko =>
+          '1년 이상 근무하고 주 평균 15시간 이상 일했다면 퇴직금 <b>${formatWon(r.severance, lang)}</b>이 발생해요. (근로자퇴직급여 보장법 제8조)',
+        AppLanguage.en =>
+          'Working a year or more, averaging 15+ hours a week, accrues severance pay of <b>${formatWon(r.severance, lang)}</b>. (Employee Retirement Benefit Security Act Art.8)',
+        AppLanguage.zh =>
+          '工作满1年以上且周平均15小时以上，将产生退职金<b>${formatWon(r.severance, lang)}</b>。（《劳动者退职给付保障法》第8条）',
+        AppLanguage.vi =>
+          'Nếu làm từ 1 năm trở lên và bình quân từ 15 giờ/tuần, sẽ phát sinh trợ cấp thôi việc <b>${formatWon(r.severance, lang)}</b>. (Điều 8 Luật Bảo đảm trợ cấp thôi việc)',
+      });
+    }
 
     final head = switch (lang) {
       AppLanguage.ko =>
@@ -779,7 +808,7 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
       AppLanguage.vi =>
         'Chẩn đoán này chỉ là ước tính tham khảo dựa trên dữ liệu bạn nhập. Số tiền nợ lương chính thức sẽ do thanh tra lao động điều tra xác định, vì vậy hãy yêu cầu phiếu lương để đối chiếu từng mục trước, nếu vẫn không giải thích được hãy liên hệ Bộ Việc làm và Lao động.',
     };
-    return '$head\n\n$body\n\n$foot';
+    return '$head\n\n$body\n\n$foot\n\n${_gapMethodologyNote(lang)}';
   } else {
     parts.add(switch (lang) {
       AppLanguage.ko => '포괄임금제 계약이라면 연장·야간수당이 월급에 미리 합산되어 있을 수 있어요.',
@@ -828,9 +857,22 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
       AppLanguage.vi =>
         'Hãy kiểm tra cơ cấu các khoản trong phiếu lương để biết khoản nào đã được cộng thêm.',
     };
-    return '$head\n\n$body\n\n$foot';
+    return '$head\n\n$body\n\n$foot\n\n${_gapMethodologyNote(lang)}';
   }
 }
+
+/// "이 목록은 어떻게 만들어지나요?" 투명성 안내 — AI가 새 법적 판단을 만들지
+/// 않는다는 것을 매번 명시한다.
+String _gapMethodologyNote(AppLanguage lang) => switch (lang) {
+  AppLanguage.ko =>
+    '<b>이 목록은 어떻게 만들어지나요?</b>\n사전에 검수된 법 조항 설명 중, 입력하신 계산값에 해당하는 항목만 규칙에 따라 골라 보여드립니다. AI가 새로운 법적 주장을 만들지 않습니다.',
+  AppLanguage.en =>
+    '<b>How is this list made?</b>\nWe select, by fixed rule, only pre-reviewed article explanations matching your figures. The AI does not generate new legal arguments.',
+  AppLanguage.zh =>
+    '<b>此列表如何生成？</b>\n仅按固定规则挑选与您计算数值匹配的、已预先审核的法条说明，AI不会生成新的法律主张。',
+  AppLanguage.vi =>
+    '<b>Danh sách này được tạo thế nào?</b>\nChúng tôi chỉ chọn theo quy tắc cố định các giải thích điều luật đã kiểm duyệt phù hợp với số liệu của bạn. AI không tạo lập luận pháp lý mới.',
+};
 
 String formatWon(num value, AppLanguage lang) {
   final rounded = value.round();

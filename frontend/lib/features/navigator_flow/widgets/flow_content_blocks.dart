@@ -494,22 +494,22 @@ class OrgCardView extends StatelessWidget {
 }
 
 const _legendLabelAuto = L10nText(
-  ko: '자동입력',
+  ko: '자동채움',
   en: 'Auto-filled',
-  zh: '自动填写',
-  vi: 'Tự động điền',
+  zh: '自动填充',
+  vi: 'Tự điền',
 );
 const _legendLabelRaw = L10nText(
-  ko: '그대로 옮김',
-  en: 'Copied as-is',
-  zh: '原样填写',
-  vi: 'Chép nguyên văn',
+  ko: '원문 그대로',
+  en: 'As you wrote it',
+  zh: '原文照录',
+  vi: 'Nguyên văn',
 );
 const _legendLabelBlank = L10nText(
-  ko: '직접입력',
-  en: 'You fill in',
-  zh: '需自行填写',
-  vi: 'Tự nhập',
+  ko: '공란 유지',
+  en: 'Left blank',
+  zh: '保持空白',
+  vi: 'Để trống',
 );
 
 /// auto/raw/blank 3색 범례 — 서식 편집·검토·PDF 안내 앞에 공용으로 붙는다.

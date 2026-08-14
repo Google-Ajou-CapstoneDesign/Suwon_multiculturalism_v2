@@ -390,16 +390,30 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
           lang: lang,
           onImport: _handleImport,
         ),
-        FormEditBlock(:final sections) => FormEditorView(
-          sections: sections,
-          values: _formValues,
-          lang: lang,
-        ),
-        FormReviewBlock(:final sections) => FormReviewView(
-          sections: sections,
-          values: _formValues,
-          lang: lang,
-        ),
+        FormEditBlock(
+          :final sections,
+          :final documentTitle,
+          :final formSubtitle,
+        ) =>
+          FormEditorView(
+            sections: sections,
+            values: _formValues,
+            lang: lang,
+            documentTitle: documentTitle,
+            formSubtitle: formSubtitle,
+          ),
+        FormReviewBlock(
+          :final sections,
+          :final documentTitle,
+          :final formSubtitle,
+        ) =>
+          FormReviewView(
+            sections: sections,
+            values: _formValues,
+            lang: lang,
+            documentTitle: documentTitle,
+            formSubtitle: formSubtitle,
+          ),
         PdfActionsBlock(:final sections, :final documentTitle) =>
           PdfActionsSection(
             documentTitle: documentTitle,

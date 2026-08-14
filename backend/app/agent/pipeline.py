@@ -142,15 +142,9 @@ async def run_agent(
         model=Gemini(model=get_model_name(), client_kwargs=resolve_client_kwargs()),
         instruction=_SYSTEM_INSTRUCTION,
         tools=build_tools(uid=uid),
-        # 사고 과정(thought) 로그는 디버깅용일 뿐 사용자 응답에는 전혀 쓰이지
-        # 않는데, thinking_budget 상한이 없으면 매 호출마다 모델이 실제로
-        # "생각"하는 데 적잖은 시간을 써 체감 응답 속도를 떨어뜨린다.
-        # thinking_budget=0으로 꺼서 그 지연을 없앤다.
-        generate_content_config=types.GenerateContentConfig(
-            thinking_config=types.ThinkingConfig(
-                include_thoughts=False, thinking_budget=0
-            )
-        ),
+        # thinking_budget=0으로 지연을 줄이려던 시도가 답변을 지나치게 짧고
+        # 부실하게 만드는 부작용을 일으켜 되돌린다 — 이 모델은 도구 호출 판단과
+        # 답변 구성에 thinking 예산이 필요하다. 지연보다 답변 품질을 우선한다.
     )
     runner = Runner(agent=agent, app_name=_APP_NAME, session_service=_session_service)
 

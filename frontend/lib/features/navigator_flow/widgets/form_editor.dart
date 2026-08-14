@@ -5,13 +5,23 @@ import '../controllers/form_values_controller.dart';
 import '../models/flow_block.dart';
 import '../models/form_field_spec.dart';
 
-const _tagAutoLabel = L10nText(ko: '자동입력', en: 'Auto', zh: '自动', vi: 'Tự động');
-const _tagRawLabel = L10nText(ko: '그대로', en: 'Raw', zh: '原样', vi: 'Nguyên văn');
+const _tagAutoLabel = L10nText(
+  ko: '자동채움',
+  en: 'Auto-filled',
+  zh: '自动填充',
+  vi: 'Tự điền',
+);
+const _tagRawLabel = L10nText(
+  ko: '원문 그대로',
+  en: 'As you wrote it',
+  zh: '原文照录',
+  vi: 'Nguyên văn',
+);
 const _tagBlankLabel = L10nText(
-  ko: '직접입력',
-  en: 'You fill in',
-  zh: '自行填写',
-  vi: 'Tự nhập',
+  ko: '공란 유지',
+  en: 'Left blank',
+  zh: '保持空白',
+  vi: 'Để trống',
 );
 
 (Color, Color, L10nText) _tagStyle(FillTag tag) => switch (tag) {
@@ -66,10 +76,14 @@ class FormEditorView extends StatefulWidget {
     required this.sections,
     required this.values,
     required this.lang,
+    this.documentTitle,
+    this.formSubtitle,
   });
   final List<FormSection> sections;
   final FormValuesController values;
   final AppLanguage lang;
+  final L10nText? documentTitle;
+  final L10nText? formSubtitle;
 
   @override
   State<FormEditorView> createState() => _FormEditorViewState();
@@ -101,6 +115,12 @@ class _FormEditorViewState extends State<FormEditorView> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (widget.documentTitle != null)
+              _FormHeader(
+                title: widget.documentTitle!,
+                subtitle: widget.formSubtitle,
+                lang: widget.lang,
+              ),
             for (final section in widget.sections) ...[
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 6),
@@ -287,6 +307,44 @@ class _FormEditorViewState extends State<FormEditorView> {
   }
 }
 
+/// 문서명 · 부제 배너 — 실제 정부 서식 상단(html_files 원본의 .fdh)을 재현한다.
+class _FormHeader extends StatelessWidget {
+  const _FormHeader({required this.title, required this.lang, this.subtitle});
+  final L10nText title;
+  final L10nText? subtitle;
+  final AppLanguage lang;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title.of(lang),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              subtitle!.of(lang),
+              style: const TextStyle(
+                fontSize: 10.5,
+                color: AppColors.textMuted,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 /// 같은 sections를 읽기 전용으로 다시 그린다(검토 단계).
 class FormReviewView extends StatelessWidget {
   const FormReviewView({
@@ -294,10 +352,14 @@ class FormReviewView extends StatelessWidget {
     required this.sections,
     required this.values,
     required this.lang,
+    this.documentTitle,
+    this.formSubtitle,
   });
   final List<FormSection> sections;
   final FormValuesController values;
   final AppLanguage lang;
+  final L10nText? documentTitle;
+  final L10nText? formSubtitle;
 
   String _displayValue(FormFieldSpec field) {
     final raw = values.valueOf(field.key);
@@ -317,6 +379,12 @@ class FormReviewView extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (documentTitle != null)
+              _FormHeader(
+                title: documentTitle!,
+                subtitle: formSubtitle,
+                lang: lang,
+              ),
             for (final section in sections) ...[
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 6),

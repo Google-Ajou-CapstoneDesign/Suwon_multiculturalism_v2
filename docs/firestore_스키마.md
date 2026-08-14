@@ -21,7 +21,8 @@
 | `phone_number` | string | – | E.164 형식 권장(`+821012345678`). |
 | `email` | string | – | Firebase Auth 이메일과 동일하게 유지(가입 시 동기화). |
 | ~~`password`~~ | – | ❌ **저장 안 함** | Firebase Authentication이 자체 관리한다. 로그인/비밀번호 검증은 클라이언트가 Firebase Auth SDK로 처리하고, 백엔드는 발급된 ID Token만 검증(`core/auth.py`)한다. |
-| `visa_type` | string | – | `D-2` / `E-9` / `E-7` / `H-2` — `frontend/lib/core/visa_status.dart`의 `VisaStatus.code`와 동일한 값. |
+| `visa_type` | string | – | `D-2` / `E-9` / `E-7` / `H-2` / 직접입력 텍스트 — `frontend/lib/core/visa_status.dart`의 `VisaStatus.code`와 동일한 값(단, `ETC` 선택 시엔 사용자가 입력한 자유 텍스트를 그대로 저장한다). |
+| `nationality` | string | – | ✨ ISO 3166-1 alpha-2 국가 코드(`VN`, `PH` 등) — `frontend/lib/features/auth/models/country.dart`의 `Country.code`와 동일. 회원가입 폼에서 국가 목록 드롭다운으로 수집한다. |
 | `visa_expiry_date` | timestamp | – | 비자 만료일. `frontend/lib/features/encyclopedia/widgets/book_cover.dart`의 D-day 표시(🔧 `visaValue/visaDday`)와 `home_screen.dart`의 `HomeStrings.visaExpiry`를 위한 값 — **D-day는 저장하지 않고 이 날짜에서 매번 계산**한다(정적 정수로 저장하면 하루 지날 때마다 값이 어긋난다). |
 | `preferred_language` | string | ✅ | `ko`/`en`/`zh`/`vi` — `frontend/lib/core/app_language.dart`의 `AppLanguage.code`와 동일. 기본값 `ko`. |
 | `contract_stored` | boolean | ✅ | 근로계약서 보관함 등록 여부(파일 자체가 아니라 상태만). 기본 `false`. |
