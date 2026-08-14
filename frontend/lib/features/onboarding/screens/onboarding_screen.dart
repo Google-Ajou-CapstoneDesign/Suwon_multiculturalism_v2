@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
-import '../../../core/visa_status.dart';
 import '../../../theme/app_colors.dart';
+import '../../auth/screens/login_screen.dart';
+import '../../auth/screens/signup_form_screen.dart';
 
 /// 최초 실행 온보딩 — 언어 → 체류자격 → 서류 보관함 3단계.
 /// 화면 전체를 덮고(스플래시 아래), 완료하거나 첫 단계에서 건너뛰면 사라진다.
@@ -29,10 +30,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       vi: 'Bạn đọc bằng ngôn ngữ nào?',
     ),
     L10nText(
-      ko: '체류자격을 알려주세요',
-      en: 'What is your status of stay?',
-      zh: '请告诉我们您的居留资格',
-      vi: 'Tư cách lưu trú của bạn là gì?',
+      ko: '로그인하고 시작하세요',
+      en: 'Log in to get started',
+      zh: '登录后开始使用',
+      vi: 'Đăng nhập để bắt đầu',
     ),
     L10nText(
       ko: '서류를 미리 넣어두세요',
@@ -50,10 +51,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       vi: 'Dù chọn ngôn ngữ nào, thuật ngữ tiếng Hàn vẫn hiện kèm để bạn nói nguyên văn tại cơ quan.',
     ),
     L10nText(
-      ko: '백과사전 첫 화면의 MY VISA 카드가 이 값으로 맞춰집니다.',
-      en: 'Your MY VISA card is set from this.',
-      zh: '百科全书首页的MY VISA卡片将根据此设置显示。',
-      vi: 'Thẻ MY VISA sẽ được thiết lập theo giá trị này.',
+      ko: '가입할 때 등록한 체류자격이 MY VISA 카드에 자동으로 반영됩니다. 로그인 없이도 계속 진행할 수 있어요.',
+      en: 'The visa status you registered is applied to your MY VISA card automatically. You can still continue without logging in.',
+      zh: '注册时登记的居留资格将自动显示在MY VISA卡片中。不登录也可以继续。',
+      vi: 'Tư cách lưu trú bạn đăng ký sẽ tự động áp dụng vào thẻ MY VISA. Bạn vẫn có thể tiếp tục mà không cần đăng nhập.',
     ),
     L10nText(
       ko: '근로계약서와 임금명세서는 나중에 가장 강한 증거가 됩니다. 지금 넣어두면 잃어버리지 않습니다.',
@@ -64,10 +65,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   ];
 
   static const _skipLabel = L10nText(
-    ko: '건너뛰기',
-    en: 'Skip',
-    zh: '跳过',
-    vi: 'Bỏ qua',
+    ko: '로그인 없이 이용하기\n(데모버전)',
+    en: 'Continue without login\n(demo)',
+    zh: '不登录使用\n（演示版）',
+    vi: 'Dùng không cần đăng nhập\n(bản demo)',
   );
   static const _prevLabel = L10nText(
     ko: '이전',
@@ -173,6 +174,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     key: const ValueKey(1),
                     profile: profile,
                     language: lang,
+                    onAuthenticated: _next,
                   ),
                   _ => _VaultStep(
                     key: const ValueKey(2),
@@ -204,8 +206,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       child: Text(
                         (_step == 0 ? _skipLabel : _prevLabel).of(lang),
-                        style: const TextStyle(
-                          fontSize: 13,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: _step == 0 ? 11 : 13,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -266,24 +269,119 @@ class _LanguageStep extends StatelessWidget {
   }
 }
 
+const _signedInAsLabel = L10nText(
+  ko: '로그인됨',
+  en: 'Signed in',
+  zh: '已登录',
+  vi: 'Đã đăng nhập',
+);
+const _visaNotSetLabel = L10nText(
+  ko: '체류자격 미등록 · 설정에서 나중에 등록할 수 있어요',
+  en: 'Visa status not set · you can add it later in settings',
+  zh: '尚未登记居留资格 · 可稍后在设置中登记',
+  vi: 'Chưa đăng ký tư cách lưu trú · có thể thêm sau trong cài đặt',
+);
+const _noAccountLabel = L10nText(
+  ko: '아직 가입하지 않으셨나요? 회원가입하기',
+  en: "Haven't signed up yet? Create an account",
+  zh: '还没有注册？去注册',
+  vi: 'Chưa đăng ký? Đăng ký ngay',
+);
+
 class _VisaStep extends StatelessWidget {
-  const _VisaStep({super.key, required this.profile, required this.language});
+  const _VisaStep({
+    super.key,
+    required this.profile,
+    required this.language,
+    required this.onAuthenticated,
+  });
+
   final UserProfileController profile;
   final AppLanguage language;
+  final VoidCallback onAuthenticated;
+
+  Future<void> _openSignup(BuildContext context) async {
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SignupFormScreen()));
+    if (profile.isSignedIn) onAuthenticated();
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
       children: [
-        for (final visa in VisaStatus.values)
-          _PickRow(
-            code: visa.code,
-            title: visa.label,
-            subtitle: null,
-            selected: profile.visaStatus == visa,
-            onTap: () => profile.setVisaStatus(visa),
+        if (profile.isSignedIn)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppColors.blueBg,
+              border: Border.all(color: AppColors.blueBorder),
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.check_circle,
+                  color: AppColors.primary,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${profile.displayName ?? profile.email ?? ''} · ${_signedInAsLabel.of(language)}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        profile.visaStatus?.label ?? _visaNotSetLabel.of(language),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: profile.visaStatus != null
+                              ? AppColors.textSecondary
+                              : AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+        else ...[
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: LoginFormBody(onSuccess: onAuthenticated),
           ),
+          const SizedBox(height: 18),
+          Center(
+            child: TextButton(
+              onPressed: () => _openSignup(context),
+              child: Text(
+                _noAccountLabel.of(language),
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

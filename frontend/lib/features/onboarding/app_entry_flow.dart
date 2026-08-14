@@ -1,14 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart' show User;
 import 'package:flutter/material.dart';
 import '../../core/user_profile_controller.dart';
+import '../../core/visa_status.dart';
 import '../../navigation/main_shell.dart';
+import '../auth/screens/signup_form_screen.dart';
+import '../auth/services/auth_service.dart';
+import '../auth/services/user_profile_api_service.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/splash_screen.dart';
 
-enum _EntryStage { splash, onboarding, ready }
+enum _EntryStage { splash, onboarding, googleSignupCompletion, ready }
+
+enum _RedirectOutcome { none, existingUser, newGoogleUser }
 
 /// 앱 진입 오케스트레이션: 스플래시(약 2초) → 온보딩(언어·체류자격·서류) → 메인 셸.
 /// MainShell은 처음부터 트리에 마운트해두고 위에 오버레이만 덮는다 — 온보딩이
 /// 끝나자마자 별도 전환 애니메이션 없이 바로 이어지고, 탭 상태도 미리 준비된다.
+///
+/// Google 로그인은 웹에서 signInWithRedirect를 쓰기 때문에(AuthService 참고)
+/// 페이지 전체가 갔다가 돌아온다 — 그래서 스플래시 준비 단계에서 항상
+/// [AuthService.consumeRedirectResult]를 먼저 확인한다: 기존 회원이면 온보딩을
+/// 건너뛰고 바로 메인으로, 신규 Google 가입자면 체류자격·국적·동의만 마저
+/// 받는 화면으로 보낸다.
 class AppEntryFlow extends StatefulWidget {
   const AppEntryFlow({super.key});
 
@@ -17,9 +30,9 @@ class AppEntryFlow extends StatefulWidget {
 }
 
 class _AppEntryFlowState extends State<AppEntryFlow> {
-  final _profile = UserProfileController();
   _EntryStage _stage = _EntryStage.splash;
   bool _prepareStarted = false;
+  User? _pendingGoogleUser;
 
   @override
   void didChangeDependencies() {
@@ -41,45 +54,90 @@ class _AppEntryFlowState extends State<AppEntryFlow> {
       const AssetImage('img/Logo.png'),
       context,
     ).timeout(const Duration(milliseconds: 8000), onTimeout: () {});
+    final redirectOutcome = _consumeGoogleRedirect();
     await Future.wait([minDelay, logoReady]);
+    final outcome = await redirectOutcome;
     if (!mounted) return;
-    setState(() => _stage = _EntryStage.onboarding);
+    setState(() {
+      _stage = switch (outcome) {
+        _RedirectOutcome.none => _EntryStage.onboarding,
+        _RedirectOutcome.existingUser => _EntryStage.ready,
+        _RedirectOutcome.newGoogleUser => _EntryStage.googleSignupCompletion,
+      };
+    });
+  }
+
+  Future<_RedirectOutcome> _consumeGoogleRedirect() async {
+    try {
+      final authService = AuthService();
+      final credential = await authService.consumeRedirectResult();
+      final user = credential?.user;
+      if (user == null) return _RedirectOutcome.none;
+
+      final idToken = await authService.currentIdToken();
+      if (idToken == null) return _RedirectOutcome.none;
+
+      Map<String, dynamic>? profile;
+      try {
+        profile = await UserProfileApiService().fetchProfile(idToken: idToken);
+      } catch (_) {
+        profile = null; // 프로필 없음(신규) 또는 일시적 조회 실패 — 둘 다 신규로 취급
+      }
+
+      if (!mounted) return _RedirectOutcome.none;
+      if (profile != null) {
+        final visaCode = profile['visaType'] as String?;
+        UserProfileScope.of(context).applyAuthenticatedProfile(
+          uid: user.uid,
+          email: user.email,
+          name: profile['name'] as String?,
+          visa: VisaStatus.values.where((v) => v.code == visaCode).firstOrNull,
+          nationality: profile['nationality'] as String?,
+        );
+        UserProfileScope.of(context).completeOnboarding();
+        return _RedirectOutcome.existingUser;
+      }
+      _pendingGoogleUser = user;
+      return _RedirectOutcome.newGoogleUser;
+    } catch (_) {
+      return _RedirectOutcome.none;
+    }
   }
 
   void _finishOnboarding() {
-    _profile.completeOnboarding();
+    UserProfileScope.of(context).completeOnboarding();
     setState(() => _stage = _EntryStage.ready);
   }
 
   @override
-  void dispose() {
-    _profile.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return UserProfileScope(
-      controller: _profile,
-      child: Stack(
-        children: [
-          const MainShell(),
-          if (_stage == _EntryStage.onboarding)
-            Positioned.fill(
-              child: OnboardingScreen(onFinished: _finishOnboarding),
-            ),
+    return Stack(
+      children: [
+        const MainShell(),
+        if (_stage == _EntryStage.onboarding)
           Positioned.fill(
-            child: IgnorePointer(
-              ignoring: _stage != _EntryStage.splash,
-              child: AnimatedOpacity(
-                opacity: _stage == _EntryStage.splash ? 1 : 0,
-                duration: const Duration(milliseconds: 450),
-                child: const SplashScreen(),
-              ),
+            child: OnboardingScreen(onFinished: _finishOnboarding),
+          ),
+        if (_stage == _EntryStage.googleSignupCompletion)
+          Positioned.fill(
+            child: SignupFormScreen(
+              isGoogleFlow: true,
+              initialName: _pendingGoogleUser?.displayName,
+              initialEmail: _pendingGoogleUser?.email,
+              onGoogleSignupComplete: _finishOnboarding,
             ),
           ),
-        ],
-      ),
+        Positioned.fill(
+          child: IgnorePointer(
+            ignoring: _stage != _EntryStage.splash,
+            child: AnimatedOpacity(
+              opacity: _stage == _EntryStage.splash ? 1 : 0,
+              duration: const Duration(milliseconds: 450),
+              child: const SplashScreen(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

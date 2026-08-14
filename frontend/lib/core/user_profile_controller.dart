@@ -22,6 +22,46 @@ class UserProfileController extends ChangeNotifier {
   bool _onboardingCompleted = false;
   bool get onboardingCompleted => _onboardingCompleted;
 
+  /// Firebase Auth uid — null이면 로그인하지 않은 게스트 상태.
+  String? _uid;
+  String? get uid => _uid;
+
+  String? _email;
+  String? get email => _email;
+
+  String? _displayName;
+  String? get displayName => _displayName;
+
+  /// ISO 3166-1 alpha-2 국가 코드(frontend/lib/features/auth/models/country.dart 참고).
+  String? _nationality;
+  String? get nationality => _nationality;
+
+  bool get isSignedIn => _uid != null;
+
+  /// 로그인/회원가입 성공 직후 한 번에 반영한다.
+  void applyAuthenticatedProfile({
+    required String uid,
+    String? email,
+    String? name,
+    VisaStatus? visa,
+    String? nationality,
+  }) {
+    _uid = uid;
+    _email = email;
+    _displayName = name;
+    if (visa != null) _visaStatus = visa;
+    _nationality = nationality;
+    notifyListeners();
+  }
+
+  void signOut() {
+    _uid = null;
+    _email = null;
+    _displayName = null;
+    _nationality = null;
+    notifyListeners();
+  }
+
   void setLanguage(AppLanguage lang) {
     if (_language == lang) return;
     _language = lang;

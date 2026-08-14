@@ -165,9 +165,9 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     markLabel: L10nText(ko: '필수행정', en: 'ADMIN', zh: '必办手续', vi: 'THỦ TỤC'),
     name: L10nText(ko: '그룹 A', en: 'Group A ', zh: 'A组', vi: 'Nhóm A'),
     title: L10nText(
-      ko: '필수 행정·인증',
+      ko: '필수 행정',
       en: 'Essential admin',
-      zh: '必办行政·认证',
+      zh: '必办行政',
       vi: 'Thủ tục bắt buộc',
     ),
     itemIds: [1, 2, 3, 4],
