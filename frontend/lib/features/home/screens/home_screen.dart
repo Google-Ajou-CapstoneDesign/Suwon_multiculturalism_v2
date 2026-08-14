@@ -8,6 +8,7 @@ import '../../../theme/app_colors.dart';
 import '../../auth/screens/login_screen.dart';
 import '../../worklog/controllers/work_log_controller.dart';
 import '../../worklog/models/daily_work_record.dart';
+import '../../worklog/screens/accident_navigator_screen.dart';
 import '../../worklog/screens/wage_navigator_screen.dart';
 import '../models/home_strings.dart';
 import '../models/weather_info.dart';
@@ -68,20 +69,11 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 9),
+                  _NavigatorLinksRow(lang: lang),
+                  const SizedBox(height: 9),
                   _CaseWidget(lang: lang),
                   const SizedBox(height: 9),
                   _AiWidget(lang: lang, onOpen: onOpenAiChat),
-                  const SizedBox(height: 9),
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(child: _MonthWidget(lang: lang, now: now)),
-                        const SizedBox(width: 9),
-                        Expanded(child: _FavWidget(lang: lang)),
-                      ],
-                    ),
-                  ),
                   const SizedBox(height: 9),
                   _OrgWidget(lang: lang),
                 ],
@@ -955,138 +947,101 @@ class _AiWidget extends StatelessWidget {
   }
 }
 
-class _MonthWidget extends StatelessWidget {
-  const _MonthWidget({required this.lang, required this.now});
+/// 임금체불/산재처리 내비게이터 바로가기 — 예전 홈 화면에 있던 그라데이션
+/// 버튼을 그대로 재사용한다(위젯 그리드 카드와는 다른, 원래부터 눈에 띄어야
+/// 하는 진입점이라 톤을 맞추지 않고 유지).
+class _NavigatorLinksRow extends StatelessWidget {
+  const _NavigatorLinksRow({required this.lang});
   final AppLanguage lang;
-  final DateTime now;
-
-  static const _bars = [0.40, 0.65, 0.55, 0.85, 0.60, 0.70, 0.95, 0.50];
-  static const _hiBars = {3, 6};
 
   @override
   Widget build(BuildContext context) {
-    return _HomeWidgetCard(
-      minHeight: 150,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _WidgetLabel(
-            icon: '📊',
-            text: HomeStrings.monthTitle(lang, now.month),
-          ),
-          const SizedBox(height: 8),
-          Text.rich(
-            TextSpan(
-              children: [
-                const TextSpan(
-                  text: '168',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.navy,
-                    letterSpacing: -0.6,
-                  ),
-                ),
-                TextSpan(
-                  text: ' ${HomeStrings.monthHoursUnit.of(lang)}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
+    return Row(
+      children: [
+        Expanded(
+          child: _NavigatorLinkCard(
+            gradient: const [Color(0xFFE08A1E), Color(0xFFB45309)],
+            emoji: '💸',
+            title: HomeStrings.wageNavTitle.of(lang),
+            subtitle: HomeStrings.wageNavSubtitle.of(lang),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const WageNavigatorScreen()),
             ),
           ),
-          const SizedBox(height: 5),
-          Text(
-            HomeStrings.monthSummary(lang, 21, 12),
-            style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 26,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(_bars.length, (i) {
-                return Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      right: i < _bars.length - 1 ? 2.5 : 0,
-                    ),
-                    child: FractionallySizedBox(
-                      heightFactor: _bars[i],
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: _hiBars.contains(i)
-                              ? AppColors.primary
-                              : const Color(0xFFDCE6F7),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
+        ),
+        const SizedBox(width: 9),
+        Expanded(
+          child: _NavigatorLinkCard(
+            gradient: const [Color(0xFF12A594), Color(0xFF0B7267)],
+            emoji: '⛑️',
+            title: HomeStrings.injuryNavTitle.of(lang),
+            subtitle: HomeStrings.injuryNavSubtitle.of(lang),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const AccidentNavigatorScreen(),
+              ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class _FavWidget extends StatelessWidget {
-  const _FavWidget({required this.lang});
-  final AppLanguage lang;
+class _NavigatorLinkCard extends StatelessWidget {
+  const _NavigatorLinkCard({
+    required this.gradient,
+    required this.emoji,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+  final List<Color> gradient;
+  final String emoji;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      ('📋', HomeStrings.favContract.of(lang)),
-      ('🪪', HomeStrings.favArc.of(lang)),
-      ('🛟', HomeStrings.favRights.of(lang)),
-    ];
-    return _HomeWidgetCard(
-      minHeight: 150,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _WidgetLabel(icon: '⭐', text: HomeStrings.favTitle.of(lang)),
-          const SizedBox(height: 8),
-          for (final item in items)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Row(
-                children: [
-                  Container(
-                    width: 26,
-                    height: 26,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.blueBg,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(item.$1, style: const TextStyle(fontSize: 12)),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      item.$2,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ),
-                ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(13),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: gradient,
+          ),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 7),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                height: 1.3,
               ),
             ),
-        ],
+            const SizedBox(height: 3),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 9.5,
+                color: Colors.white70,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

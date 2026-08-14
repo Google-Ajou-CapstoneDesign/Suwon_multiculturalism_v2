@@ -17,6 +17,31 @@ class HomeStrings {
     vi: 'Chưa đặt tư cách lưu trú',
   );
 
+  static const wageNavTitle = L10nText(
+    ko: '임금체불 진정 안내',
+    en: 'Unpaid wage report guide',
+    zh: '拖欠工资申诉指南',
+    vi: 'Hướng dẫn khiếu nại nợ lương',
+  );
+  static const wageNavSubtitle = L10nText(
+    ko: '단계별로 진정서까지 안내',
+    en: 'Step by step, all the way to the report',
+    zh: '逐步引导直到提交申诉书',
+    vi: 'Hướng dẫn từng bước đến khi nộp đơn',
+  );
+  static const injuryNavTitle = L10nText(
+    ko: '산재처리 신청 안내',
+    en: 'Workplace injury claim guide',
+    zh: '工伤申报指南',
+    vi: 'Hướng dẫn yêu cầu bồi thường tai nạn lao động',
+  );
+  static const injuryNavSubtitle = L10nText(
+    ko: '단계별로 요양급여 신청까지',
+    en: 'Step by step, all the way to the benefit claim',
+    zh: '逐步引导直到申请疗养补偿',
+    vi: 'Hướng dẫn từng bước đến khi yêu cầu trợ cấp',
+  );
+
   static const greetingMorning = L10nText(
     ko: '좋은 아침이에요,',
     en: 'Good morning,',
@@ -272,66 +297,6 @@ class HomeStrings {
     en: 'Visa extension',
     zh: '签证延期',
     vi: 'Gia hạn visa',
-  );
-
-  // ---------- 이번 달 근무 ----------
-  static String monthTitle(AppLanguage lang, int month) {
-    switch (lang) {
-      case AppLanguage.ko:
-        return '$month월 근무';
-      case AppLanguage.en:
-        return 'This month';
-      case AppLanguage.zh:
-        return '$month月出勤';
-      case AppLanguage.vi:
-        return 'Tháng $month';
-    }
-  }
-
-  static const monthHoursUnit = L10nText(
-    ko: '시간',
-    en: 'hrs',
-    zh: '小时',
-    vi: 'giờ',
-  );
-
-  static String monthSummary(AppLanguage lang, int days, int overtimeHours) {
-    switch (lang) {
-      case AppLanguage.ko:
-        return '$days일 근무 · 연장 $overtimeHours시간';
-      case AppLanguage.en:
-        return '$days days worked · $overtimeHours hrs overtime';
-      case AppLanguage.zh:
-        return '出勤$days天 · 加班$overtimeHours小时';
-      case AppLanguage.vi:
-        return '$days ngày làm · $overtimeHours giờ tăng ca';
-    }
-  }
-
-  // ---------- 즐겨찾기 ----------
-  static const favTitle = L10nText(
-    ko: '자주 보는 정보',
-    en: 'Frequently viewed',
-    zh: '常看信息',
-    vi: 'Thường xem',
-  );
-  static const favContract = L10nText(
-    ko: '근로계약서 체크',
-    en: 'Employment contract checklist',
-    zh: '劳动合同核对',
-    vi: 'Kiểm tra hợp đồng lao động',
-  );
-  static const favArc = L10nText(
-    ko: 'ARC 발급',
-    en: 'Getting your ARC',
-    zh: '外国人登录证办理',
-    vi: 'Cấp thẻ ARC',
-  );
-  static const favRights = L10nText(
-    ko: '권리구제 가이드',
-    en: 'Rights & remedies guide',
-    zh: '权利救济指南',
-    vi: 'Hướng dẫn bảo vệ quyền lợi',
   );
 
   // ---------- 가까운 도움처 ----------
