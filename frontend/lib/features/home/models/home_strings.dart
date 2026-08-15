@@ -123,10 +123,10 @@ class HomeStrings {
     vi: 'Đã hoàn tất ghi nhận',
   );
   static const workMemoButton = L10nText(
-    ko: '메모',
-    en: 'Note',
-    zh: '备注',
-    vi: 'Ghi chú',
+    ko: '근무 기록하기',
+    en: 'Log work',
+    zh: '记录工作',
+    vi: 'Ghi nhận công việc',
   );
 
   static String workClockedInAt(AppLanguage lang, String time, String status) {

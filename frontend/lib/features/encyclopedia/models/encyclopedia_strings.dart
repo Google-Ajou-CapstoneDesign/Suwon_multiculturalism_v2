@@ -6,16 +6,16 @@ class EncyclopediaStrings {
   EncyclopediaStrings._();
 
   static const coverTitle = L10nText(
-    ko: '한국 생활\n안내서',
+    ko: '한국 생활\n백과사전',
     en: 'Living in\nKorea',
     zh: '韩国生活\n指南',
     vi: 'Cẩm nang\nsống ở Hàn Quốc',
   );
   static const coverSubtitle = L10nText(
-    ko: '일하고 살아가는 데 필요한 절차를\n순서대로 정리했습니다',
-    en: "The steps you need for work and daily life,\nin the order you'll need them",
-    zh: '我们按顺序整理了\n工作生活所需的各项手续',
-    vi: 'Các thủ tục cần cho công việc và cuộc sống,\nsắp xếp theo thứ tự bạn sẽ cần',
+    ko: '한국에서 일하고 살아가는 데 필요한 절차를 정리했습니다',
+    en: "We've organized the steps you need to work and live in Korea",
+    zh: '我们整理了在韩国工作生活所需的各项手续',
+    vi: 'Chúng tôi đã tổng hợp các thủ tục cần thiết để làm việc và sinh sống tại Hàn Quốc',
   );
   static const visaLabel = L10nText(
     ko: 'MY VISA',
@@ -116,13 +116,13 @@ class EncyclopediaStrings {
   static String itemCount(AppLanguage lang, int n) {
     switch (lang) {
       case AppLanguage.ko:
-        return '$n개 항목 · 순서대로 진행하세요';
+        return '$n개 항목';
       case AppLanguage.en:
-        return '$n items · follow them in order';
+        return '$n items';
       case AppLanguage.zh:
-        return '$n个项目 · 请按顺序进行';
+        return '$n个项目';
       case AppLanguage.vi:
-        return '$n mục · làm theo thứ tự';
+        return '$n mục';
     }
   }
 }
