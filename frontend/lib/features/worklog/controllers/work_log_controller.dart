@@ -37,7 +37,10 @@ class WorkLogController extends ChangeNotifier {
         breakMinutes: 60,
         isOvertime: isOvertime,
         isRisk: i == 4,
-        gpsVerified: true,
+        // 오늘(i==0)은 아직 실제로 위치 인증을 받지 않은 상태로 시드한다 —
+        // "위치 인증하기" 버튼을 눌러보는 데모가 되도록. 지난 날짜는 이미
+        // 완료된 과거 기록이라 true로 둔다.
+        gpsVerified: i != 0,
       );
     }
   }
@@ -51,7 +54,6 @@ class WorkLogController extends ChangeNotifier {
     if (current.clockIn != null) return;
     _records[key] = current.copyWith(
       clockIn: TimeOfDay.fromDateTime(DateTime.now()),
-      gpsVerified: true,
     );
     notifyListeners();
   }

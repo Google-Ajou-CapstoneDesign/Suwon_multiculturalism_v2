@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
 import '../controllers/work_log_controller.dart';
+import '../models/daily_work_record.dart';
 import '../screens/accident_navigator_screen.dart';
 import '../screens/wage_navigator_screen.dart';
+import '../services/location_verify_service.dart';
 
 /// 근무기록장 UI 문구.
 class _WorkLogStrings {
@@ -75,6 +78,36 @@ class _WorkLogStrings {
     zh: '📍 工作场所外记录',
     vi: '📍 Ghi nhận ngoài nơi làm việc',
   );
+  static const gpsVerifyButton = L10nText(
+    ko: '📍 위치 인증하기',
+    en: '📍 Verify location',
+    zh: '📍 认证位置',
+    vi: '📍 Xác minh vị trí',
+  );
+  static const gpsServiceDisabled = L10nText(
+    ko: '기기의 위치 서비스가 꺼져 있어요. 설정에서 켜주세요.',
+    en: 'Your device\'s location service is off. Please turn it on in settings.',
+    zh: '设备的位置服务已关闭，请在设置中打开。',
+    vi: 'Dịch vụ vị trí của thiết bị đang tắt. Vui lòng bật trong cài đặt.',
+  );
+  static const gpsPermissionDenied = L10nText(
+    ko: '위치 권한이 필요해요. 브라우저나 기기 설정에서 위치 접근을 허용해주세요.',
+    en: 'Location permission is needed. Please allow location access in your browser or device settings.',
+    zh: '需要位置权限，请在浏览器或设备设置中允许访问位置信息。',
+    vi: 'Cần quyền truy cập vị trí. Vui lòng cho phép truy cập vị trí trong cài đặt trình duyệt hoặc thiết bị.',
+  );
+  static const gpsVerifyFailed = L10nText(
+    ko: '위치 정보를 받았지만 인증에 실패했어요. 다시 시도해주세요.',
+    en: 'We received your location but verification failed. Please try again.',
+    zh: '已收到位置信息，但认证失败，请重试。',
+    vi: 'Đã nhận vị trí nhưng xác minh thất bại. Vui lòng thử lại.',
+  );
+  static const gpsVerifyError = L10nText(
+    ko: '위치 인증 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.',
+    en: 'Something went wrong while verifying your location. Please try again shortly.',
+    zh: '认证位置时发生错误，请稍后重试。',
+    vi: 'Đã xảy ra lỗi khi xác minh vị trí. Vui lòng thử lại sau.',
+  );
 
   static const clockIn = L10nText(
     ko: '출근',
@@ -113,6 +146,12 @@ class _WorkLogStrings {
     en: '📎 Attach payslip',
     zh: '📎 附加工资单',
     vi: '📎 Đính kèm phiếu lương',
+  );
+  static const audioRecord = L10nText(
+    ko: '🎙️ 녹음하기',
+    en: '🎙️ Record audio',
+    zh: '🎙️ 录音',
+    vi: '🎙️ Ghi âm',
   );
 
   static const memoHint = L10nText(
@@ -811,28 +850,12 @@ class _DailyHookBody extends StatelessWidget {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 9,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: record.gpsVerified
-                          ? const Color(0xFFE6F6F4)
-                          : const Color(0xFFFEF3E2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      record.gpsVerified
-                          ? _WorkLogStrings.gpsVerified.of(language)
-                          : _WorkLogStrings.gpsUnverified.of(language),
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: record.gpsVerified
-                            ? const Color(0xFF0B7267)
-                            : const Color(0xFFB45309),
-                      ),
+                  _LocationVerifyBadge(
+                    record: record,
+                    isToday: DateUtils.isSameDay(day, controller.today),
+                    language: language,
+                    onVerified: () => controller.updateSelectedRecord(
+                      (r) => r.copyWith(gpsVerified: true),
                     ),
                   ),
                 ],
@@ -893,6 +916,13 @@ class _DailyHookBody extends StatelessWidget {
                   Expanded(
                     child: _AttachButton(
                       label: _WorkLogStrings.photoAttach.of(language),
+                      onTap: () {},
+                    ),
+                  ),
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: _AttachButton(
+                      label: _WorkLogStrings.audioRecord.of(language),
                       onTap: () {},
                     ),
                   ),
@@ -1037,6 +1067,145 @@ class _TimeRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// 오늘 기록이면서 아직 인증 전이면 "위치 인증하기" 버튼을, 그 외에는 기존
+/// 완료/사업장 외부 안내 배지를 보여준다. 과거 날짜는 GPS를 다시 딸 수 없으니
+/// 그때 기록된 값을 그대로 배지로만 보여주고 버튼을 띄우지 않는다.
+class _LocationVerifyBadge extends StatefulWidget {
+  const _LocationVerifyBadge({
+    required this.record,
+    required this.isToday,
+    required this.language,
+    required this.onVerified,
+  });
+
+  final DailyWorkRecord record;
+  final bool isToday;
+  final AppLanguage language;
+  final VoidCallback onVerified;
+
+  @override
+  State<_LocationVerifyBadge> createState() => _LocationVerifyBadgeState();
+}
+
+class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
+  bool _verifying = false;
+
+  Future<void> _verify() async {
+    final lang = widget.language;
+    setState(() => _verifying = true);
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showMessage(_WorkLogStrings.gpsServiceDisabled.of(lang));
+        return;
+      }
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        _showMessage(_WorkLogStrings.gpsPermissionDenied.of(lang));
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+      final result = await LocationVerifyService().verify(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        accuracyM: position.accuracy,
+      );
+      if (result.verified) {
+        widget.onVerified();
+      } else {
+        _showMessage(_WorkLogStrings.gpsVerifyFailed.of(lang));
+      }
+    } catch (_) {
+      _showMessage(_WorkLogStrings.gpsVerifyError.of(lang));
+    } finally {
+      if (mounted) setState(() => _verifying = false);
+    }
+  }
+
+  void _showMessage(String text) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(text), duration: const Duration(seconds: 2)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final record = widget.record;
+    final lang = widget.language;
+
+    if (widget.isToday && !record.gpsVerified) {
+      return InkWell(
+        onTap: _verifying ? null : _verify,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEFF6FF),
+            border: Border.all(color: AppColors.primary),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_verifying) ...[
+                const SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.6,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(width: 6),
+              ],
+              Text(
+                _WorkLogStrings.gpsVerifyButton.of(lang),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(
+        color: record.gpsVerified
+            ? const Color(0xFFE6F6F4)
+            : const Color(0xFFFEF3E2),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        record.gpsVerified
+            ? _WorkLogStrings.gpsVerified.of(lang)
+            : _WorkLogStrings.gpsUnverified.of(lang),
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: record.gpsVerified
+              ? const Color(0xFF0B7267)
+              : const Color(0xFFB45309),
+        ),
+      ),
     );
   }
 }
