@@ -19,7 +19,13 @@ import '../widgets/wage_result_card.dart';
 /// 진정서 자동매핑·기관찾기 버튼은 실제 네비게이션으로 살려둔다(WageResultCard 참고).
 /// OCR(임금명세서 자동 인식)만 실제 이미지 인식 파이프라인이 없어 준비 중 안내로 남긴다.
 class WageCalculatorScreen extends StatefulWidget {
-  const WageCalculatorScreen({super.key});
+  const WageCalculatorScreen({super.key, this.onUseResult});
+
+  /// 임금체불 내비게이터 2단계에서 이 화면을 열었을 때만 전달된다. 있으면
+  /// 결과 화면의 "진정서에 내 기록 자동 매핑하기" 버튼이 새 내비게이터를
+  /// 여는 대신, 계산값을 콜백으로 돌려주고 이 화면만 닫아 원래 내비게이터
+  /// 단계로 되돌아간다(html_files 원본의 WAGE.fromNav 분기와 동일한 동작).
+  final ValueChanged<WageCalcInput>? onUseResult;
 
   @override
   State<WageCalculatorScreen> createState() => _WageCalculatorScreenState();
@@ -582,11 +588,16 @@ class _WageCalculatorScreenState extends State<WageCalculatorScreen> {
                       input: input,
                       result: result!,
                       language: lang,
-                      onOpenWageNavigator: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const WageNavigatorScreen(),
-                        ),
-                      ),
+                      onOpenWageNavigator: widget.onUseResult != null
+                          ? () {
+                              widget.onUseResult!(input);
+                              Navigator.of(context).pop();
+                            }
+                          : () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const WageNavigatorScreen(),
+                              ),
+                            ),
                       onFindNearbyOrgs: () =>
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(_findOrgsSnack.of(lang))),

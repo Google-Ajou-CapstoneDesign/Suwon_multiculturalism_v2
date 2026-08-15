@@ -5,63 +5,52 @@ import '../../../common/widgets/rich_note.dart';
 import '../../../core/app_language.dart';
 import '../../../theme/app_colors.dart';
 import '../../wage_calculator/models/wage_diagnosis.dart';
+import '../../wage_calculator/screens/wage_calculator_screen.dart';
 import '../controllers/wage_calc_scratch_controller.dart';
 import '../models/flow_block.dart' show NoticeTone;
 import 'flow_content_blocks.dart' show NoticeBox;
 
-const _sectionTitle = L10nText(
-  ko: '체불액 예상 계산',
-  en: 'Estimate the unpaid amount',
-  zh: '预估欠薪金额',
-  vi: 'Ước tính số tiền bị nợ',
+const _calcRunTitle = L10nText(
+  ko: '정밀 임금계산기 바로 실행하기',
+  en: 'Run the precise calculator',
+  zh: '立即运行精密工资计算器',
+  vi: 'Chạy máy tính lương chính xác',
 );
-const _payTypeLabel = L10nText(
-  ko: '급여 형태',
-  en: 'Pay type',
-  zh: '薪资形式',
-  vi: 'Hình thức lương',
+const _calcRunSubtitle = L10nText(
+  ko: '계산 안 해보신 분',
+  en: "Haven't calculated yet",
+  zh: '尚未计算过',
+  vi: 'Nếu bạn chưa tính',
 );
-const _payLabel = L10nText(
-  ko: '계약된 금액',
-  en: 'Contracted amount',
-  zh: '约定金额',
-  vi: 'Số tiền theo hợp đồng',
+const _calcLoadTitle = L10nText(
+  ko: '임금계산기 데이터 불러오기',
+  en: 'Load calculator data',
+  zh: '导入工资计算器数据',
+  vi: 'Tải dữ liệu máy tính lương',
 );
-const _weekHoursLabel = L10nText(
-  ko: '주당 근로시간',
-  en: 'Weekly hours',
-  zh: '每周工作时长',
-  vi: 'Giờ làm mỗi tuần',
+const _calcLoadSubtitle = L10nText(
+  ko: '이미 계산해보신 분',
+  en: 'Already calculated',
+  zh: '已经计算过',
+  vi: 'Nếu bạn đã tính rồi',
 );
-const _hireDateLabel = L10nText(
-  ko: '입사일',
-  en: 'Hire date',
-  zh: '入职日',
-  vi: 'Ngày vào làm',
+const _calcAlreadyLoadedToast = L10nText(
+  ko: '이미 최신 계산 데이터를 사용 중입니다',
+  en: 'Already using your latest calculation',
+  zh: '已在使用最新的计算数据',
+  vi: 'Đang dùng dữ liệu tính toán mới nhất',
 );
-const _leaveDateLabel = L10nText(
-  ko: '퇴사일(재직 중이면 비움)',
-  en: 'Leave date (blank if still working)',
-  zh: '离职日（在职留空）',
-  vi: 'Ngày nghỉ (bỏ trống nếu còn làm)',
+const _calcNotYetAvailableToast = L10nText(
+  ko: '아직 계산한 데이터가 없습니다. 위 버튼으로 정밀 임금계산기를 먼저 실행해주세요.',
+  en: 'No calculation yet. Please run the precise calculator with the button above first.',
+  zh: '尚无计算数据，请先用上方按钮运行精密工资计算器。',
+  vi: 'Chưa có dữ liệu tính toán. Hãy chạy máy tính lương chính xác bằng nút bên trên trước.',
 );
-const _sizeLabel = L10nText(
-  ko: '사업장 규모',
-  en: 'Workplace size',
-  zh: '单位规模',
-  vi: 'Quy mô cơ sở',
-);
-const _receivedLabel = L10nText(
-  ko: '실제 받은 금액(세후)',
-  en: 'Amount actually received (after tax)',
-  zh: '实际到账金额（税后）',
-  vi: 'Số tiền thực nhận (sau thuế)',
-);
-const _calcButtonLabel = L10nText(
-  ko: '🧮 계산하기',
-  en: '🧮 Calculate',
-  zh: '🧮 计算',
-  vi: '🧮 Tính toán',
+const _reportEmptyText = L10nText(
+  ko: '아직 계산 데이터가 없습니다. 위 버튼으로 임금계산기를 실행하거나 데이터를 불러오세요.',
+  en: 'No calculation yet. Use the buttons above to run the calculator or load your data.',
+  zh: '尚无计算数据，请用上方按钮运行计算器或导入数据。',
+  vi: 'Chưa có dữ liệu tính toán. Hãy dùng nút bên trên để chạy máy tính hoặc tải dữ liệu.',
 );
 const _expectedLabel = L10nText(
   ko: '법정 예상 실수령액(세후)',
@@ -183,6 +172,12 @@ const _viewKoreanLabel = L10nText(
   zh: '🇰🇷 查看韩语版',
   vi: '🇰🇷 Xem bằng tiếng Hàn',
 );
+const _amtPlaceholder = L10nText(
+  ko: '(임금계산기로 먼저 확인해주세요)',
+  en: '(please check with the wage calculator first)',
+  zh: '（请先用工资计算器确认）',
+  vi: '(hãy kiểm tra bằng máy tính lương trước)',
+);
 const _dontSignTitle = L10nText(
   ko: '⚠ 돈을 받기 전에는 서명하지 마세요',
   en: '⚠ Do not sign anything before you are paid',
@@ -196,79 +191,55 @@ const _dontSignBody = L10nText(
   vi: "Tuyệt đối đừng ký 'thỏa thuận' hay 'đơn rút' trước khi tiền thực sự vào tài khoản.",
 );
 
-const _payTypeHourLabel = L10nText(
-  ko: '시급',
-  en: 'Hourly',
-  zh: '时薪',
-  vi: 'Theo giờ',
-);
-const _payTypeDayLabel = L10nText(
-  ko: '일급',
-  en: 'Daily',
-  zh: '日薪',
-  vi: 'Theo ngày',
-);
-const _payTypeMonthLabel = L10nText(
-  ko: '월급',
-  en: 'Monthly',
-  zh: '月薪',
-  vi: 'Theo tháng',
-);
-const _sizeOver5Label = L10nText(
-  ko: '5인 이상',
-  en: '5 or more',
-  zh: '5人以上',
-  vi: 'Từ 5 người',
-);
-const _sizeUnder5Label = L10nText(
-  ko: '5인 미만',
-  en: 'Under 5',
-  zh: '不足5人',
-  vi: 'Dưới 5 người',
-);
-const _sizeUnknownLabel = L10nText(
-  ko: '잘 모름',
-  en: 'Not sure',
-  zh: '不清楚',
-  vi: 'Không rõ',
-);
-
-class WageCalcSection extends StatefulWidget {
+/// 임금체불 내비게이터 2단계 "체불액을 확인하고 방법을 고르세요"의 본문.
+/// html_files/임금체불네비게이터_완성본.html의 blocks:[calcbtns, report,
+/// aireason, options2]를 그대로 옮겼다 — 계산 입력 자체는 이 화면에 없고,
+/// 이미 앱에 있는 정밀 5단계 계산기(WageCalculatorScreen)를 새 화면으로 열어
+/// 결과만 콜백으로 돌려받는다("이 화면과는 별개의 로컬 상태" 원칙 유지).
+class WageCalcSection extends StatelessWidget {
   const WageCalcSection({
     super.key,
     required this.scratch,
     required this.lang,
-    required this.accentColor,
     required this.onAdvance,
   });
 
   final WageCalcScratchController scratch;
   final AppLanguage lang;
-  final Color accentColor;
   final VoidCallback onAdvance;
 
-  @override
-  State<WageCalcSection> createState() => _WageCalcSectionState();
-}
-
-class _WageCalcSectionState extends State<WageCalcSection> {
-  final _payController = TextEditingController();
-  final _weekHoursController = TextEditingController(text: '40');
-  final _receivedController = TextEditingController();
-
-  @override
-  void dispose() {
-    _payController.dispose();
-    _weekHoursController.dispose();
-    _receivedController.dispose();
-    super.dispose();
+  String _gapKind(WageCalcResult r) {
+    final gap = r.gapValue;
+    if (gap.abs() < 10000) return 'zero';
+    return gap > 0 ? 'pos' : 'neg';
   }
 
-  void _openAiReasonPopup() {
-    final lang = widget.lang;
-    final result = widget.scratch.result;
+  void _runPreciseCalculator(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => WageCalculatorScreen(
+          onUseResult: (input) {
+            scratch.update((_) => input);
+            scratch.calculate();
+          },
+        ),
+      ),
+    );
+  }
+
+  void _loadCalcData(BuildContext context) {
+    final message = scratch.loaded
+        ? _calcAlreadyLoadedToast.of(lang)
+        : _calcNotYetAvailableToast.of(lang);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
+    );
+  }
+
+  void _openAiReasonPopup(BuildContext context) {
+    final result = scratch.result;
     if (result == null) return;
-    final text = explainGap(widget.scratch.input, result, lang);
+    final text = explainGap(scratch.input, result, lang);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -314,12 +285,12 @@ class _WageCalcSectionState extends State<WageCalcSection> {
     );
   }
 
-  void _openMessageTemplate() {
-    final lang = widget.lang;
-    final result = widget.scratch.result;
-    final gapText = result != null
+  void _openMessageTemplate(BuildContext context) {
+    final result = scratch.result;
+    final hasAmt = result != null && _gapKind(result) == 'pos';
+    final gapText = hasAmt
         ? formatWon(result.gapValue.abs(), lang)
-        : '';
+        : _amtPlaceholder.of(lang);
     // 수신자(사장님)는 한국어 사용자이므로 기본 노출은 항상 한국어다 — 앱
     // 언어 설정과 무관하게. "내 언어로 보기"는 보내기 전 뜻을 확인하려는
     // 이용자 본인을 위한 토글일 뿐, 기본값을 바꾸지 않는다.
@@ -459,211 +430,111 @@ class _WageCalcSectionState extends State<WageCalcSection> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = widget.lang;
-    final scratch = widget.scratch;
     return AnimatedBuilder(
       animation: scratch,
       builder: (context, _) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(13),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _sectionTitle.of(lang),
-                    style: const TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _fieldLabel(_payTypeLabel.of(lang)),
-                  const SizedBox(height: 5),
-                  Wrap(
-                    spacing: 6,
-                    children: [
-                      _payTypeChip(PayType.hour, _payTypeHourLabel.of(lang)),
-                      _payTypeChip(PayType.day, _payTypeDayLabel.of(lang)),
-                      _payTypeChip(PayType.month, _payTypeMonthLabel.of(lang)),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  _numberField(_payLabel.of(lang), _payController, (v) {
-                    scratch.update(
-                      (c) => WageCalcInput(
-                        periodMode: c.periodMode,
-                        visa: c.visa,
-                        payType: c.payType,
-                        pay: double.tryParse(v) ?? 0,
-                        weekHours: c.weekHours,
-                        hireDate: c.hireDate,
-                        leaveDate: c.leaveDate,
-                        size: c.size,
-                        received: c.received,
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 8),
-                  _numberField(_weekHoursLabel.of(lang), _weekHoursController, (
-                    v,
-                  ) {
-                    scratch.update(
-                      (c) => WageCalcInput(
-                        periodMode: c.periodMode,
-                        visa: c.visa,
-                        payType: c.payType,
-                        pay: c.pay,
-                        weekHours: double.tryParse(v) ?? 40,
-                        hireDate: c.hireDate,
-                        leaveDate: c.leaveDate,
-                        size: c.size,
-                        received: c.received,
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 8),
-                  _dateField(_hireDateLabel.of(lang), scratch.input.hireDate, (
-                    d,
-                  ) {
-                    scratch.update(
-                      (c) => WageCalcInput(
-                        periodMode: c.periodMode,
-                        visa: c.visa,
-                        payType: c.payType,
-                        pay: c.pay,
-                        weekHours: c.weekHours,
-                        hireDate: d,
-                        leaveDate: c.leaveDate,
-                        size: c.size,
-                        received: c.received,
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 8),
-                  _dateField(
-                    _leaveDateLabel.of(lang),
-                    scratch.input.leaveDate,
-                    (d) {
-                      scratch.update(
-                        (c) => WageCalcInput(
-                          periodMode: c.periodMode,
-                          visa: c.visa,
-                          payType: c.payType,
-                          pay: c.pay,
-                          weekHours: c.weekHours,
-                          hireDate: c.hireDate,
-                          leaveDate: d,
-                          size: c.size,
-                          received: c.received,
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  _fieldLabel(_sizeLabel.of(lang)),
-                  const SizedBox(height: 5),
-                  Wrap(
-                    spacing: 6,
-                    children: [
-                      _sizeChip(BizSize.over5, _sizeOver5Label.of(lang)),
-                      _sizeChip(BizSize.under5, _sizeUnder5Label.of(lang)),
-                      _sizeChip(BizSize.unknown, _sizeUnknownLabel.of(lang)),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  _numberField(_receivedLabel.of(lang), _receivedController, (
-                    v,
-                  ) {
-                    scratch.update(
-                      (c) => WageCalcInput(
-                        periodMode: c.periodMode,
-                        visa: c.visa,
-                        payType: c.payType,
-                        pay: c.pay,
-                        weekHours: c.weekHours,
-                        hireDate: c.hireDate,
-                        leaveDate: c.leaveDate,
-                        size: c.size,
-                        received: double.tryParse(v) ?? 0,
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: scratch.calculate,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: widget.accentColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: Text(_calcButtonLabel.of(lang)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (scratch.loaded) ...[
-              const SizedBox(height: 11),
-              _buildReportCard(lang, scratch.result!),
-              const SizedBox(height: 9),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: _openAiReasonPopup,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF1E3A8A),
-                    side: const BorderSide(color: Color(0xFFC9DBFA)),
-                    padding: const EdgeInsets.symmetric(vertical: 11),
-                  ),
-                  child: Text(
-                    (_gapKind(scratch.result!) == 'pos'
-                            ? _aiReasonLabelPos
-                            : _aiReasonLabelOther)
-                        .of(lang),
-                    style: const TextStyle(fontSize: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _CalcButton(
+                    icon: '🧮',
+                    title: _calcRunTitle.of(lang),
+                    subtitle: _calcRunSubtitle.of(lang),
+                    tone: _CalcButtonTone.primary,
+                    onTap: () => _runPreciseCalculator(context),
                   ),
                 ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _CalcButton(
+                    icon: '📋',
+                    title: _calcLoadTitle.of(lang),
+                    subtitle: _calcLoadSubtitle.of(lang),
+                    tone: scratch.loaded
+                        ? _CalcButtonTone.loaded
+                        : _CalcButtonTone.neutral,
+                    onTap: () => _loadCalcData(context),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 11),
+            if (scratch.loaded)
+              _buildReportCard(lang, scratch.result!)
+            else
+              _buildEmptyReportCard(),
+            const SizedBox(height: 9),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: scratch.loaded
+                    ? () => _openAiReasonPopup(context)
+                    : null,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF1E3A8A),
+                  disabledForegroundColor: AppColors.textMuted,
+                  side: BorderSide(
+                    color: scratch.loaded
+                        ? const Color(0xFFC9DBFA)
+                        : AppColors.border,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 11),
+                ),
+                child: Text(
+                  (scratch.loaded && _gapKind(scratch.result!) == 'pos'
+                          ? _aiReasonLabelPos
+                          : _aiReasonLabelOther)
+                      .of(lang),
+                  style: const TextStyle(fontSize: 12),
+                ),
               ),
-              const SizedBox(height: 14),
-              _bigOption(
-                icon: '💬',
-                title: _talkOptionTitle.of(lang),
-                subtitle: _talkOptionSubtitle.of(lang),
-                onTap: _openMessageTemplate,
-              ),
-              const SizedBox(height: 8),
-              _bigOption(
-                icon: '📄',
-                title: _fileOptionTitle.of(lang),
-                subtitle: _fileOptionSubtitle.of(lang),
-                onTap: widget.onAdvance,
-              ),
-            ],
+            ),
+            const SizedBox(height: 14),
+            _bigOption(
+              icon: '💬',
+              title: _talkOptionTitle.of(lang),
+              subtitle: _talkOptionSubtitle.of(lang),
+              onTap: () => _openMessageTemplate(context),
+            ),
+            const SizedBox(height: 8),
+            _bigOption(
+              icon: '📄',
+              title: _fileOptionTitle.of(lang),
+              subtitle: _fileOptionSubtitle.of(lang),
+              onTap: onAdvance,
+            ),
           ],
         );
       },
     );
   }
 
-  /// 1만원 미만 차이는 반올림·계산 오차로 보고 일치("zero")로 처리한다.
-  /// 실입금액이 계산값보다 많으면 체불이 아니라 계산 방식 차이("neg")다.
-  String _gapKind(WageCalcResult r) {
-    final gap = r.gapValue;
-    if (gap.abs() < 10000) return 'zero';
-    return gap > 0 ? 'pos' : 'neg';
+  Widget _buildEmptyReportCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(13),
+      ),
+      child: Text(
+        _reportEmptyText.of(lang),
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 11.5,
+          color: AppColors.textMuted,
+          height: 1.7,
+        ),
+      ),
+    );
   }
 
+  /// 1만원 미만 차이는 반올림·계산 오차로 보고 일치("zero")로 처리한다.
+  /// 실입금액이 계산값보다 많으면 체불이 아니라 계산 방식 차이("neg")다.
   Widget _buildReportCard(AppLanguage lang, WageCalcResult r) {
     final gap = r.gapValue;
     final kind = _gapKind(r);
@@ -741,123 +612,6 @@ class _WageCalcSectionState extends State<WageCalcSection> {
     );
   }
 
-  Widget _fieldLabel(String text) => Text(
-    text,
-    style: const TextStyle(
-      fontSize: 11,
-      fontWeight: FontWeight.w700,
-      color: AppColors.textSecondary,
-    ),
-  );
-
-  Widget _numberField(
-    String label,
-    TextEditingController controller,
-    ValueChanged<String> onChanged,
-  ) {
-    return Row(
-      children: [
-        Expanded(flex: 3, child: _fieldLabel(label)),
-        Expanded(
-          flex: 2,
-          child: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 12.5),
-            decoration: const InputDecoration(
-              isDense: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 9, vertical: 8),
-            ),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _dateField(
-    String label,
-    DateTime? value,
-    ValueChanged<DateTime> onPick,
-  ) {
-    return Row(
-      children: [
-        Expanded(flex: 3, child: _fieldLabel(label)),
-        Expanded(
-          flex: 2,
-          child: InkWell(
-            onTap: () async {
-              final picked = await showDatePicker(
-                context: context,
-                initialDate: value ?? DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              );
-              if (picked != null) onPick(picked);
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                value == null
-                    ? '-'
-                    : '${value.year}.${value.month.toString().padLeft(2, '0')}.${value.day.toString().padLeft(2, '0')}',
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.right,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _payTypeChip(PayType type, String label) {
-    final selected = widget.scratch.input.payType == type;
-    return ChoiceChip(
-      label: Text(label, style: const TextStyle(fontSize: 11.5)),
-      selected: selected,
-      onSelected: (_) => widget.scratch.update(
-        (c) => WageCalcInput(
-          periodMode: c.periodMode,
-          visa: c.visa,
-          payType: type,
-          pay: c.pay,
-          weekHours: c.weekHours,
-          hireDate: c.hireDate,
-          leaveDate: c.leaveDate,
-          size: c.size,
-          received: c.received,
-        ),
-      ),
-    );
-  }
-
-  Widget _sizeChip(BizSize size, String label) {
-    final selected = widget.scratch.input.size == size;
-    return ChoiceChip(
-      label: Text(label, style: const TextStyle(fontSize: 11.5)),
-      selected: selected,
-      onSelected: (_) => widget.scratch.update(
-        (c) => WageCalcInput(
-          periodMode: c.periodMode,
-          visa: c.visa,
-          payType: c.payType,
-          pay: c.pay,
-          weekHours: c.weekHours,
-          hireDate: c.hireDate,
-          leaveDate: c.leaveDate,
-          size: size,
-          received: c.received,
-        ),
-      ),
-    );
-  }
-
   Widget _bigOption({
     required String icon,
     required String title,
@@ -901,6 +655,79 @@ class _WageCalcSectionState extends State<WageCalcSection> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum _CalcButtonTone { primary, loaded, neutral }
+
+/// calcbtns 블록의 버튼 하나. 정밀 계산기 실행(파란 강조)과 데이터 불러오기
+/// (이미 불러왔으면 청록 강조)를 나란히 보여준다.
+class _CalcButton extends StatelessWidget {
+  const _CalcButton({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.tone,
+    required this.onTap,
+  });
+
+  final String icon;
+  final String title;
+  final String subtitle;
+  final _CalcButtonTone tone;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final (bg, border) = switch (tone) {
+      _CalcButtonTone.primary => (
+        const Color(0xFFF3F7FF),
+        const Color(0xFFBFDBFE),
+      ),
+      _CalcButtonTone.loaded => (
+        const Color(0xFFEAF7F5),
+        const Color(0xFFB4E0D9),
+      ),
+      _CalcButtonTone.neutral => (Colors.white, AppColors.border),
+    };
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(11),
+        decoration: BoxDecoration(
+          color: bg,
+          border: Border.all(color: border, width: 1.5),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(icon, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 6),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 9.5,
+                color: AppColors.textMuted,
+                height: 1.5,
               ),
             ),
           ],
