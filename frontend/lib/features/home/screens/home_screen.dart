@@ -12,6 +12,7 @@ import '../../worklog/screens/accident_navigator_screen.dart';
 import '../../worklog/screens/wage_navigator_screen.dart';
 import '../models/home_strings.dart';
 import '../models/weather_info.dart';
+import '../services/weather_api_service.dart';
 
 /// Tab 1 · 홈. html_files/홈화면.html의 위젯 그리드 리디자인을 옮겼다 — 위젯을
 /// 사용자가 직접 추가/삭제하는 편집 모드는 만들지 않고 구성을 고정했다(기본 6개
@@ -701,13 +702,41 @@ class _VisaWidget extends StatelessWidget {
   }
 }
 
-class _WeatherWidget extends StatelessWidget {
+class _WeatherWidget extends StatefulWidget {
   const _WeatherWidget({required this.lang});
   final AppLanguage lang;
 
   @override
+  State<_WeatherWidget> createState() => _WeatherWidgetState();
+}
+
+class _WeatherWidgetState extends State<_WeatherWidget> {
+  final _api = WeatherApiService();
+
+  // 실제 응답이 올 때까지(또는 조회 실패 시 계속) 목업을 보여준다 — 빈 화면·
+  // 로딩 스피너보다 그럴듯한 값을 먼저 보여주는 편이 이 카드 하나만을 위해
+  // 스켈레톤 UI를 새로 만드는 것보다 낫다.
+  WeatherInfo _weather = WeatherInfo.mock;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final fetched = await _api.fetchSuwonWeather();
+      if (mounted) setState(() => _weather = fetched);
+    } catch (_) {
+      // 실패해도 목업이 이미 표시 중이므로 조용히 넘어간다.
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const weather = WeatherInfo.mock;
+    final lang = widget.lang;
+    final weather = _weather;
     return _HomeWidgetCard(
       minHeight: 150,
       child: Column(

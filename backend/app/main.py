@@ -19,7 +19,7 @@ if "pytest" not in sys.modules:
 from fastapi import FastAPI  # noqa: E402
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 
-from .routers import chat, health, orgs, uploads, users, wage  # noqa: E402
+from .routers import chat, health, orgs, uploads, users, wage, weather  # noqa: E402
 
 # 루트 로거 레벨을 INFO로 올린다 — 미설정 시 기본값(WARNING)에서는
 # app.agent.pipeline의 도구 호출·사고 과정 로그가 보이지 않는다. Cloud Run은
@@ -42,3 +42,4 @@ app.include_router(wage.router)
 app.include_router(uploads.router)
 app.include_router(orgs.router)
 app.include_router(users.router)
+app.include_router(weather.router)
