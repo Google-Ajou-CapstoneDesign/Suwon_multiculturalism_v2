@@ -9,6 +9,7 @@ import '../widgets/flow_accordion.dart';
 import '../widgets/flow_content_blocks.dart';
 import '../widgets/flow_tracker.dart';
 import '../widgets/form_editor.dart';
+import '../widgets/injury_guide_section.dart';
 import '../widgets/pdf_actions_section.dart';
 import '../widgets/wage_calc_section.dart';
 
@@ -213,6 +214,50 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
     );
   }
 
+  void _openStepHelp(StepHelp help, AppLanguage lang) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(help.icon, style: const TextStyle(fontSize: 16)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    help.title.of(lang),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              help.body.of(lang),
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.textSecondary,
+                height: 1.7,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _next() {
     // 경위 서술 단계(RawTextBlock)를 지나칠 때 원문 그대로 서식의 'content'
     // 필드로 옮긴다 — FormFieldSpec.tag가 raw인 필드는 이렇게 손대지 않고
@@ -253,14 +298,40 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(15, 14, 15, 20),
                 children: [
-                  Text(
-                    step.title.of(lang),
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                      height: 1.35,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          step.title.of(lang),
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
+                            height: 1.35,
+                          ),
+                        ),
+                      ),
+                      if (step.help case final help?)
+                        InkWell(
+                          onTap: () => _openStepHelp(help, lang),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            width: 22,
+                            height: 22,
+                            margin: const EdgeInsets.only(left: 6),
+                            alignment: Alignment.center,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFF1F5F9),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Text(
+                              '❓',
+                              style: TextStyle(fontSize: 11),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 5),
                   Text(
@@ -428,9 +499,23 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
           accentColor: _accentColor,
           onAdvance: _next,
         ),
-        // 산재 플로우(2차 작업)에서 쓸 블록 — 임금 플로우에선 아직 등장하지 않는다.
+        // 임금 플로우에선 쓰이지 않는 블록.
         MessageTemplateBlock() => const SizedBox.shrink(),
-        InjuryGuideBlock() => const SizedBox.shrink(),
+        InjuryGuideBlock(
+          :final accidentCards,
+          :final illnessCards,
+          :final delegateJumpToStep,
+        ) =>
+          InjuryGuideView(
+            accidentCards: accidentCards,
+            illnessCards: illnessCards,
+            currentType: _selectedOption[0],
+            onTypeChanged: (i) => setState(() => _selectedOption[0] = i),
+            onDelegate: () => _goToStep(delegateJumpToStep),
+            onSelfFile: _next,
+            lang: lang,
+            accentColor: _accentColor,
+          ),
       },
     );
   }

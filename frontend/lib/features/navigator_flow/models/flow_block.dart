@@ -77,10 +77,22 @@ class FlowStep {
     required this.title,
     required this.lead,
     required this.blocks,
+    this.help,
   });
   final L10nText title;
   final L10nText lead;
   final List<FlowBlock> blocks;
+
+  /// 제목 옆 "❓" 버튼으로 여는 보충 설명 팝업 — 없으면 버튼 자체가 안 뜬다.
+  final StepHelp? help;
+}
+
+/// FlowStep.help 팝업 하나(아이콘+제목+본문).
+class StepHelp {
+  const StepHelp({required this.icon, required this.title, required this.body});
+  final String icon;
+  final L10nText title;
+  final L10nText body;
 }
 
 /// 트래커 레일의 노드 하나 + 탭했을 때 뜨는 팝업(pop) 3블록(+선택적 4번째 블록).
@@ -211,8 +223,15 @@ class MessageTemplateBlock extends FlowBlock {
 
 /// 산재 2단계: 사고/질병 토글 + 근거조항 카드 + "병원에 위임"(트래커로 점프)/"직접 신청" 분기.
 class LegalCitationCard {
-  const LegalCitationCard({required this.title, required this.body});
+  const LegalCitationCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.body,
+  });
+  final String icon;
   final L10nText title;
+  final L10nText subtitle;
   final L10nText body;
 }
 
