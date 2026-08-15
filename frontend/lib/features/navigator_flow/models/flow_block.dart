@@ -176,8 +176,12 @@ class EncyclopediaLinkBlock extends FlowBlock {
 enum ImportSource { workLog, payslip, calcResult, profile }
 
 class ImportButtonsBlock extends FlowBlock {
-  const ImportButtonsBlock(this.sources);
+  const ImportButtonsBlock(this.sources, {this.comingSoon = false});
   final List<ImportSource> sources;
+
+  /// true면 실제로 불러오지 않고 "추후 구현 예정" 안내만 띄운다 — 근무기록장
+  /// 저장용 백엔드 DB·엔드포인트가 아직 없는 산재처리 3단계가 이 경우다.
+  final bool comingSoon;
 }
 
 /// 실제 입력 가능한 서식 — wage_fields.dart/injury_fields.dart가 sections를 공급한다.

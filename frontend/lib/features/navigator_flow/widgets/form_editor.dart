@@ -493,6 +493,12 @@ const _importProfileLabel = L10nText(
   zh: '导入个人资料',
   vi: 'Tải thông tin hồ sơ',
 );
+const _comingSoonMessage = L10nText(
+  ko: '아직 준비 중인 기능입니다. 곧 연동될 예정이에요.',
+  en: "This feature isn't ready yet. It's coming soon.",
+  zh: '该功能尚在准备中，即将上线。',
+  vi: 'Tính năng này đang được chuẩn bị và sẽ sớm ra mắt.',
+);
 
 L10nText _importLabelFor(ImportSource source) => switch (source) {
   ImportSource.workLog => _importWorkLogLabel,
@@ -516,11 +522,15 @@ class ImportButtonsRow extends StatelessWidget {
     required this.imported,
     required this.lang,
     required this.onImport,
+    this.comingSoon = false,
   });
   final List<ImportSource> sources;
   final Set<ImportSource> imported;
   final AppLanguage lang;
   final ValueChanged<ImportSource> onImport;
+
+  /// true면 실제로 불러오지 않고 "준비 중" 안내 스낵바만 띄운다.
+  final bool comingSoon;
 
   @override
   Widget build(BuildContext context) {
@@ -530,7 +540,18 @@ class ImportButtonsRow extends StatelessWidget {
       children: sources.map((source) {
         final done = imported.contains(source);
         return InkWell(
-          onTap: () => onImport(source),
+          onTap: () {
+            if (comingSoon) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(_comingSoonMessage.of(lang)),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+              return;
+            }
+            onImport(source);
+          },
           borderRadius: BorderRadius.circular(10),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),

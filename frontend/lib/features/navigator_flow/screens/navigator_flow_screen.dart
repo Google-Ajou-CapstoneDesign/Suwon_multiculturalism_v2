@@ -455,12 +455,14 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
             ),
           ),
         ),
-        ImportButtonsBlock(:final sources) => ImportButtonsRow(
-          sources: sources,
-          imported: _importedSources,
-          lang: lang,
-          onImport: _handleImport,
-        ),
+        ImportButtonsBlock(:final sources, :final comingSoon) =>
+          ImportButtonsRow(
+            sources: sources,
+            imported: _importedSources,
+            lang: lang,
+            comingSoon: comingSoon,
+            onImport: _handleImport,
+          ),
         FormEditBlock(
           :final sections,
           :final documentTitle,

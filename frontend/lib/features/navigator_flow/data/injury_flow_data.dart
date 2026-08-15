@@ -248,6 +248,10 @@ const injuryFlowDefinition = FlowDefinition(
         vi: 'Hãy điền thông tin người bị nạn, nơi làm việc và diễn biến tai nạn. Diễn biến tai nạn sẽ được đưa vào biểu mẫu nguyên văn như bạn viết.',
       ),
       blocks: [
+        ImportButtonsBlock([
+          ImportSource.workLog,
+          ImportSource.profile,
+        ], comingSoon: true),
         LegendBlock(),
         FormEditBlock(
           injuryFields,
