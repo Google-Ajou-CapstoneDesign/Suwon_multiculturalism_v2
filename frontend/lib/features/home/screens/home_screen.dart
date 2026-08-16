@@ -10,6 +10,7 @@ import '../../worklog/controllers/work_log_controller.dart';
 import '../../worklog/models/daily_work_record.dart';
 import '../../worklog/screens/accident_navigator_screen.dart';
 import '../../worklog/screens/wage_navigator_screen.dart';
+import '../../worklog/services/location_verify_service.dart';
 import '../models/home_strings.dart';
 import '../models/weather_info.dart';
 import '../services/weather_api_service.dart';
@@ -217,18 +218,20 @@ class _HomeWidgetCard extends StatelessWidget {
     required this.child,
     this.minHeight = 129,
     this.onTap,
+    this.padding = const EdgeInsets.symmetric(horizontal: 13, vertical: 18),
   });
 
   final Widget child;
   final double minHeight;
   final VoidCallback? onTap;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
     final content = Container(
       width: double.infinity,
       constraints: BoxConstraints(minHeight: minHeight),
-      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 18),
+      padding: padding,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
@@ -258,21 +261,26 @@ class _HomeWidgetCard extends StatelessWidget {
 }
 
 class _WidgetLabel extends StatelessWidget {
-  const _WidgetLabel({required this.icon, required this.text});
+  const _WidgetLabel({
+    required this.icon,
+    required this.text,
+    this.compact = false,
+  });
   final String icon;
   final String text;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(icon, style: const TextStyle(fontSize: 18)),
-        const SizedBox(width: 8),
+        Text(icon, style: TextStyle(fontSize: compact ? 11 : 18)),
+        SizedBox(width: compact ? 5 : 8),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
-              fontSize: 17,
+              fontSize: compact ? 10 : 17,
               fontWeight: FontWeight.w700,
               color: AppColors.textMuted,
               letterSpacing: -0.1,
@@ -291,7 +299,7 @@ class _DemoTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10.5, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
         color: AppColors.noticeBg,
         border: Border.all(color: AppColors.noticeBorder),
@@ -300,7 +308,7 @@ class _DemoTag extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(
-          fontSize: 15,
+          fontSize: 9,
           fontWeight: FontWeight.w800,
           color: AppColors.noticeText,
         ),
@@ -502,27 +510,10 @@ class _WorkWidget extends StatelessWidget {
                         ),
                         if (hasClockIn) ...[
                           const SizedBox(height: 4.5),
-                          Row(
-                            children: [
-                              Container(
-                                width: 7.5,
-                                height: 7.5,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.secondary,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 7.5),
-                              Expanded(
-                                child: Text(
-                                  HomeStrings.workGpsVerified.of(lang),
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          _HomeLocationVerification(
+                            verified: record.gpsVerified,
+                            language: lang,
+                            onVerified: controller.markTodayLocationVerified,
                           ),
                         ],
                       ],
@@ -596,6 +587,136 @@ class _WorkWidget extends StatelessWidget {
 }
 
 /// 핵심 기능: 게스트(비로그인)면 데모 값, 로그인하면 실제 프로필 체류자격을 보여준다.
+class _HomeLocationVerification extends StatefulWidget {
+  const _HomeLocationVerification({
+    required this.verified,
+    required this.language,
+    required this.onVerified,
+  });
+
+  final bool verified;
+  final AppLanguage language;
+  final VoidCallback onVerified;
+
+  @override
+  State<_HomeLocationVerification> createState() =>
+      _HomeLocationVerificationState();
+}
+
+class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
+  bool _verifying = false;
+
+  Future<void> _verify() async {
+    setState(() => _verifying = true);
+    try {
+      final status = await LocationVerifyService().verifyCurrentLocation();
+      if (!mounted) return;
+      switch (status) {
+        case LocationVerifyStatus.verified:
+          widget.onVerified();
+          break;
+        case LocationVerifyStatus.serviceDisabled:
+          _showMessage(HomeStrings.workGpsServiceDisabled.of(widget.language));
+          break;
+        case LocationVerifyStatus.permissionDenied:
+          _showMessage(HomeStrings.workGpsPermissionDenied.of(widget.language));
+          break;
+        case LocationVerifyStatus.rejected:
+          _showMessage(HomeStrings.workGpsVerifyFailed.of(widget.language));
+          break;
+        case LocationVerifyStatus.error:
+          _showMessage(HomeStrings.workGpsVerifyError.of(widget.language));
+          break;
+      }
+    } finally {
+      if (mounted) setState(() => _verifying = false);
+    }
+  }
+
+  void _showMessage(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(text), duration: const Duration(seconds: 2)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.verified) {
+      return Row(
+        children: [
+          Container(
+            width: 7.5,
+            height: 7.5,
+            decoration: const BoxDecoration(
+              color: AppColors.secondary,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 7.5),
+          Expanded(
+            child: Text(
+              HomeStrings.workGpsVerified.of(widget.language),
+              style: const TextStyle(
+                fontSize: 17,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: InkWell(
+        onTap: _verifying ? null : _verify,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppColors.blueBg,
+            border: Border.all(color: AppColors.primary),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_verifying) ...[
+                const SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(width: 7),
+              ] else ...[
+                const Icon(
+                  Icons.location_on_outlined,
+                  size: 17,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(width: 5),
+              ],
+              Flexible(
+                child: Text(
+                  HomeStrings.workGpsVerifyButton.of(widget.language),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _VisaWidget extends StatelessWidget {
   const _VisaWidget({required this.profile, required this.lang});
   final UserProfileController profile;
@@ -613,14 +734,14 @@ class _VisaWidget extends StatelessWidget {
     const dDay = _demoDDay;
 
     return _HomeWidgetCard(
-      minHeight: 225,
+      minHeight: 150,
+      padding: const EdgeInsets.all(13),
       onTap: signedIn
           ? null
           : () => Navigator.of(
               context,
             ).push(MaterialPageRoute(builder: (_) => const LoginScreen())),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -629,31 +750,32 @@ class _VisaWidget extends StatelessWidget {
                 child: _WidgetLabel(
                   icon: '🪪',
                   text: HomeStrings.visaTitle.of(lang),
+                  compact: true,
                 ),
               ),
               if (!signedIn) _DemoTag(text: HomeStrings.visaDemoTag.of(lang)),
             ],
           ),
           SizedBox(
-            height: 123,
+            height: 82,
             child: Center(
               child: showRing
                   ? Opacity(
                       opacity: signedIn ? 1 : 0.55,
                       child: _RingIndicator(
-                        size: 105,
-                        strokeWidth: 9,
+                        size: 70,
+                        strokeWidth: 6,
                         fraction: dDay / _dDayScale,
                         color: AppColors.primary,
                         big: '$dDay',
                         small: HomeStrings.visaDaysLeft.of(lang),
-                        bigFontSize: 32,
-                        smallFontSize: 14,
+                        bigFontSize: 19,
+                        smallFontSize: 8,
                       ),
                     )
                   : const Icon(
                       Icons.badge_outlined,
-                      size: 51,
+                      size: 34,
                       color: AppColors.textMuted,
                     ),
             ),
@@ -666,19 +788,19 @@ class _VisaWidget extends StatelessWidget {
                     : HomeStrings.visaSampleLabel.of(lang),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 19,
+                  fontSize: 11.5,
                   fontWeight: FontWeight.w700,
                   color: AppColors.navy,
                 ),
               ),
-              const SizedBox(height: 3),
+              const SizedBox(height: 2),
               Text(
                 signedIn
                     ? (visa != null ? HomeStrings.visaExpiry(lang, dDay) : '')
                     : HomeStrings.visaDemoHint.of(lang),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 9.5,
                   color: AppColors.textMuted,
                   height: 1.4,
                 ),
@@ -727,13 +849,17 @@ class _WeatherWidgetState extends State<_WeatherWidget> {
     final lang = widget.lang;
     final weather = _weather;
     return _HomeWidgetCard(
-      minHeight: 225,
+      minHeight: 150,
+      padding: const EdgeInsets.all(13),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _WidgetLabel(icon: '📍', text: weather.location.of(lang)),
-          const SizedBox(height: 10.5),
+          _WidgetLabel(
+            icon: '📍',
+            text: weather.location.of(lang),
+            compact: true,
+          ),
+          const SizedBox(height: 7),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -744,34 +870,31 @@ class _WeatherWidgetState extends State<_WeatherWidget> {
                     Text(
                       '${weather.tempC}°',
                       style: const TextStyle(
-                        fontSize: 46,
+                        fontSize: 27,
                         fontWeight: FontWeight.w800,
                         color: AppColors.navy,
                         letterSpacing: -0.6,
                         height: 1,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       '${weather.condition.of(lang)} · ${HomeStrings.weatherFeelsLike(lang, weather.feelsLikeC)}',
                       style: const TextStyle(
-                        fontSize: 17,
+                        fontSize: 10,
                         color: AppColors.textMuted,
                       ),
                     ),
                   ],
                 ),
               ),
-              Text(weather.emoji, style: const TextStyle(fontSize: 36)),
+              Text(weather.emoji, style: const TextStyle(fontSize: 20)),
             ],
           ),
           if (weather.heatWarning) ...[
             Container(
-              margin: const EdgeInsets.only(top: 10.5),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10.5,
-              ),
+              margin: const EdgeInsets.only(top: 7),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
               decoration: BoxDecoration(
                 color: AppColors.noticeBg,
                 borderRadius: BorderRadius.circular(9),
@@ -779,13 +902,13 @@ class _WeatherWidgetState extends State<_WeatherWidget> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('🥵', style: TextStyle(fontSize: 18)),
-                  const SizedBox(width: 7.5),
+                  const Text('🥵', style: TextStyle(fontSize: 10)),
+                  const SizedBox(width: 5),
                   Expanded(
                     child: Text(
                       HomeStrings.weatherHeatAlert(lang, weather.feelsLikeC),
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 9.5,
                         fontWeight: FontWeight.w700,
                         color: AppColors.noticeText,
                         height: 1.4,
@@ -808,35 +931,32 @@ class _NavigatorLinksRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: _NavigatorLinkCard(
-              gradient: const [Color(0xFF2196F3), Color(0xFF0D47A1)],
-              emoji: '💸',
-              title: HomeStrings.wageNavTitle.of(lang),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const WageNavigatorScreen()),
+    return Row(
+      children: [
+        Expanded(
+          child: _NavigatorLinkCard(
+            gradient: const [Color(0xFF2196F3), Color(0xFF0D47A1)],
+            emoji: '💸',
+            title: HomeStrings.wageNavTitle.of(lang),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const WageNavigatorScreen()),
+            ),
+          ),
+        ),
+        const SizedBox(width: 9),
+        Expanded(
+          child: _NavigatorLinkCard(
+            gradient: const [Color(0xFF4CAF50), Color(0xFF1B5E20)],
+            emoji: '⛑️',
+            title: HomeStrings.injuryNavTitle.of(lang),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const AccidentNavigatorScreen(),
               ),
             ),
           ),
-          const SizedBox(width: 9),
-          Expanded(
-            child: _NavigatorLinkCard(
-              gradient: const [Color(0xFF4CAF50), Color(0xFF1B5E20)],
-              emoji: '⛑️',
-              title: HomeStrings.injuryNavTitle.of(lang),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const AccidentNavigatorScreen(),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -859,8 +979,7 @@ class _NavigatorLinkCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
       child: Container(
-        constraints: const BoxConstraints(minHeight: 144),
-        padding: const EdgeInsets.all(19.5),
+        padding: const EdgeInsets.all(13),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -870,15 +989,14 @@ class _NavigatorLinkCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 32)),
-            const SizedBox(height: 10.5),
+            Text(emoji, style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 7),
             Text(
               title,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
                 height: 1.3,

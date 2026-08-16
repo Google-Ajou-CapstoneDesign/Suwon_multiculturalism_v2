@@ -11,7 +11,7 @@ import '../models/flow_block.dart' show NoticeTone;
 import 'flow_content_blocks.dart' show NoticeBox;
 
 const _calcRunTitle = L10nText(
-  ko: '정밀 임금계산기 바로 실행하기',
+  ko: '임금계산기 바로 실행하기',
   en: 'Run the precise calculator',
   zh: '立即运行精密工资计算器',
   vi: 'Chạy máy tính lương chính xác',

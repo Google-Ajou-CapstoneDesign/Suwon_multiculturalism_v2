@@ -43,10 +43,10 @@ class _S {
 }
 
 const _appBarTitle = _S(
-  '정밀 임금계산기',
-  'Precise Wage Calculator',
-  '精确工资计算器',
-  'Máy tính lương chính xác',
+  '임금계산기',
+  'Wage Calculator',
+  '工资计算器',
+  'Máy tính lương',
 );
 const _importWorklog = _S(
   '📁 근무기록장 불러오기',

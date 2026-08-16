@@ -92,6 +92,36 @@ class HomeStrings {
     zh: '已完成位置认证',
     vi: 'Đã xác thực vị trí',
   );
+  static const workGpsVerifyButton = L10nText(
+    ko: '위치 인증하기',
+    en: 'Verify location',
+    zh: '认证位置',
+    vi: 'Xác minh vị trí',
+  );
+  static const workGpsServiceDisabled = L10nText(
+    ko: '기기의 위치 서비스가 꺼져 있어요. 설정에서 켜주세요.',
+    en: 'Your device location service is off. Please turn it on in settings.',
+    zh: '设备的位置服务已关闭，请在设置中打开。',
+    vi: 'Dịch vụ vị trí đang tắt. Vui lòng bật trong cài đặt.',
+  );
+  static const workGpsPermissionDenied = L10nText(
+    ko: '위치 권한이 필요해요. 브라우저나 기기 설정에서 위치 접근을 허용해주세요.',
+    en: 'Location permission is required. Please allow location access.',
+    zh: '需要位置权限，请允许访问位置信息。',
+    vi: 'Cần quyền vị trí. Vui lòng cho phép truy cập vị trí.',
+  );
+  static const workGpsVerifyFailed = L10nText(
+    ko: '위치 정보를 받았지만 인증에 실패했어요. 다시 시도해주세요.',
+    en: 'Location verification failed. Please try again.',
+    zh: '位置认证失败，请重试。',
+    vi: 'Xác minh vị trí thất bại. Vui lòng thử lại.',
+  );
+  static const workGpsVerifyError = L10nText(
+    ko: '위치 인증 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.',
+    en: 'Something went wrong during location verification. Please try again.',
+    zh: '位置认证时发生错误，请稍后重试。',
+    vi: 'Đã xảy ra lỗi khi xác minh vị trí. Vui lòng thử lại.',
+  );
   static const workClockInButton = L10nText(
     ko: '출근 기록하기',
     en: 'Clock in',

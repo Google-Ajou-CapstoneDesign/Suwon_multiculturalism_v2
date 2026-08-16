@@ -12,10 +12,10 @@ const _title = L10nText(
   vi: 'Chọn ngôn ngữ',
 );
 const _subtitle = L10nText(
-  ko: '어떤 언어를 골라도 한국어 표기는 함께 보여드립니다. 기관에서 그대로 말할 수 있도록요.',
-  en: 'Whichever language you pick, the Korean term stays below it — so you can say it as-is at an office.',
-  zh: '无论选择哪种语言，都会一并显示韩语原文，方便您在窗口照原文说出来。',
-  vi: 'Dù chọn ngôn ngữ nào, tên tiếng Hàn vẫn hiển thị bên dưới — để bạn nói nguyên văn tại cơ quan.',
+  ko: '어떤 언어를 골라도 한국어 표기는 함께 보여드립니다.',
+  en: 'Whichever language you pick, the Korean term stays below it',
+  zh: '无论选择哪种语言，都会一并显示韩语原文。',
+  vi: 'Dù chọn ngôn ngữ nào, tên tiếng Hàn vẫn hiển thị bên dưới',
 );
 
 Future<void> showLanguageSheet(
