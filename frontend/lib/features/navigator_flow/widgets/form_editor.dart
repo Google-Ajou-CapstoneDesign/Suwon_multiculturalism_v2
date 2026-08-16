@@ -26,13 +26,13 @@ const _tagBlankLabel = L10nText(
 
 (Color, Color, L10nText) _tagStyle(FillTag tag) => switch (tag) {
   FillTag.auto => (
-    const Color(0xFFE6F6F4),
-    const Color(0xFF0B7267),
+    const Color(0xFFE8F5E9),
+    const Color(0xFF1B5E20),
     _tagAutoLabel,
   ),
   FillTag.raw => (
-    const Color(0xFFEEF3FE),
-    const Color(0xFF1D4ED8),
+    const Color(0xFFE3F2FD),
+    const Color(0xFF2196F3),
     _tagRawLabel,
   ),
   FillTag.blank => (
@@ -273,15 +273,15 @@ class _FormEditorViewState extends State<FormEditorView> {
               ),
               selected: selected,
               onSelected: (_) => widget.values.setValue(field.key, opt.value),
-              selectedColor: const Color(0xFFEEF3FE),
+              selectedColor: const Color(0xFFE3F2FD),
               labelStyle: TextStyle(
                 color: selected
-                    ? const Color(0xFF1D4ED8)
+                    ? const Color(0xFF2196F3)
                     : AppColors.textSecondary,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
               ),
               side: BorderSide(
-                color: selected ? const Color(0xFF1D4ED8) : AppColors.border,
+                color: selected ? const Color(0xFF2196F3) : AppColors.border,
               ),
             );
           }).toList(),
@@ -444,7 +444,7 @@ class FormReviewView extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 12,
                                 color: isEmpty
-                                    ? const Color(0xFFB9C4D2)
+                                    ? const Color(0xFF90CAF9)
                                     : AppColors.textPrimary,
                                 fontStyle: isEmpty
                                     ? FontStyle.italic
@@ -556,7 +556,7 @@ class ImportButtonsRow extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: done ? const Color(0xFFE6F6F4) : Colors.white,
+              color: done ? const Color(0xFFE8F5E9) : Colors.white,
               border: Border.all(
                 color: done ? AppColors.secondary : AppColors.border,
               ),

@@ -132,14 +132,14 @@ class _InjuryGuideViewState extends State<InjuryGuideView> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 10),
           decoration: BoxDecoration(
-            color: const Color(0xFFEAF7F5),
+            color: const Color(0xFFE8F5E9),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
             _stageBadgeHint.of(widget.lang),
             style: const TextStyle(
               fontSize: 11,
-              color: Color(0xFF0B7267),
+              color: Color(0xFF1B5E20),
               height: 1.5,
               fontWeight: FontWeight.w600,
             ),

@@ -36,7 +36,7 @@ class GoogleSignInButton extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF4285F4),
+                color: Color(0xFF2196F3),
               ),
             ),
             const SizedBox(width: 8),

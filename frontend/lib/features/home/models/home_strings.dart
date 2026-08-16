@@ -23,23 +23,11 @@ class HomeStrings {
     zh: '拖欠工资申诉指南',
     vi: 'Hướng dẫn khiếu nại nợ lương',
   );
-  static const wageNavSubtitle = L10nText(
-    ko: '단계별로 진정서까지 안내',
-    en: 'Step by step, all the way to the report',
-    zh: '逐步引导直到提交申诉书',
-    vi: 'Hướng dẫn từng bước đến khi nộp đơn',
-  );
   static const injuryNavTitle = L10nText(
     ko: '산재처리 신청 안내',
     en: 'Workplace injury claim guide',
     zh: '工伤申报指南',
     vi: 'Hướng dẫn yêu cầu bồi thường tai nạn lao động',
-  );
-  static const injuryNavSubtitle = L10nText(
-    ko: '단계별로 요양급여 신청까지',
-    en: 'Step by step, all the way to the benefit claim',
-    zh: '逐步引导直到申请疗养补偿',
-    vi: 'Hướng dẫn từng bước đến khi yêu cầu trợ cấp',
   );
 
   static const greetingMorning = L10nText(

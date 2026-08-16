@@ -30,16 +30,22 @@ class EncyclopediaStrings {
     vi: 'E-9 Lao động phổ thông',
   );
   static const visaNotSet = L10nText(
-    ko: '체류자격 미설정 — 설정에서 등록하세요',
-    en: 'Visa status not set — register it in Settings',
-    zh: '未设置居留资格 — 请在设置中登记',
-    vi: 'Chưa đặt tư cách lưu trú — hãy đăng ký trong Cài đặt',
+    ko: '체류자격 미설정',
+    en: 'Visa status not set',
+    zh: '未设置居留资格',
+    vi: 'Chưa đặt tư cách lưu trú',
   );
   static const visaNote = L10nText(
     ko: '연장 절차 확인하기 →',
     en: 'Check renewal steps →',
     zh: '查看延长手续 →',
     vi: 'Xem thủ tục gia hạn →',
+  );
+  static const visaNoteNotSet = L10nText(
+    ko: '설정에서 등록하세요 →',
+    en: 'Register it in Settings →',
+    zh: '请在设置中登记 →',
+    vi: 'Đăng ký trong Cài đặt →',
   );
   static const quickAccessLabel = L10nText(
     ko: '자주 보는 항목',
@@ -52,6 +58,18 @@ class EncyclopediaStrings {
     en: 'Search for what you need',
     zh: '搜索您需要的信息',
     vi: 'Tìm thông tin bạn cần',
+  );
+  static const searchNoResults = L10nText(
+    ko: '검색 결과가 없습니다.\n다른 단어로 검색해 보세요.',
+    en: 'No results found.\nTry a different search term.',
+    zh: '没有搜索结果。\n请尝试其他关键词。',
+    vi: 'Không có kết quả.\nHãy thử từ khóa khác.',
+  );
+  static const searchEmptyPrompt = L10nText(
+    ko: '카테고리 이름으로 검색해 보세요',
+    en: 'Try searching by category name',
+    zh: '请尝试用分类名称搜索',
+    vi: 'Hãy thử tìm theo tên danh mục',
   );
   static const soonBadge = L10nText(
     ko: '준비 중',

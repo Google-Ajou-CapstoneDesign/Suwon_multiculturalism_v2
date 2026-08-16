@@ -28,12 +28,10 @@ class HomeScreen extends StatelessWidget {
     super.key,
     required this.workLogController,
     required this.onOpenWorkLog,
-    required this.onOpenAiChat,
   });
 
   final WorkLogController workLogController;
   final VoidCallback onOpenWorkLog;
-  final VoidCallback onOpenAiChat;
 
   @override
   Widget build(BuildContext context) {
@@ -71,12 +69,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 9),
                   _NavigatorLinksRow(lang: lang),
-                  const SizedBox(height: 9),
-                  _CaseWidget(lang: lang),
-                  const SizedBox(height: 9),
-                  _AiWidget(lang: lang, onOpen: onOpenAiChat),
-                  const SizedBox(height: 9),
-                  _OrgWidget(lang: lang),
                 ],
               ),
             ),
@@ -193,7 +185,7 @@ class _HomeHeader extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(color: const Color(0xFFE4EBF5)),
+                border: Border.all(color: const Color(0xFFE3F2FD)),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -223,43 +215,36 @@ class _HomeHeader extends StatelessWidget {
 class _HomeWidgetCard extends StatelessWidget {
   const _HomeWidgetCard({
     required this.child,
-    this.minHeight = 86,
+    this.minHeight = 129,
     this.onTap,
-    this.gradient,
   });
 
   final Widget child;
   final double minHeight;
   final VoidCallback? onTap;
-  final Gradient? gradient;
 
   @override
   Widget build(BuildContext context) {
     final content = Container(
       width: double.infinity,
       constraints: BoxConstraints(minHeight: minHeight),
-      padding: const EdgeInsets.all(13),
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 18),
       decoration: BoxDecoration(
-        color: gradient == null ? Colors.white : null,
-        gradient: gradient,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: gradient == null
-            ? Border.all(color: const Color(0xFFE4EBF5))
-            : null,
-        boxShadow: gradient == null
-            ? [
-                BoxShadow(
-                  color: AppColors.navy.withValues(alpha: 0.04),
-                  blurRadius: 2,
-                  offset: const Offset(0, 1),
-                ),
-                BoxShadow(
-                  color: AppColors.navy.withValues(alpha: 0.05),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ]
-            : null,
+        border: Border.all(color: const Color(0xFFE3F2FD)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.navy.withValues(alpha: 0.04),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
+          ),
+          BoxShadow(
+            color: AppColors.navy.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: child,
     );
@@ -273,24 +258,23 @@ class _HomeWidgetCard extends StatelessWidget {
 }
 
 class _WidgetLabel extends StatelessWidget {
-  const _WidgetLabel({required this.icon, required this.text, this.color});
+  const _WidgetLabel({required this.icon, required this.text});
   final String icon;
   final String text;
-  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(icon, style: const TextStyle(fontSize: 11)),
-        const SizedBox(width: 5),
+        Text(icon, style: const TextStyle(fontSize: 18)),
+        const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: color ?? AppColors.textMuted,
+              color: AppColors.textMuted,
               letterSpacing: -0.1,
             ),
           ),
@@ -307,18 +291,18 @@ class _DemoTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10.5, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.amberBg,
-        border: Border.all(color: AppColors.amberBorder),
+        color: AppColors.noticeBg,
+        border: Border.all(color: AppColors.noticeBorder),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         text,
         style: const TextStyle(
-          fontSize: 9,
+          fontSize: 15,
           fontWeight: FontWeight.w800,
-          color: AppColors.amberText,
+          color: AppColors.noticeText,
         ),
       ),
     );
@@ -334,8 +318,8 @@ class _RingIndicator extends StatelessWidget {
     required this.color,
     required this.big,
     required this.small,
-    this.bigFontSize = 12,
-    this.smallFontSize = 7,
+    this.bigFontSize = 22,
+    this.smallFontSize = 12.5,
   });
 
   final double size;
@@ -406,7 +390,7 @@ class _RingPainter extends CustomPainter {
     final center = size.center(Offset.zero);
     final radius = (size.width - strokeWidth) / 2;
     final bg = Paint()
-      ..color = const Color(0xFFE7EDF6)
+      ..color = const Color(0xFFE3F2FD)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
@@ -479,22 +463,24 @@ class _WorkWidget extends StatelessWidget {
                   : HomeStrings.workStatusWorking);
 
         return _HomeWidgetCard(
+          minHeight: 204,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _WidgetLabel(icon: '🕐', text: HomeStrings.workTitle.of(lang)),
-              const SizedBox(height: 9),
+              const SizedBox(height: 13.5),
               Row(
                 children: [
                   _RingIndicator(
-                    size: 46,
-                    strokeWidth: 5,
+                    size: 92,
+                    strokeWidth: 9,
                     fraction: fraction,
                     color: AppColors.primary,
                     big: _formatDuration(elapsed),
                     small: HomeStrings.workRingLabel.of(lang),
                   ),
-                  const SizedBox(width: 11),
+                  const SizedBox(width: 16.5),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,30 +494,32 @@ class _WorkWidget extends StatelessWidget {
                                 )
                               : status.of(lang),
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 22,
                             fontWeight: FontWeight.w800,
                             color: AppColors.navy,
                             letterSpacing: -0.2,
                           ),
                         ),
                         if (hasClockIn) ...[
-                          const SizedBox(height: 3),
+                          const SizedBox(height: 4.5),
                           Row(
                             children: [
                               Container(
-                                width: 5,
-                                height: 5,
+                                width: 7.5,
+                                height: 7.5,
                                 decoration: const BoxDecoration(
                                   color: AppColors.secondary,
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 5),
-                              Text(
-                                HomeStrings.workGpsVerified.of(lang),
-                                style: const TextStyle(
-                                  fontSize: 10.5,
-                                  color: AppColors.textSecondary,
+                              const SizedBox(width: 7.5),
+                              Expanded(
+                                child: Text(
+                                  HomeStrings.workGpsVerified.of(lang),
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    color: AppColors.textSecondary,
+                                  ),
                                 ),
                               ),
                             ],
@@ -542,7 +530,7 @@ class _WorkWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 15),
               Row(
                 children: [
                   Expanded(
@@ -555,11 +543,11 @@ class _WorkWidget extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: const Color(0xFFDCE6F7),
+                        disabledBackgroundColor: const Color(0xFFE3F2FD),
                         disabledForegroundColor: AppColors.textMuted,
-                        padding: const EdgeInsets.symmetric(vertical: 9),
+                        padding: const EdgeInsets.symmetric(vertical: 13.5),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                       child: Text(
@@ -569,13 +557,13 @@ class _WorkWidget extends StatelessWidget {
                                   ? HomeStrings.workClockOutButton.of(lang)
                                   : HomeStrings.workClockInButton.of(lang)),
                         style: const TextStyle(
-                          fontSize: 11.5,
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 9),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: onOpenWorkLog,
@@ -583,15 +571,15 @@ class _WorkWidget extends StatelessWidget {
                         foregroundColor: AppColors.primary,
                         backgroundColor: AppColors.blueBg,
                         side: BorderSide.none,
-                        padding: const EdgeInsets.symmetric(vertical: 9),
+                        padding: const EdgeInsets.symmetric(vertical: 13.5),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                       child: Text(
                         HomeStrings.workMemoButton.of(lang),
                         style: const TextStyle(
-                          fontSize: 11.5,
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -625,13 +613,14 @@ class _VisaWidget extends StatelessWidget {
     const dDay = _demoDDay;
 
     return _HomeWidgetCard(
-      minHeight: 150,
+      minHeight: 225,
       onTap: signedIn
           ? null
           : () => Navigator.of(
               context,
             ).push(MaterialPageRoute(builder: (_) => const LoginScreen())),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -646,25 +635,25 @@ class _VisaWidget extends StatelessWidget {
             ],
           ),
           SizedBox(
-            height: 82,
+            height: 123,
             child: Center(
               child: showRing
                   ? Opacity(
                       opacity: signedIn ? 1 : 0.55,
                       child: _RingIndicator(
-                        size: 70,
-                        strokeWidth: 6,
+                        size: 105,
+                        strokeWidth: 9,
                         fraction: dDay / _dDayScale,
                         color: AppColors.primary,
                         big: '$dDay',
                         small: HomeStrings.visaDaysLeft.of(lang),
-                        bigFontSize: 19,
-                        smallFontSize: 8,
+                        bigFontSize: 32,
+                        smallFontSize: 14,
                       ),
                     )
                   : const Icon(
                       Icons.badge_outlined,
-                      size: 34,
+                      size: 51,
                       color: AppColors.textMuted,
                     ),
             ),
@@ -677,19 +666,19 @@ class _VisaWidget extends StatelessWidget {
                     : HomeStrings.visaSampleLabel.of(lang),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 11.5,
+                  fontSize: 19,
                   fontWeight: FontWeight.w700,
                   color: AppColors.navy,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 3),
               Text(
                 signedIn
                     ? (visa != null ? HomeStrings.visaExpiry(lang, dDay) : '')
                     : HomeStrings.visaDemoHint.of(lang),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 9.5,
+                  fontSize: 16,
                   color: AppColors.textMuted,
                   height: 1.4,
                 ),
@@ -738,12 +727,13 @@ class _WeatherWidgetState extends State<_WeatherWidget> {
     final lang = widget.lang;
     final weather = _weather;
     return _HomeWidgetCard(
-      minHeight: 150,
+      minHeight: 225,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _WidgetLabel(icon: '📍', text: weather.location.of(lang)),
-          const SizedBox(height: 7),
+          const SizedBox(height: 10.5),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -754,47 +744,50 @@ class _WeatherWidgetState extends State<_WeatherWidget> {
                     Text(
                       '${weather.tempC}°',
                       style: const TextStyle(
-                        fontSize: 27,
+                        fontSize: 46,
                         fontWeight: FontWeight.w800,
                         color: AppColors.navy,
                         letterSpacing: -0.6,
                         height: 1,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Text(
                       '${weather.condition.of(lang)} · ${HomeStrings.weatherFeelsLike(lang, weather.feelsLikeC)}',
                       style: const TextStyle(
-                        fontSize: 10,
+                        fontSize: 17,
                         color: AppColors.textMuted,
                       ),
                     ),
                   ],
                 ),
               ),
-              Text(weather.emoji, style: const TextStyle(fontSize: 20)),
+              Text(weather.emoji, style: const TextStyle(fontSize: 36)),
             ],
           ),
           if (weather.heatWarning) ...[
             Container(
-              margin: const EdgeInsets.only(top: 7),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+              margin: const EdgeInsets.only(top: 10.5),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10.5,
+              ),
               decoration: BoxDecoration(
-                color: AppColors.amberBg,
+                color: AppColors.noticeBg,
                 borderRadius: BorderRadius.circular(9),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('🥵', style: TextStyle(fontSize: 10)),
-                  const SizedBox(width: 5),
+                  const Text('🥵', style: TextStyle(fontSize: 18)),
+                  const SizedBox(width: 7.5),
                   Expanded(
                     child: Text(
                       HomeStrings.weatherHeatAlert(lang, weather.feelsLikeC),
                       style: const TextStyle(
-                        fontSize: 9.5,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.amberText,
+                        color: AppColors.noticeText,
                         height: 1.4,
                       ),
                     ),
@@ -809,210 +802,41 @@ class _WeatherWidgetState extends State<_WeatherWidget> {
   }
 }
 
-class _CaseWidget extends StatelessWidget {
-  const _CaseWidget({required this.lang});
-  final AppLanguage lang;
-
-  static const _total = 8;
-  static const _now = 3; // 0-based index of the "진행 중" segment
-
-  @override
-  Widget build(BuildContext context) {
-    return _HomeWidgetCard(
-      onTap: () => Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const WageNavigatorScreen())),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.amberBg,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  HomeStrings.caseBadge(lang, _now + 1, _total),
-                  style: const TextStyle(
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.amberText,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 7),
-              Text(
-                HomeStrings.caseTitleWage.of(lang),
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.navy,
-                ),
-              ),
-              const Spacer(),
-              _DemoTag(text: HomeStrings.caseDemoTag.of(lang)),
-            ],
-          ),
-          const SizedBox(height: 11),
-          Row(
-            children: List.generate(_total, (i) {
-              final color = i < _now
-                  ? AppColors.secondary
-                  : (i == _now ? AppColors.accent : const Color(0xFFE7EDF6));
-              return Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(right: i < _total - 1 ? 3 : 0),
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 9),
-          Text.rich(
-            TextSpan(
-              style: const TextStyle(
-                fontSize: 10.5,
-                color: AppColors.textSecondary,
-                height: 1.5,
-              ),
-              children: [
-                TextSpan(
-                  text: HomeStrings.caseNow(
-                    lang,
-                    HomeStrings.caseStageInvestigation.of(lang),
-                    '8.21',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AiWidget extends StatelessWidget {
-  const _AiWidget({required this.lang, required this.onOpen});
-  final AppLanguage lang;
-  final VoidCallback onOpen;
-
-  @override
-  Widget build(BuildContext context) {
-    return _HomeWidgetCard(
-      onTap: onOpen,
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFF1E40AF), Color(0xFF16307E)],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _WidgetLabel(
-            icon: '💬',
-            text: HomeStrings.aiTitle.of(lang),
-            color: Colors.white.withValues(alpha: 0.75),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            HomeStrings.aiQuestion.of(lang),
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-              letterSpacing: -0.2,
-            ),
-          ),
-          const SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for (final chip in [
-                  HomeStrings.aiChipWage,
-                  HomeStrings.aiChipInjury,
-                  HomeStrings.aiChipVisa,
-                ])
-                  Padding(
-                    padding: const EdgeInsets.only(right: 5),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(20),
-                      onTap: onOpen,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.11),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.22),
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          chip.of(lang),
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Color(0xFFEAF0FC),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 임금체불/산재처리 내비게이터 바로가기 — 예전 홈 화면에 있던 그라데이션
-/// 버튼을 그대로 재사용한다(위젯 그리드 카드와는 다른, 원래부터 눈에 띄어야
-/// 하는 진입점이라 톤을 맞추지 않고 유지).
 class _NavigatorLinksRow extends StatelessWidget {
   const _NavigatorLinksRow({required this.lang});
   final AppLanguage lang;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _NavigatorLinkCard(
-            gradient: const [Color(0xFFE08A1E), Color(0xFFB45309)],
-            emoji: '💸',
-            title: HomeStrings.wageNavTitle.of(lang),
-            subtitle: HomeStrings.wageNavSubtitle.of(lang),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const WageNavigatorScreen()),
-            ),
-          ),
-        ),
-        const SizedBox(width: 9),
-        Expanded(
-          child: _NavigatorLinkCard(
-            gradient: const [Color(0xFF12A594), Color(0xFF0B7267)],
-            emoji: '⛑️',
-            title: HomeStrings.injuryNavTitle.of(lang),
-            subtitle: HomeStrings.injuryNavSubtitle.of(lang),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const AccidentNavigatorScreen(),
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: _NavigatorLinkCard(
+              gradient: const [Color(0xFF2196F3), Color(0xFF0D47A1)],
+              emoji: '💸',
+              title: HomeStrings.wageNavTitle.of(lang),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const WageNavigatorScreen()),
               ),
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 9),
+          Expanded(
+            child: _NavigatorLinkCard(
+              gradient: const [Color(0xFF4CAF50), Color(0xFF1B5E20)],
+              emoji: '⛑️',
+              title: HomeStrings.injuryNavTitle.of(lang),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const AccidentNavigatorScreen(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1022,13 +846,11 @@ class _NavigatorLinkCard extends StatelessWidget {
     required this.gradient,
     required this.emoji,
     required this.title,
-    required this.subtitle,
     required this.onTap,
   });
   final List<Color> gradient;
   final String emoji;
   final String title;
-  final String subtitle;
   final VoidCallback onTap;
 
   @override
@@ -1037,7 +859,8 @@ class _NavigatorLinkCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
       child: Container(
-        padding: const EdgeInsets.all(13),
+        constraints: const BoxConstraints(minHeight: 144),
+        padding: const EdgeInsets.all(19.5),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -1047,116 +870,22 @@ class _NavigatorLinkCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 7),
+            Text(emoji, style: const TextStyle(fontSize: 32)),
+            const SizedBox(height: 10.5),
             Text(
               title,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 20,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
                 height: 1.3,
               ),
             ),
-            const SizedBox(height: 3),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 9.5,
-                color: Colors.white70,
-                height: 1.4,
-              ),
-            ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _OrgWidget extends StatelessWidget {
-  const _OrgWidget({required this.lang});
-  final AppLanguage lang;
-
-  static const _phone = '031-000-0000';
-
-  @override
-  Widget build(BuildContext context) {
-    return _HomeWidgetCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _WidgetLabel(icon: '🏢', text: HomeStrings.orgTitle.of(lang)),
-          const SizedBox(height: 9),
-          Row(
-            children: [
-              Container(
-                width: 30,
-                height: 30,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE6F6F4),
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: const Text('🏢', style: TextStyle(fontSize: 14)),
-              ),
-              const SizedBox(width: 9),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      HomeStrings.orgName.of(lang),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.navy,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      HomeStrings.orgDesc.of(lang),
-                      style: const TextStyle(
-                        fontSize: 9.5,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              OutlinedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(HomeStrings.orgCallToast(lang, _phone)),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.border),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 11,
-                    vertical: 8,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(9),
-                  ),
-                ),
-                child: Text(
-                  HomeStrings.orgCallButton.of(lang),
-                  style: const TextStyle(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

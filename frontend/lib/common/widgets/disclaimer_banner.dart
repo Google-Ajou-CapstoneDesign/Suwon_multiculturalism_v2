@@ -18,21 +18,21 @@ class DisclaimerBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.amberBg,
+        color: AppColors.noticeBg,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.amberBorder),
+        border: Border.all(color: AppColors.noticeBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: AppColors.amberText),
+          Icon(icon, size: 16, color: AppColors.noticeText),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message,
               style: const TextStyle(
                 fontSize: 12,
-                color: AppColors.amberText,
+                color: AppColors.noticeText,
                 height: 1.4,
               ),
             ),

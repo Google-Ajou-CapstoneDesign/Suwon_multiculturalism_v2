@@ -106,7 +106,6 @@ class _MainShellState extends State<MainShell> {
     HomeScreen(
       workLogController: _workLogController,
       onOpenWorkLog: _openWorkLog,
-      onOpenAiChat: _toggleAiChat,
     ),
     const WageCalculatorScreen(),
     const EncyclopediaHomeScreen(),
@@ -251,11 +250,11 @@ class _AiBubble extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF12A594), Color(0xFF0B7267)],
+            colors: [Color(0xFF4CAF50), Color(0xFF1B5E20)],
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF0D9488).withValues(alpha: 0.4),
+              color: const Color(0xFF4CAF50).withValues(alpha: 0.4),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -406,11 +405,11 @@ class _CalendarBubble extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF2B4E8C), Color(0xFF152C52)],
+            colors: [Color(0xFF0D47A1), Color(0xFF0D47A1)],
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF152C52).withValues(alpha: 0.45),
+              color: const Color(0xFF0D47A1).withValues(alpha: 0.45),
               blurRadius: 14,
               offset: const Offset(0, 5),
             ),
@@ -428,7 +427,7 @@ class _CalendarBubble extends StatelessWidget {
               '${now.month}월',
               style: const TextStyle(
                 fontSize: 7.5,
-                color: Color(0xFFE8C88A),
+                color: Color(0xFF90CAF9),
                 fontWeight: FontWeight.w700,
               ),
             ),

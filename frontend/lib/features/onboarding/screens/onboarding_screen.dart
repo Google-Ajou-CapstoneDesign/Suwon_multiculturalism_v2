@@ -343,7 +343,8 @@ class _VisaStep extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        profile.visaStatus?.label ?? _visaNotSetLabel.of(language),
+                        profile.visaStatus?.label ??
+                            _visaNotSetLabel.of(language),
                         style: TextStyle(
                           fontSize: 11,
                           color: profile.visaStatus != null
@@ -448,8 +449,8 @@ class _VaultStep extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: const Color(0xFFEAF7F5),
-            border: Border.all(color: const Color(0xFFB4E0D9)),
+            color: const Color(0xFFE8F5E9),
+            border: Border.all(color: const Color(0xFFA5D6A7)),
             borderRadius: BorderRadius.circular(11),
           ),
           child: Text(
@@ -461,7 +462,7 @@ class _VaultStep extends StatelessWidget {
             ).of(language),
             style: const TextStyle(
               fontSize: 11,
-              color: Color(0xFF0F766E),
+              color: Color(0xFF1B5E20),
               height: 1.6,
             ),
           ),
@@ -495,7 +496,7 @@ class _PickRow extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFF3F7FF) : Colors.white,
+          color: selected ? const Color(0xFFE3F2FD) : Colors.white,
           border: Border.all(
             color: selected ? AppColors.primary : AppColors.border,
             width: selected ? 1.5 : 1,
@@ -582,9 +583,9 @@ class _VaultPickCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 13),
         decoration: BoxDecoration(
-          color: done ? const Color(0xFFEAF7F5) : const Color(0xFFFBFDFF),
+          color: done ? const Color(0xFFE8F5E9) : const Color(0xFFFBFDFF),
           border: Border.all(
-            color: done ? const Color(0xFFB4E0D9) : const Color(0xFFC6D2E2),
+            color: done ? const Color(0xFFA5D6A7) : const Color(0xFF90CAF9),
           ),
           borderRadius: BorderRadius.circular(12),
         ),
@@ -597,7 +598,7 @@ class _VaultPickCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w700,
-                color: done ? const Color(0xFF0B7267) : AppColors.textPrimary,
+                color: done ? const Color(0xFF1B5E20) : AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 4),

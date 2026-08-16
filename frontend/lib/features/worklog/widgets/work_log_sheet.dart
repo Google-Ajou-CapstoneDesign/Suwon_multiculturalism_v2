@@ -240,7 +240,12 @@ class _WorkLogStrings {
     zh: '已保存',
     vi: 'Đã lưu',
   );
-  static const vaultAddTag = L10nText(ko: '추가', en: 'Add', zh: '添加', vi: 'Thêm');
+  static const vaultAddTag = L10nText(
+    ko: '추가',
+    en: 'Add',
+    zh: '添加',
+    vi: 'Thêm',
+  );
   static const vaultComingSoonMessage = L10nText(
     ko: '아직 준비 중인 기능입니다. 곧 연동될 예정이에요.',
     en: "This feature isn't ready yet. It's coming soon.",
@@ -629,9 +634,9 @@ class _CalendarBlock extends StatelessWidget {
           Row(
             children: List.generate(7, (i) {
               final color = i == 0
-                  ? const Color(0xFFE06060)
+                  ? const Color(0xFF2196F3)
                   : i == 6
-                  ? const Color(0xFF5B8DEF)
+                  ? const Color(0xFF2196F3)
                   : AppColors.textMuted;
               return Expanded(
                 child: Text(
@@ -714,9 +719,9 @@ class _DayCell extends StatelessWidget {
     final textColor = isToday
         ? Colors.white
         : weekday == 0
-        ? const Color(0xFFE06060)
+        ? const Color(0xFF2196F3)
         : weekday == 6
-        ? const Color(0xFF5B8DEF)
+        ? const Color(0xFF2196F3)
         : AppColors.textPrimary;
 
     return InkWell(
@@ -728,7 +733,7 @@ class _DayCell extends StatelessWidget {
           color: isToday ? AppColors.primary : null,
           borderRadius: BorderRadius.circular(8),
           border: isRisk
-              ? Border.all(color: const Color(0xFFDC2626), width: 1.5)
+              ? Border.all(color: const Color(0xFF0D47A1), width: 1.5)
               : isSelected
               ? Border.all(color: AppColors.primary, width: 2)
               : null,
@@ -816,7 +821,7 @@ class _LegendRiskBox extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(2),
-            border: Border.all(color: const Color(0xFFDC2626), width: 1.5),
+            border: Border.all(color: const Color(0xFF0D47A1), width: 1.5),
           ),
         ),
         const SizedBox(width: 4),
@@ -996,7 +1001,7 @@ class _DailyHookBody extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF1E3A8A),
+                        color: Color(0xFF0D47A1),
                       ),
                     ),
                   ],
@@ -1073,7 +1078,7 @@ class _DailyHookBody extends StatelessWidget {
           children: [
             Expanded(
               child: _EntryCard(
-                gradient: const [Color(0xFFE08A1E), Color(0xFFB45309)],
+                gradient: const [Color(0xFF2196F3), Color(0xFF0D47A1)],
                 emoji: '💸',
                 title: _WorkLogStrings.wageEntryTitle.of(language),
                 subtitle: _WorkLogStrings.wageEntrySubtitle.of(language),
@@ -1087,7 +1092,7 @@ class _DailyHookBody extends StatelessWidget {
             const SizedBox(width: 9),
             Expanded(
               child: _EntryCard(
-                gradient: const [Color(0xFF12A594), Color(0xFF0B7267)],
+                gradient: const [Color(0xFF4CAF50), Color(0xFF1B5E20)],
                 emoji: '⛑️',
                 title: _WorkLogStrings.injuryEntryTitle.of(language),
                 subtitle: _WorkLogStrings.injuryEntrySubtitle.of(language),
@@ -1231,9 +1236,9 @@ class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
 
   void _showMessage(String text) {
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(text), duration: const Duration(seconds: 2)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(text), duration: const Duration(seconds: 2)),
+    );
   }
 
   @override
@@ -1248,7 +1253,7 @@ class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0xFFEFF6FF),
+            color: const Color(0xFFE3F2FD),
             border: Border.all(color: AppColors.primary),
             borderRadius: BorderRadius.circular(20),
           ),
@@ -1284,8 +1289,8 @@ class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
         color: record.gpsVerified
-            ? const Color(0xFFE6F6F4)
-            : const Color(0xFFFEF3E2),
+            ? const Color(0xFFE8F5E9)
+            : const Color(0xFFE3F2FD),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -1296,8 +1301,8 @@ class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
           fontSize: 10,
           fontWeight: FontWeight.w700,
           color: record.gpsVerified
-              ? const Color(0xFF0B7267)
-              : const Color(0xFFB45309),
+              ? const Color(0xFF1B5E20)
+              : const Color(0xFF0D47A1),
         ),
       ),
     );
@@ -1324,7 +1329,9 @@ class _VaultBoxState extends State<_VaultBox> {
   void _showComingSoon(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(_WorkLogStrings.vaultComingSoonMessage.of(widget.language)),
+        content: Text(
+          _WorkLogStrings.vaultComingSoonMessage.of(widget.language),
+        ),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -1358,7 +1365,7 @@ class _VaultBoxState extends State<_VaultBox> {
                         height: 30,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFEF3E2),
+                          color: const Color(0xFFE3F2FD),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text('📁', style: TextStyle(fontSize: 15)),
@@ -1549,7 +1556,7 @@ class _VaultFileRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: stored
-                    ? const Color(0xFFE6F6F4)
+                    ? const Color(0xFFE8F5E9)
                     : const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -1562,7 +1569,7 @@ class _VaultFileRow extends StatelessWidget {
                   fontSize: 9.5,
                   fontWeight: FontWeight.w700,
                   color: stored
-                      ? const Color(0xFF0B7267)
+                      ? const Color(0xFF1B5E20)
                       : AppColors.textSecondary,
                 ),
               ),
@@ -1585,7 +1592,7 @@ class _AttachButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: onTap,
       style: OutlinedButton.styleFrom(
-        side: const BorderSide(color: Color(0xFFC6D2E2)),
+        side: const BorderSide(color: Color(0xFF90CAF9)),
         padding: const EdgeInsets.symmetric(vertical: 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
       ),

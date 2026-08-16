@@ -94,11 +94,11 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
       ? AppColors.accent
       : AppColors.secondary;
   Color get _accentBg => widget.definition.accent == FlowAccent.amber
-      ? const Color(0xFFFEF3E2)
-      : const Color(0xFFE6F6F4);
+      ? const Color(0xFFE3F2FD)
+      : const Color(0xFFE8F5E9);
   Color get _accentText => widget.definition.accent == FlowAccent.amber
-      ? const Color(0xFFB45309)
-      : const Color(0xFF0B7267);
+      ? const Color(0xFF0D47A1)
+      : const Color(0xFF1B5E20);
 
   @override
   void dispose() {

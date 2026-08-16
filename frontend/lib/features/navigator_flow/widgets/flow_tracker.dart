@@ -103,7 +103,7 @@ class TrackerCard extends StatelessWidget {
                                 boxShadow: isNow
                                     ? [
                                         const BoxShadow(
-                                          color: Color(0xFFFDF0DC),
+                                          color: Color(0xFFE3F2FD),
                                           blurRadius: 0,
                                           spreadRadius: 4,
                                         ),

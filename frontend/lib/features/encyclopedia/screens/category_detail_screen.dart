@@ -69,7 +69,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             },
             icon: Icon(
               _starred ? Icons.star : Icons.star_border,
-              color: _starred ? const Color(0xFFFDE047) : Colors.white,
+              color: _starred ? const Color(0xFF90CAF9) : Colors.white,
             ),
           ),
         ],
@@ -262,8 +262,8 @@ class _FormPreviewCard extends StatelessWidget {
   final AppLanguage language;
 
   static const _tagColors = {
-    'auto': Color(0xFF2563EB),
-    'blank': Color(0xFFDC2626),
+    'auto': Color(0xFF2196F3),
+    'blank': Color(0xFF0D47A1),
     'raw': Color(0xFF6B7280),
   };
 

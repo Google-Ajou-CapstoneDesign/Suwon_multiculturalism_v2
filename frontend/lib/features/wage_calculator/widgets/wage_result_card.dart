@@ -267,7 +267,7 @@ class WageResultCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 9),
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0xFFFEF3E2),
+            color: const Color(0xFFE3F2FD),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -275,7 +275,7 @@ class WageResultCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 9.5,
               fontWeight: FontWeight.w800,
-              color: Color(0xFFB45309),
+              color: Color(0xFF0D47A1),
             ),
           ),
         ),
@@ -285,7 +285,7 @@ class WageResultCard extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           margin: const EdgeInsets.only(bottom: 11),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F2947),
+            color: const Color(0xFF0D47A1),
             borderRadius: BorderRadius.circular(13),
           ),
           child: Column(
@@ -300,7 +300,7 @@ class WageResultCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFFE8C88A),
+                        color: Color(0xFF90CAF9),
                       ),
                     ),
                   ),
@@ -308,7 +308,7 @@ class WageResultCard extends StatelessWidget {
                     _noticeYearText(lang),
                     style: const TextStyle(
                       fontSize: 10,
-                      color: Color(0xFF8FA9CC),
+                      color: Color(0xFF90CAF9),
                     ),
                   ),
                 ],
@@ -357,7 +357,7 @@ class WageResultCard extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 8),
                 padding: const EdgeInsets.only(top: 10),
                 decoration: const BoxDecoration(
-                  border: Border(top: BorderSide(color: Color(0x59E8C88A))),
+                  border: Border(top: BorderSide(color: Color(0x5990CAF9))),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -370,7 +370,7 @@ class WageResultCard extends StatelessWidget {
                           _grossTotal.of(lang),
                           style: const TextStyle(
                             fontSize: 12,
-                            color: Color(0xFFE8C88A),
+                            color: Color(0xFF90CAF9),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -459,16 +459,16 @@ class WageResultCard extends StatelessWidget {
           padding: const EdgeInsets.all(13),
           decoration: BoxDecoration(
             color: isZero
-                ? const Color(0xFFEAF7F5)
+                ? const Color(0xFFE8F5E9)
                 : isNeg
-                ? const Color(0xFFF0F5FF)
-                : const Color(0xFFFEF2F2),
+                ? const Color(0xFFE3F2FD)
+                : const Color(0xFFE3F2FD),
             border: Border.all(
               color: isZero
-                  ? const Color(0xFFB4E0D9)
+                  ? const Color(0xFFA5D6A7)
                   : isNeg
-                  ? const Color(0xFFC9DBFA)
-                  : const Color(0xFFF6C9C9),
+                  ? const Color(0xFF90CAF9)
+                  : const Color(0xFF90CAF9),
             ),
             borderRadius: BorderRadius.circular(12),
           ),
@@ -485,10 +485,10 @@ class WageResultCard extends StatelessWidget {
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
                   color: isZero
-                      ? const Color(0xFF0B7267)
+                      ? const Color(0xFF1B5E20)
                       : isNeg
-                      ? const Color(0xFF1E3A8A)
-                      : const Color(0xFF991B1B),
+                      ? const Color(0xFF0D47A1)
+                      : const Color(0xFF0D47A1),
                 ),
               ),
               const SizedBox(height: 4),
@@ -510,10 +510,10 @@ class WageResultCard extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: isZero
-                          ? const Color(0xFF0B7267)
+                          ? const Color(0xFF1B5E20)
                           : isNeg
-                          ? const Color(0xFF1E3A8A)
-                          : const Color(0xFF991B1B),
+                          ? const Color(0xFF0D47A1)
+                          : const Color(0xFF0D47A1),
                     ),
                   ),
                 ],
@@ -527,8 +527,8 @@ class WageResultCard extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white.withValues(alpha: 0.7),
                       foregroundColor: isNeg
-                          ? const Color(0xFF1E3A8A)
-                          : const Color(0xFF991B1B),
+                          ? const Color(0xFF0D47A1)
+                          : const Color(0xFF0D47A1),
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
@@ -602,8 +602,8 @@ class WageResultCard extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.all(13),
             decoration: BoxDecoration(
-              color: const Color(0xFFEAF7F5),
-              border: Border.all(color: const Color(0xFFB4E0D9)),
+              color: const Color(0xFFE8F5E9),
+              border: Border.all(color: const Color(0xFFA5D6A7)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -621,7 +621,7 @@ class WageResultCard extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF0B7267),
+                                color: Color(0xFF1B5E20),
                               ),
                             ),
                           ),
@@ -636,7 +636,7 @@ class WageResultCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF0B7267),
+                        color: Color(0xFF1B5E20),
                       ),
                     ),
                   ],
@@ -646,7 +646,7 @@ class WageResultCard extends StatelessWidget {
                   _severanceNote.of(lang),
                   style: const TextStyle(
                     fontSize: 10.5,
-                    color: Color(0xFF0F766E),
+                    color: Color(0xFF1B5E20),
                     height: 1.55,
                   ),
                 ),
@@ -799,7 +799,7 @@ class _ResRow extends StatelessWidget {
                 label,
                 style: const TextStyle(
                   fontSize: 11.5,
-                  color: Color(0xFFA8BEDC),
+                  color: Color(0xFF90CAF9),
                 ),
               ),
               if (onHelp != null) _DarkQMark(onTap: onHelp!),
@@ -810,7 +810,7 @@ class _ResRow extends StatelessWidget {
             style: TextStyle(
               fontSize: zero ? 11 : 12.5,
               fontWeight: zero ? FontWeight.w600 : FontWeight.w700,
-              color: zero ? const Color(0xFF6D86AC) : const Color(0xFFF1F6FC),
+              color: zero ? const Color(0xFF90CAF9) : const Color(0xFFE3F2FD),
             ),
           ),
         ],
@@ -832,7 +832,7 @@ class _NetRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: const BoxDecoration(
         border: Border(
-          top: BorderSide(color: Color(0x59E8C88A), style: BorderStyle.solid),
+          top: BorderSide(color: Color(0x5990CAF9), style: BorderStyle.solid),
         ),
       ),
       child: Row(
@@ -846,7 +846,7 @@ class _NetRow extends StatelessWidget {
                 label,
                 style: const TextStyle(
                   fontSize: 12,
-                  color: Color(0xFFE8C88A),
+                  color: Color(0xFF90CAF9),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -880,7 +880,7 @@ class _SubHead extends StatelessWidget {
         style: const TextStyle(
           fontSize: 10.5,
           fontWeight: FontWeight.w800,
-          color: Color(0xFFE8C88A),
+          color: Color(0xFF90CAF9),
           letterSpacing: 0.2,
         ),
       ),
@@ -912,7 +912,7 @@ class _DarkQMark extends StatelessWidget {
             style: TextStyle(
               fontSize: 8.5,
               fontWeight: FontWeight.w800,
-              color: Color(0xFFA8BEDC),
+              color: Color(0xFF90CAF9),
             ),
           ),
         ),

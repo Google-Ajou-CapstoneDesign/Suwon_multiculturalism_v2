@@ -93,9 +93,9 @@ class AiResponseCard extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.amberBg,
+              color: AppColors.noticeBg,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.amberBorder),
+              border: Border.all(color: AppColors.noticeBorder),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +103,7 @@ class AiResponseCard extends StatelessWidget {
                 const Icon(
                   Icons.warning_amber_rounded,
                   size: 16,
-                  color: AppColors.amberText,
+                  color: AppColors.noticeText,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -111,7 +111,7 @@ class AiResponseCard extends StatelessWidget {
                     response.riskNotice!,
                     style: const TextStyle(
                       fontSize: 11,
-                      color: AppColors.amberText,
+                      color: AppColors.noticeText,
                       height: 1.4,
                     ),
                   ),

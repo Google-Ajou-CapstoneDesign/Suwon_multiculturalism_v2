@@ -7,6 +7,7 @@ import '../widgets/book_page_switcher.dart';
 import '../widgets/category_toc_page.dart';
 import '../widgets/group_bookmark_rail.dart';
 import 'category_detail_screen.dart';
+import 'category_search_screen.dart';
 import 'favorites_screen.dart';
 
 /// Tab 1 · 백과사전. "책 표지 + 세로 북마크" 컨셉(프론트엔드_구상.html 기반).
@@ -46,6 +47,17 @@ class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => FavoritesScreen(controller: _controller),
+      ),
+    );
+  }
+
+  void _openSearch() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CategorySearchScreen(
+          language: UserProfileScope.of(context).language,
+          controller: _controller,
+        ),
       ),
     );
   }
@@ -91,6 +103,7 @@ class _EncyclopediaHomeScreenState extends State<EncyclopediaHomeScreen> {
                               child: BookCover(
                                 language: lang,
                                 onOpenItem: _openDetail,
+                                onSearchTap: _openSearch,
                               ),
                             ),
                           )

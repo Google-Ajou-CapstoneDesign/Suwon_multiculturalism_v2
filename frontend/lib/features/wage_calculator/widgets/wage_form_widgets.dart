@@ -331,7 +331,7 @@ class Chips<T> extends StatelessWidget {
               vertical: compact ? 5 : 7,
             ),
             decoration: BoxDecoration(
-              color: selected ? const Color(0xFFF3F7FF) : Colors.white,
+              color: selected ? const Color(0xFFE3F2FD) : Colors.white,
               border: Border.all(
                 color: selected ? AppColors.primary : AppColors.border,
                 width: selected ? 1.5 : 1,
@@ -344,7 +344,7 @@ class Chips<T> extends StatelessWidget {
                 fontSize: compact ? 10.5 : 11,
                 fontWeight: FontWeight.w600,
                 color: selected
-                    ? const Color(0xFF1D4ED8)
+                    ? const Color(0xFF2196F3)
                     : AppColors.textSecondary,
               ),
             ),
@@ -379,7 +379,7 @@ class OptButton extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: selected ? const Color(0xFFF3F7FF) : Colors.white,
+            color: selected ? const Color(0xFFE3F2FD) : Colors.white,
             border: Border.all(
               color: selected ? AppColors.primary : AppColors.border,
               width: selected ? 1.5 : 1,
@@ -458,8 +458,8 @@ class RedNotice extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 11),
       padding: const EdgeInsets.all(11),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEF2F2),
-        border: Border.all(color: const Color(0xFFF6C9C9)),
+        color: const Color(0xFFE3F2FD),
+        border: Border.all(color: const Color(0xFF90CAF9)),
         borderRadius: BorderRadius.circular(11),
       ),
       child: Column(
@@ -470,7 +470,7 @@ class RedNotice extends StatelessWidget {
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF991B1B),
+              color: Color(0xFF0D47A1),
             ),
           ),
           const SizedBox(height: 3),
@@ -478,7 +478,7 @@ class RedNotice extends StatelessWidget {
             body,
             style: const TextStyle(
               fontSize: 10.5,
-              color: Color(0xFFB33A3A),
+              color: Color(0xFF0D47A1),
               height: 1.55,
             ),
           ),
@@ -612,8 +612,8 @@ class ImportButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 9),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: const Color(0xFFEEF2FF),
-            border: Border.all(color: const Color(0xFFC7D2FE)),
+            color: const Color(0xFFE3F2FD),
+            border: Border.all(color: const Color(0xFF90CAF9)),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
@@ -621,7 +621,7 @@ class ImportButton extends StatelessWidget {
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF3730A3),
+              color: Color(0xFF0D47A1),
             ),
             textAlign: TextAlign.center,
           ),

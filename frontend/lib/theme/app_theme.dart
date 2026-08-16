@@ -7,12 +7,28 @@ class AppTheme {
   static ThemeData get light {
     final base = ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
+        onPrimary: Colors.white,
+        primaryContainer: AppColors.blue50,
+        onPrimaryContainer: AppColors.blue900,
         secondary: AppColors.secondary,
+        onSecondary: Colors.white,
+        secondaryContainer: AppColors.green50,
+        onSecondaryContainer: AppColors.green900,
         tertiary: AppColors.accent,
+        onTertiary: AppColors.blue900,
+        tertiaryContainer: AppColors.blue50,
+        onTertiaryContainer: AppColors.blue900,
+        error: AppColors.blue900,
+        onError: Colors.white,
+        errorContainer: AppColors.blue50,
+        onErrorContainer: AppColors.blue900,
         surface: Colors.white,
+        onSurface: AppColors.textPrimary,
+        onSurfaceVariant: AppColors.textSecondary,
+        outline: AppColors.blue200,
+        outlineVariant: AppColors.blue50,
       ),
       scaffoldBackgroundColor: AppColors.background,
     );

@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
         gradient: LinearGradient(
           begin: Alignment(-0.4, -1),
           end: Alignment(0.4, 1),
-          colors: [Color(0xFF1E3A6E), Color(0xFF132747), Color(0xFF0C1A31)],
+          colors: [Color(0xFF0D47A1), Color(0xFF0D47A1), Color(0xFF0D47A1)],
           stops: [0, 0.62, 1],
         ),
       ),
@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Color(0xB8CEDEF5),
+                      color: Color(0xB890CAF9),
                       height: 1.7,
                     ),
                   ),
@@ -105,7 +105,7 @@ class _SplashScreenState extends State<SplashScreen>
                           height: 3,
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [Color(0xFF0D9488), Color(0xFFE8C88A)],
+                              colors: [Color(0xFF4CAF50), Color(0xFF90CAF9)],
                             ),
                             borderRadius: BorderRadius.circular(3),
                           ),
@@ -124,7 +124,7 @@ class _SplashScreenState extends State<SplashScreen>
               style: TextStyle(
                 fontSize: 9.5,
                 letterSpacing: 3,
-                color: Color(0x8CE8C88A),
+                color: Color(0x8C90CAF9),
                 fontWeight: FontWeight.w600,
               ),
             ),

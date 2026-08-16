@@ -474,11 +474,11 @@ class WageCalcSection extends StatelessWidget {
                     ? () => _openAiReasonPopup(context)
                     : null,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF1E3A8A),
+                  foregroundColor: const Color(0xFF0D47A1),
                   disabledForegroundColor: AppColors.textMuted,
                   side: BorderSide(
                     color: scratch.loaded
-                        ? const Color(0xFFC9DBFA)
+                        ? const Color(0xFF90CAF9)
                         : AppColors.border,
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 11),
@@ -544,7 +544,7 @@ class WageCalcSection extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(13),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F2947),
+            color: const Color(0xFF0D47A1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -594,7 +594,7 @@ class WageCalcSection extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: emphasize ? 12.5 : 11.5,
-                color: const Color(0xFFA8BEDC),
+                color: const Color(0xFF90CAF9),
               ),
             ),
           ),
@@ -604,7 +604,7 @@ class WageCalcSection extends StatelessWidget {
               style: TextStyle(
                 fontSize: emphasize ? 15 : 13,
                 fontWeight: FontWeight.w800,
-                color: emphasize ? const Color(0xFFE8C88A) : Colors.white,
+                color: emphasize ? const Color(0xFF90CAF9) : Colors.white,
               ),
             ),
         ],
@@ -687,12 +687,12 @@ class _CalcButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final (bg, border) = switch (tone) {
       _CalcButtonTone.primary => (
-        const Color(0xFFF3F7FF),
-        const Color(0xFFBFDBFE),
+        const Color(0xFFE3F2FD),
+        const Color(0xFF90CAF9),
       ),
       _CalcButtonTone.loaded => (
-        const Color(0xFFEAF7F5),
-        const Color(0xFFB4E0D9),
+        const Color(0xFFE8F5E9),
+        const Color(0xFFA5D6A7),
       ),
       _CalcButtonTone.neutral => (Colors.white, AppColors.border),
     };

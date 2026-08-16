@@ -33,7 +33,7 @@ class OptionsList extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(13),
               decoration: BoxDecoration(
-                color: selected ? const Color(0xFFF3F7FF) : Colors.white,
+                color: selected ? const Color(0xFFE3F2FD) : Colors.white,
                 border: Border.all(
                   color: selected ? AppColors.primary : AppColors.border,
                   width: selected ? 1.5 : 1,
@@ -95,22 +95,22 @@ class NoticeBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final (bg, border, titleColor, bodyColor) = switch (tone) {
       NoticeTone.amber => (
-        const Color(0xFFFFF8EC),
-        const Color(0xFFF5D9A8),
-        const Color(0xFF92400E),
-        const Color(0xFFA16207),
+        const Color(0xFFE3F2FD),
+        const Color(0xFF90CAF9),
+        const Color(0xFF0D47A1),
+        const Color(0xFF0D47A1),
       ),
       NoticeTone.blue => (
-        const Color(0xFFF0F5FF),
-        const Color(0xFFC9DBFA),
-        const Color(0xFF1E3A8A),
-        const Color(0xFF2A4C90),
+        const Color(0xFFE3F2FD),
+        const Color(0xFF90CAF9),
+        const Color(0xFF0D47A1),
+        const Color(0xFF0D47A1),
       ),
       NoticeTone.teal => (
-        const Color(0xFFEAF7F5),
-        const Color(0xFFB4E0D9),
-        const Color(0xFF0B7267),
-        const Color(0xFF0F766E),
+        const Color(0xFFE8F5E9),
+        const Color(0xFFA5D6A7),
+        const Color(0xFF1B5E20),
+        const Color(0xFF1B5E20),
       ),
     };
 
@@ -247,21 +247,21 @@ class FillCard extends StatelessWidget {
             badgeLabel,
           ) = switch (row.tag) {
             FillTag.auto => (
-              const Color(0xFF0B7267),
+              const Color(0xFF1B5E20),
               false,
-              const Color(0xFFE6F6F4),
-              const Color(0xFF0B7267),
+              const Color(0xFFE8F5E9),
+              const Color(0xFF1B5E20),
               'AUTO',
             ),
             FillTag.raw => (
               const Color(0xFF0F172A),
               false,
-              const Color(0xFFEEF3FE),
-              const Color(0xFF1D4ED8),
+              const Color(0xFFE3F2FD),
+              const Color(0xFF2196F3),
               'RAW',
             ),
             FillTag.blank => (
-              const Color(0xFFB9C4D2),
+              const Color(0xFF90CAF9),
               true,
               const Color(0xFFF1F5F9),
               const Color(0xFF94A3B8),
@@ -471,7 +471,7 @@ class OrgCardView extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEEF3FE),
+                        color: const Color(0xFFE3F2FD),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
@@ -479,7 +479,7 @@ class OrgCardView extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 9.5,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF1D4ED8),
+                          color: Color(0xFF2196F3),
                         ),
                       ),
                     ),
@@ -544,8 +544,8 @@ class LegendView extends StatelessWidget {
       spacing: 14,
       runSpacing: 6,
       children: [
-        chip(const Color(0xFF0B7267), _legendLabelAuto.of(lang)),
-        chip(const Color(0xFF1D4ED8), _legendLabelRaw.of(lang)),
+        chip(const Color(0xFF1B5E20), _legendLabelAuto.of(lang)),
+        chip(const Color(0xFF2196F3), _legendLabelRaw.of(lang)),
         chip(const Color(0xFF94A3B8), _legendLabelBlank.of(lang)),
       ],
     );

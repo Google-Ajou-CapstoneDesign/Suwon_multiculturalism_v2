@@ -756,7 +756,7 @@ class _WageCalculatorScreenState extends State<WageCalculatorScreen> {
             padding: const EdgeInsets.symmetric(vertical: 10),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: const Color(0xFFEEF3FE),
+              color: const Color(0xFFE3F2FD),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -768,7 +768,7 @@ class _WageCalculatorScreenState extends State<WageCalculatorScreen> {
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF1D4ED8),
+                      color: Color(0xFF2196F3),
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),

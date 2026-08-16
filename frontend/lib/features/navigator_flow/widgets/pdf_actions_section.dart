@@ -83,7 +83,7 @@ class PdfActionsSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F2947),
+        color: const Color(0xFF0D47A1),
         borderRadius: BorderRadius.circular(13),
       ),
       child: Column(
@@ -94,7 +94,7 @@ class PdfActionsSection extends StatelessWidget {
             style: const TextStyle(
               fontSize: 11.5,
               fontWeight: FontWeight.w800,
-              color: Color(0xFFF1F6FC),
+              color: Color(0xFFE3F2FD),
             ),
           ),
           const SizedBox(height: 9),
@@ -139,7 +139,7 @@ class PdfActionsSection extends StatelessWidget {
             child: TextButton(
               onPressed: () => _openPreview(context),
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFFA8BEDC),
+                foregroundColor: const Color(0xFF90CAF9),
               ),
               child: Text(
                 _pdfPreviewLabel.of(lang),

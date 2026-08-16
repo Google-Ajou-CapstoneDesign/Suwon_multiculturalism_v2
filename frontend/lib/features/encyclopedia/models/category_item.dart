@@ -160,8 +160,8 @@ const Map<int, CategoryItem> categoryById = {
 const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
   CategoryGroupId.a: CategoryGroupData(
     id: CategoryGroupId.a,
-    color: Color(0xFF1E40AF),
-    backgroundTint: Color(0xFFEEF3FE),
+    color: Color(0xFF2196F3),
+    backgroundTint: Color(0xFFE3F2FD),
     markLabel: L10nText(ko: '필수행정', en: 'ADMIN', zh: '必办手续', vi: 'THỦ TỤC'),
     name: L10nText(ko: '그룹 A', en: 'Group A ', zh: 'A组', vi: 'Nhóm A'),
     title: L10nText(
@@ -174,8 +174,8 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
   ),
   CategoryGroupId.b: CategoryGroupData(
     id: CategoryGroupId.b,
-    color: Color(0xFF0D9488),
-    backgroundTint: Color(0xFFE6F6F4),
+    color: Color(0xFF4CAF50),
+    backgroundTint: Color(0xFFE8F5E9),
     markLabel: L10nText(ko: '생활정착', en: 'LIVING', zh: '生活安顿', vi: 'SINH HOẠT'),
     name: L10nText(ko: '그룹 B', en: 'Group B', zh: 'B组', vi: 'Nhóm B'),
     title: L10nText(
@@ -188,8 +188,8 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
   ),
   CategoryGroupId.c: CategoryGroupData(
     id: CategoryGroupId.c,
-    color: Color(0xFFD97706),
-    backgroundTint: Color(0xFFFEF3E2),
+    color: Color(0xFF2196F3),
+    backgroundTint: Color(0xFFE3F2FD),
     markLabel: L10nText(ko: '노동권익', en: 'RIGHTS', zh: '劳动权益', vi: 'QUYỀN LỢI'),
     name: L10nText(ko: '그룹 C', en: 'Group C', zh: 'C组', vi: 'Nhóm C'),
     title: L10nText(
