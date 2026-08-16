@@ -13,7 +13,7 @@ enum _EntryStage { splash, onboarding, googleSignupCompletion, ready }
 
 enum _RedirectOutcome { none, existingUser, newGoogleUser }
 
-/// 앱 진입 오케스트레이션: 스플래시(약 2초) → 온보딩(언어·체류자격·서류) → 메인 셸.
+/// 앱 진입 오케스트레이션: 스플래시(약 2초) → 온보딩(언어·체류자격·사용 설명서) → 메인 셸.
 /// MainShell은 처음부터 트리에 마운트해두고 위에 오버레이만 덮는다 — 온보딩이
 /// 끝나자마자 별도 전환 애니메이션 없이 바로 이어지고, 탭 상태도 미리 준비된다.
 ///

@@ -4,10 +4,10 @@ import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
 import '../../auth/screens/login_screen.dart';
 import '../../auth/screens/signup_form_screen.dart';
+import '../models/onboarding_guide_strings.dart';
 
-/// 최초 실행 온보딩 — 언어 → 체류자격 → 서류 보관함 3단계.
+/// 최초 실행 온보딩 — 언어 → 체류자격 → 사용 설명서 3단계.
 /// 화면 전체를 덮고(스플래시 아래), 완료하거나 첫 단계에서 건너뛰면 사라진다.
-/// 서류 보관함은 실제 파일 업로드가 아니라 "넣어뒀다"는 상태만 기록하는 데모다.
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key, required this.onFinished});
 
@@ -35,12 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       zh: '登录后开始使用',
       vi: 'Đăng nhập để bắt đầu',
     ),
-    L10nText(
-      ko: '서류를 미리 넣어두세요',
-      en: 'Store your documents now',
-      zh: '请提前保存好证件资料',
-      vi: 'Hãy lưu giấy tờ trước',
-    ),
+    OnboardingGuideStrings.pageTitle,
   ];
 
   static const _subtitles = [
@@ -56,12 +51,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       zh: '注册时登记的居留资格将自动显示在MY VISA卡片中。不登录也可以继续。',
       vi: 'Tư cách lưu trú bạn đăng ký sẽ tự động áp dụng vào thẻ MY VISA. Bạn vẫn có thể tiếp tục mà không cần đăng nhập.',
     ),
-    L10nText(
-      ko: '근로계약서와 임금명세서는 나중에 가장 강한 증거가 됩니다. 지금 넣어두면 잃어버리지 않습니다.',
-      en: 'Your contract and payslips become the strongest evidence later. Store them now so you do not lose them.',
-      zh: '劳动合同和工资单日后将成为最有力的证据。现在保存好，以免遗失。',
-      vi: 'Hợp đồng và phiếu lương sau này là chứng cứ mạnh nhất. Lưu ngay để không bị mất.',
-    ),
+    OnboardingGuideStrings.pageSubtitle,
   ];
 
   static const _skipLabel = L10nText(
@@ -95,6 +85,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } else {
       widget.onFinished();
     }
+  }
+
+  void _skipLoginAndOpenGuide() {
+    setState(() => _step = _totalSteps - 1);
   }
 
   void _prev() {
@@ -176,11 +170,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     language: lang,
                     onAuthenticated: _next,
                   ),
-                  _ => _VaultStep(
-                    key: const ValueKey(2),
-                    profile: profile,
-                    language: lang,
-                  ),
+                  _ => _GuideStep(key: const ValueKey(2), language: lang),
                 },
               ),
             ),
@@ -194,7 +184,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: _prev,
+                      onPressed: _step == 0 ? _skipLoginAndOpenGuide : _prev,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         foregroundColor: AppColors.textSecondary,
@@ -388,86 +378,190 @@ class _VisaStep extends StatelessWidget {
   }
 }
 
-class _VaultStep extends StatelessWidget {
-  const _VaultStep({super.key, required this.profile, required this.language});
-  final UserProfileController profile;
+class _GuideStep extends StatelessWidget {
+  const _GuideStep({super.key, required this.language});
   final AppLanguage language;
+
+  static const _moduleIcons = <IconData>[
+    Icons.menu_book_rounded,
+    Icons.smart_toy_rounded,
+    Icons.calendar_month_rounded,
+    Icons.calculate_rounded,
+    Icons.alt_route_rounded,
+  ];
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 24),
       children: [
-        _VaultPickCard(
-          emoji: '📄',
-          title: const L10nText(
-            ko: '근로계약서 넣기',
-            en: 'Add your employment contract',
-            zh: '添加劳动合同',
-            vi: 'Thêm hợp đồng lao động',
-          ).of(language),
-          doneLabel: const L10nText(
-            ko: '보관됨',
-            en: 'Stored',
-            zh: '已保存',
-            vi: 'Đã lưu',
-          ).of(language),
-          idleLabel: const L10nText(
-            ko: '사진 · PDF · 카카오톡 캡처 모두 됩니다',
-            en: 'Photo, PDF or a KakaoTalk screenshot all work',
-            zh: '支持照片、PDF、KakaoTalk截图等各种格式',
-            vi: 'Ảnh, PDF hay ảnh chụp KakaoTalk đều được',
-          ).of(language),
-          done: profile.contractStored,
-          onTap: profile.toggleContractStored,
+        const Text(
+          'Local Bridge',
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w900,
+            color: AppColors.primary,
+            letterSpacing: -0.6,
+          ),
         ),
-        const SizedBox(height: 9),
-        _VaultPickCard(
-          emoji: '🧾',
-          title: const L10nText(
-            ko: '임금명세서 넣기',
-            en: 'Add a payslip',
-            zh: '添加工资单',
-            vi: 'Thêm phiếu lương',
-          ).of(language),
-          doneLabel: const L10nText(
-            ko: '보관됨',
-            en: 'Stored',
-            zh: '已保存',
-            vi: 'Đã lưu',
-          ).of(language),
-          idleLabel: const L10nText(
-            ko: '사진 · PDF · 카카오톡 캡처 모두 됩니다',
-            en: 'Photo, PDF or a KakaoTalk screenshot all work',
-            zh: '支持照片、PDF、KakaoTalk截图等各种格式',
-            vi: 'Ảnh, PDF hay ảnh chụp KakaoTalk đều được',
-          ).of(language),
-          done: profile.payslipStored,
-          onTap: profile.togglePayslipStored,
+        const SizedBox(height: 5),
+        Text(
+          OnboardingGuideStrings.tagline.of(language),
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: AppColors.primary,
+            height: 1.45,
+          ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 13),
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFE8F5E9),
-            border: Border.all(color: const Color(0xFFA5D6A7)),
-            borderRadius: BorderRadius.circular(11),
+            color: AppColors.blueBg,
+            border: Border.all(color: AppColors.blueBorder),
+            borderRadius: BorderRadius.circular(13),
           ),
           child: Text(
-            const L10nText(
-              ko: '💡 여기서 넣은 서류는 임금체불·산재 신고 때 가장 먼저 요구되는 증거입니다. 실제 업로드는 근무기록장 탭에서도 언제든 할 수 있어요.',
-              en: '💡 Documents you store here are the first evidence asked for when filing a wage or injury claim. You can always upload for real from the Work log tab.',
-              zh: '💡 在这里保存的资料是申报欠薪、工伤时最先被要求提供的证据。您也可以随时在工作记录本标签页中进行实际上传。',
-              vi: '💡 Giấy tờ lưu ở đây là bằng chứng đầu tiên được yêu cầu khi khiếu nại nợ lương hoặc tai nạn lao động. Bạn luôn có thể tải lên thật từ tab Nhật ký làm việc.',
-            ).of(language),
+            OnboardingGuideStrings.introduction.of(language),
             style: const TextStyle(
-              fontSize: 11,
-              color: Color(0xFF1B5E20),
-              height: 1.6,
+              fontSize: 11.5,
+              color: AppColors.textSecondary,
+              height: 1.65,
             ),
           ),
         ),
+        const SizedBox(height: 14),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(
+            children: List.generate(
+              OnboardingGuideStrings.modules.length,
+              (index) => Column(
+                children: [
+                  _GuideModuleRow(
+                    number: index + 1,
+                    icon: _moduleIcons[index],
+                    module: OnboardingGuideStrings.modules[index],
+                    language: language,
+                  ),
+                  if (index < OnboardingGuideStrings.modules.length - 1)
+                    const Divider(height: 1, color: AppColors.border),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.green50,
+            border: Border.all(color: AppColors.green200),
+            borderRadius: BorderRadius.circular(13),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                OnboardingGuideStrings.creatorTitle.of(language),
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.green900,
+                ),
+              ),
+              const SizedBox(height: 5),
+              const Text(
+                'Team EQ LAB',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.green900,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                OnboardingGuideStrings.creatorNames.of(language),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.green900,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
+    );
+  }
+}
+
+class _GuideModuleRow extends StatelessWidget {
+  const _GuideModuleRow({
+    required this.number,
+    required this.icon,
+    required this.module,
+    required this.language,
+  });
+
+  final int number;
+  final IconData icon;
+  final OnboardingGuideModuleText module;
+  final AppLanguage language;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: number.isEven ? AppColors.green50 : AppColors.blueBg,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              size: 19,
+              color: number.isEven ? AppColors.green900 : AppColors.primary,
+            ),
+          ),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${number.toString().padLeft(2, '0')}  ${module.title.of(language)}',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  module.description.of(language),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textSecondary,
+                    height: 1.55,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -550,67 +644,6 @@ class _PickRow extends StatelessWidget {
             ),
             if (selected)
               const Icon(Icons.check, size: 16, color: AppColors.primary),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _VaultPickCard extends StatelessWidget {
-  const _VaultPickCard({
-    required this.emoji,
-    required this.title,
-    required this.doneLabel,
-    required this.idleLabel,
-    required this.done,
-    required this.onTap,
-  });
-
-  final String emoji;
-  final String title;
-  final String doneLabel;
-  final String idleLabel;
-  final bool done;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 13),
-        decoration: BoxDecoration(
-          color: done ? const Color(0xFFE8F5E9) : const Color(0xFFFBFDFF),
-          border: Border.all(
-            color: done ? const Color(0xFFA5D6A7) : const Color(0xFF90CAF9),
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Text(emoji, style: const TextStyle(fontSize: 22)),
-            const SizedBox(height: 7),
-            Text(
-              done ? '$title ✓' : title,
-              style: TextStyle(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w700,
-                color: done ? const Color(0xFF1B5E20) : AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              done ? doneLabel : idleLabel,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 10.5,
-                color: AppColors.textMuted,
-                height: 1.5,
-              ),
-            ),
           ],
         ),
       ),

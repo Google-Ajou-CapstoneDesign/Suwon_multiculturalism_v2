@@ -1362,9 +1362,9 @@ class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
 
 /// 근로계약서·임금명세서·사업주 메시지·통화 녹음을 모아 보여주는 접이식
 /// 보관함. html_files/프론트엔드_최종.html의 "사업주 공식 증빙 보관함"을
-/// 그대로 옮겼다 — 계약서·명세서는 온보딩의 "서류 보관" 단계에서 채운
-/// UserProfileController.contractStored/payslipStored를 그대로 재사용하고
-/// (실제 파일 업로드는 아직 없어 "넣어뒀다"는 상태만 기록하는 것도 동일),
+/// 그대로 옮겼다. 계약서·명세서는 이 보관함에서
+/// UserProfileController.contractStored/payslipStored 상태를 직접 변경하며,
+/// 실제 파일 업로드는 아직 없어 "넣어뒀다"는 상태만 기록한다.
 /// 카톡·문자와 통화 녹음은 아직 저장할 방법이 없어 "준비 중" 안내만 띄운다.
 class _VaultBox extends StatefulWidget {
   const _VaultBox({required this.language});
