@@ -19,7 +19,12 @@ from ..services import document_search_service, history_service, org_service, wa
 logger = logging.getLogger(__name__)
 
 
-def build_tools(*, uid: Optional[str]) -> List[Callable]:
+def build_tools(
+    *,
+    uid: Optional[str],
+    latitude: Optional[float] = None,
+    longitude: Optional[float] = None,
+) -> List[Callable]:
     def get_user_history(limit: int = 5) -> dict:
         """이 사용자의 최근 상담 이력을 조회합니다.
 
@@ -79,11 +84,7 @@ def build_tools(*, uid: Optional[str]) -> List[Callable]:
         result = wage_rules.classify(facts)
         return result.model_dump(mode="json")
 
-    def search_support_orgs(
-        situation: str = "",
-        lat: Optional[float] = None,
-        lng: Optional[float] = None,
-    ) -> dict:
+    def search_support_orgs(situation: str = "") -> dict:
         """GCP(Firestore)에 등록된 중앙정부·경기도·수원시·법률지원 기관 중,
         사용자 상황에 실제로 맞는 곳을 찾아 가까운 순으로 정렬해 돌려줍니다.
         기관을 추천하거나 문의처를 안내할 때 호출하세요.
@@ -94,18 +95,20 @@ def build_tools(*, uid: Optional[str]) -> List[Callable]:
                 가야 할지 모름", "산재를 당했는데 사업주가 산재 처리를
                 거부함"). 반드시 채우세요 — 비워두면 관련도 판단 없이
                 아무 기관이나 반환됩니다.
-            lat: 사용자 위도. 모르면 비워두세요.
-            lng: 사용자 경도. 모르면 비워두세요.
-
         Returns:
             관련도·거리순으로 정렬된 기관 목록(orgs, 최대 3개). 각 항목은
             이름(name)·설명(description)·전화번호(phone_number)·주소(address)·
             이용시간(business_hours)·홈페이지(website_url)·이메일(email)·
-            거리(distance_km, 위치 정보가 없으면 0)를 담고 있으니 답변에
+            거리(distance_km, 위치 정보가 없으면 null)를 담고 있으니 답변에
             자유롭게 인용하세요.
         """
         try:
-            orgs = org_service.find_relevant_orgs(situation=situation, lat=lat, lng=lng, limit=3)
+            orgs = org_service.find_relevant_orgs(
+                situation=situation,
+                lat=latitude,
+                lng=longitude,
+                limit=3,
+            )
         except Exception as exc:  # noqa: BLE001 - 도구 실패를 모델에게 알려 회복시킨다.
             log_exception_summary(logger, "기관 조회 도구 실패", exc)
             logger.exception("기관 조회 도구 실패 전체 트레이스백")

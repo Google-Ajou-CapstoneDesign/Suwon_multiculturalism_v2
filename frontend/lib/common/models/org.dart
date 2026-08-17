@@ -4,9 +4,9 @@ class Org {
 
   factory Org.fromJson(Map<String, dynamic> json) => Org(
     name: json['name'] as String,
-    distanceKm: (json['distanceKm'] as num).toDouble(),
+    distanceKm: (json['distanceKm'] as num?)?.toDouble(),
   );
 
   final String name;
-  final double distanceKm;
+  final double? distanceKm;
 }

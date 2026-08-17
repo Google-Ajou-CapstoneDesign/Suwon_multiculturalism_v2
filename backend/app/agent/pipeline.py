@@ -129,6 +129,8 @@ async def run_agent(
     lifecycle_stage: Optional[str],
     history: Optional[List[ChatTurn]] = None,
     language: Optional[str] = None,
+    latitude: Optional[float] = None,
+    longitude: Optional[float] = None,
 ) -> AgentResult:
     """Tools를 갖춘 Gemini 에이전트를 한 번 실행해 답변과 에이전트의 판단(AgentResult)을 반환한다."""
 
@@ -141,7 +143,11 @@ async def run_agent(
         # 안전하게 만든다.
         model=Gemini(model=get_model_name(), client_kwargs=resolve_client_kwargs()),
         instruction=_SYSTEM_INSTRUCTION,
-        tools=build_tools(uid=uid),
+        tools=build_tools(
+            uid=uid,
+            latitude=latitude,
+            longitude=longitude,
+        ),
         # thinking_budget=0으로 지연을 줄이려던 시도가 답변을 지나치게 짧고
         # 부실하게 만드는 부작용을 일으켜 되돌린다 — 이 모델은 도구 호출 판단과
         # 답변 구성에 thinking 예산이 필요하다. 지연보다 답변 품질을 우선한다.

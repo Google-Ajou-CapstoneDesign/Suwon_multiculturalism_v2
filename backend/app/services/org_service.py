@@ -37,21 +37,8 @@ logger = logging.getLogger(__name__)
 _FALLBACK_PATH = Path(__file__).resolve().parent.parent / "data" / "organizations.json"
 _FIRESTORE_COLLECTION = "organizations"
 
-# 사용자 위치는 알지만 기관 좌표가 없는 경우(예: 오프라인 주소가 없는 콜센터) —
-# 실제 거리로 오인하지 않도록 뒤로 밀어내는 정렬용 큰 값.
-_NO_COORDS_DISTANCE_KM = 999.0
-
-
 def _read_fallback_orgs() -> List[Dict[str, Any]]:
     return json.loads(_FALLBACK_PATH.read_text(encoding="utf-8"))
-
-
-# GET /api/orgs 등 "위치 정보 없음" 상태에서 쓰는 정적 기본 목록 — Firestore
-# 연동 여부와 무관하게 항상 같은 로컬 데이터로 만든다(과거 orgs.json 5건과
-# 동일한 역할, 지금은 32건).
-DEFAULT_ORGS: List[Org] = [
-    Org(name=o["name"], distance_km=0.0) for o in _read_fallback_orgs()
-]
 
 
 @lru_cache
@@ -89,12 +76,14 @@ def _haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
     return 2 * r * math.asin(math.sqrt(a))
 
 
-def _distance_km(lat: Optional[float], lng: Optional[float], org: Dict[str, Any]) -> float:
+def _distance_km(
+    lat: Optional[float], lng: Optional[float], org: Dict[str, Any]
+) -> Optional[float]:
     if lat is None or lng is None:
-        return 0.0
+        return None
     org_lat, org_lng = org.get("latitude"), org.get("longitude")
     if org_lat is None or org_lng is None:
-        return _NO_COORDS_DISTANCE_KM
+        return None
     return round(_haversine_km(lat, lng, org_lat, org_lng), 1)
 
 
@@ -113,7 +102,11 @@ def list_orgs(
         Org(name=o["name"], distance_km=_distance_km(lat, lng, o)) for o in orgs
     ]
     if lat is not None and lng is not None:
-        scored.sort(key=lambda org: org.distance_km)
+        scored.sort(
+            key=lambda org: org.distance_km
+            if org.distance_km is not None
+            else math.inf
+        )
     return scored
 
 
@@ -207,5 +200,9 @@ def find_relevant_orgs(
         result.append(item)
 
     if lat is not None and lng is not None:
-        result.sort(key=lambda o: o["distance_km"])
+        result.sort(
+            key=lambda o: o["distance_km"]
+            if o["distance_km"] is not None
+            else math.inf
+        )
     return result

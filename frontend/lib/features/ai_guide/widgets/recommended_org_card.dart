@@ -20,6 +20,19 @@ class RecommendedOrgCard extends StatelessWidget {
     zh: '◎ 基于您位置推荐的机构',
     vi: '◎ Cơ quan gợi ý theo vị trí của bạn',
   );
+  static const _distanceUnavailable = L10nText(
+    ko: '거리 정보 없음',
+    en: 'Distance unavailable',
+    zh: '无距离信息',
+    vi: 'Không có khoảng cách',
+  );
+
+  String _distanceLabel(Org org) {
+    final distance = org.distanceKm;
+    if (distance == null) return _distanceUnavailable.of(language);
+    if (distance < 0.1) return '<0.1km';
+    return '${distance.toStringAsFixed(1)}km';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +63,18 @@ class RecommendedOrgCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    org.name,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textPrimary,
+                  Expanded(
+                    child: Text(
+                      org.name,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 8),
                   Text(
-                    '${org.distanceKm}km',
+                    _distanceLabel(org),
                     style: const TextStyle(
                       fontSize: 11,
                       color: AppColors.textMuted,

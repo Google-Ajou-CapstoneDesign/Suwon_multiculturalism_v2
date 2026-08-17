@@ -27,8 +27,7 @@ from ..core.genai_client import get_genai_client, get_model_name
 from ..core.logging_utils import log_exception_summary
 from ..schemas.chat import ChatRequest, ChatResponse, ChatTurn, RoutingTarget
 from ..schemas.org import Org
-from . import history_service
-from .org_service import DEFAULT_ORGS
+from . import history_service, org_service
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +36,32 @@ Intent = Literal["wage", "accident", "contract", "meta", "off_topic"]
 # 에이전트를 실제로 호출하는 의도 — 나머지(off_topic)는 정중히 거절만 하고
 # Gemini를 부르지 않는다(비용·오남용 방지).
 _AGENT_INTENTS: frozenset = frozenset({"wage", "accident", "contract", "meta"})
+
+_ORG_CATEGORY_BY_INTENT = {
+    "wage": "임금",
+    "accident": "산재",
+    "contract": "근로계약",
+}
+
+
+def _fallback_orgs(request: ChatRequest, intent: Intent, limit: int) -> List[Org]:
+    """에이전트가 기관 도구를 호출하지 않거나 실패해도 기기 위치 기준의
+    실제 거리와 상황별 기본 기관을 반환한다."""
+    category = _ORG_CATEGORY_BY_INTENT.get(intent)
+    if category is None:
+        return []
+
+    orgs = org_service.list_orgs(
+        lat=request.latitude,
+        lng=request.longitude,
+        category=category,
+    )
+    if not orgs:
+        orgs = org_service.list_orgs(
+            lat=request.latitude,
+            lng=request.longitude,
+        )
+    return orgs[:limit]
 
 
 class IntentClassification(BaseModel):
@@ -231,7 +256,7 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
     # 경우에만 채운다(urgent).
     risk_notice: Optional[str] = None
     routing_target: Optional[RoutingTarget] = None
-    orgs: List[Org] = DEFAULT_ORGS[:1] if intent in ("wage", "accident", "contract") else []
+    orgs = _fallback_orgs(request, intent, limit=1)
 
     if intent in _AGENT_INTENTS:
         try:
@@ -242,6 +267,8 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
                 lifecycle_stage=request.lifecycle_stage,
                 history=request.history,
                 language=language,
+                latitude=request.latitude,
+                longitude=request.longitude,
             )
             fact_answer = agent_result.text
             if agent_result.urgent:
@@ -260,7 +287,7 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
             if intent != "meta":
                 risk_notice = _pick(content["risk_notice"], language)
                 routing_target = content["routing_target"]
-                orgs = DEFAULT_ORGS[:2]
+                orgs = _fallback_orgs(request, intent, limit=2)
 
     response = ChatResponse(
         fact_answer=fact_answer,

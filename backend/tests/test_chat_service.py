@@ -55,3 +55,25 @@ async def test_fallback_answer_follows_app_language_setting(monkeypatch):
 
     assert response.fact_answer == chat_service._CONTENT["wage"]["fact_answer"]["en"]
     assert response.fact_answer != chat_service._CONTENT["wage"]["fact_answer"]["ko"]
+
+
+async def test_current_location_is_forwarded_to_agent(monkeypatch):
+    captured = {}
+
+    async def _fake_run_agent(**kwargs):
+        captured.update(kwargs)
+        return SimpleNamespace(text="위치 기반 응답", urgent=False, orgs=[])
+
+    monkeypatch.setattr(chat_service, "get_genai_client", lambda: None)
+    monkeypatch.setattr(chat_service, "run_agent", _fake_run_agent)
+
+    await chat_service.answer(
+        ChatRequest(
+            message="임금체불 기관을 알려주세요",
+            latitude=37.2636,
+            longitude=127.0286,
+        )
+    )
+
+    assert captured["latitude"] == 37.2636
+    assert captured["longitude"] == 127.0286

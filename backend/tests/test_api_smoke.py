@@ -25,6 +25,21 @@ def test_orgs_default_list_without_location():
     # DB/Organizations/*.csv 5개 파일(scripts/geocode_organizations.py로 지오코딩)
     # 총 32개 기관 — 개수가 바뀌면 데이터 유실/중복을 의심해볼 신호가 된다.
     assert len(response.json()) == 32
+    assert all(org["distanceKm"] is None for org in response.json())
+
+
+def test_orgs_calculates_distance_from_current_location():
+    response = client.get("/api/orgs", params={"lat": 37.2636, "lng": 127.0286})
+
+    assert response.status_code == 200
+    distances = [
+        org["distanceKm"]
+        for org in response.json()
+        if org["distanceKm"] is not None
+    ]
+    assert distances
+    assert distances == sorted(distances)
+    assert any(distance > 0 for distance in distances)
 
 
 def test_wage_classify_requires_auth_dev_bypass_ok():

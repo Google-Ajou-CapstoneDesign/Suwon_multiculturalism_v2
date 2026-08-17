@@ -131,6 +131,13 @@ class EncyclopediaStrings {
     zh: '原样填写',
     vi: 'Chép nguyên văn',
   );
+  static const previousPage = L10nText(
+    ko: '이전',
+    en: 'Previous',
+    zh: '上一页',
+    vi: 'Trước',
+  );
+  static const nextPage = L10nText(ko: '다음', en: 'Next', zh: '下一页', vi: 'Tiếp');
   static String itemCount(AppLanguage lang, int n) {
     switch (lang) {
       case AppLanguage.ko:

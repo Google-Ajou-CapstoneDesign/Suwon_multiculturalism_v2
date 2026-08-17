@@ -106,16 +106,16 @@ const _moreThanCalculated = _S(
 );
 const _gapLabel = _S('차액', 'Difference', '差额', 'Chênh lệch');
 const _aiDiagnosisPositive = _S(
-  '🤖 왜 더 받아야 하는지 AI 진단 보기',
-  '🤖 See AI diagnosis on why you should receive more',
-  '🤖 查看AI诊断：为什么应该多收到',
-  '🤖 Xem chẩn đoán AI về lý do bạn nên nhận nhiều hơn',
+  '🤖 왜 더 받아야 하는지 진단 보기',
+  '🤖 See diagnosis on why you should receive more',
+  '🤖 查看诊断：为什么应该多收到',
+  '🤖 Xem chẩn đoán về lý do bạn nên nhận nhiều hơn',
 );
 const _aiDiagnosisNegative = _S(
-  '🤖 왜 차이가 나는지 AI 진단 보기',
-  '🤖 See AI diagnosis on why there is a difference',
-  '🤖 查看AI诊断：为什么会有差异',
-  '🤖 Xem chẩn đoán AI về lý do có sự chênh lệch',
+  '🤖 왜 차이가 나는지 진단 보기',
+  '🤖 See diagnosis on why there is a difference',
+  '🤖 查看诊断：为什么会有差异',
+  '🤖 Xem chẩn đoán về lý do có sự chênh lệch',
 );
 const _aiDiagnosisTitle = _S(
   '🤖 AI 맞춤 진단',

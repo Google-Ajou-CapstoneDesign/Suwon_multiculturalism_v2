@@ -30,6 +30,30 @@ class CategoryDetailScreen extends StatefulWidget {
 
 class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
   late bool _starred = widget.starred;
+  late final PageController _pageController;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _goToPage(int page, int pageCount) {
+    if (page < 0 || page >= pageCount || page == _currentPage) return;
+
+    _pageController.animateToPage(
+      page,
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,16 +114,41 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 ),
               ),
             )
-          : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
-              itemCount: detail.pages.length,
-              itemBuilder: (context, i) => _BookPageSection(
-                page: detail.pages[i],
-                pageNumber: i + 1,
-                totalPages: detail.pages.length,
-                groupColor: group.color,
-                language: widget.language,
-              ),
+          : Column(
+              children: [
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    reverse: true,
+                    itemCount: detail.pages.length,
+                    onPageChanged: (page) {
+                      setState(() => _currentPage = page);
+                    },
+                    itemBuilder: (context, i) => ListView(
+                      key: PageStorageKey(
+                        'encyclopedia-${widget.categoryId}-$i',
+                      ),
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                      children: [
+                        _BookPageSection(
+                          page: detail.pages[i],
+                          pageNumber: i + 1,
+                          groupColor: group.color,
+                          language: widget.language,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                _PageNavigation(
+                  currentPage: _currentPage,
+                  pageCount: detail.pages.length,
+                  color: group.color,
+                  language: widget.language,
+                  onPageSelected: (page) =>
+                      _goToPage(page, detail.pages.length),
+                ),
+              ],
             ),
     );
   }
@@ -109,14 +158,12 @@ class _BookPageSection extends StatelessWidget {
   const _BookPageSection({
     required this.page,
     required this.pageNumber,
-    required this.totalPages,
     required this.groupColor,
     required this.language,
   });
 
   final BookPage page;
   final int pageNumber;
-  final int totalPages;
   final Color groupColor;
   final AppLanguage language;
 
@@ -237,12 +284,106 @@ class _BookPageSection extends StatelessWidget {
             ),
             const SizedBox(height: 10),
           ],
-          if (pageNumber < totalPages)
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Divider(color: AppColors.border.withValues(alpha: 0.6)),
-            ),
         ],
+      ),
+    );
+  }
+}
+
+class _PageNavigation extends StatelessWidget {
+  const _PageNavigation({
+    required this.currentPage,
+    required this.pageCount,
+    required this.color,
+    required this.language,
+    required this.onPageSelected,
+  });
+
+  final int currentPage;
+  final int pageCount;
+  final Color color;
+  final AppLanguage language;
+  final ValueChanged<int> onPageSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(8, 7, 8, 9),
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: AppColors.border)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextButton.icon(
+                onPressed: currentPage == 0
+                    ? null
+                    : () => onPageSelected(currentPage - 1),
+                icon: const Icon(Icons.chevron_left, size: 20),
+                label: Text(EncyclopediaStrings.previousPage.of(language)),
+              ),
+            ),
+            SizedBox(
+              width: 126,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(pageCount, (index) {
+                      final selected = index == currentPage;
+                      return Semantics(
+                        button: true,
+                        selected: selected,
+                        label: '${index + 1} / $pageCount',
+                        child: InkWell(
+                          onTap: () => onPageSelected(index),
+                          borderRadius: BorderRadius.circular(8),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 2,
+                              vertical: 3,
+                            ),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              width: selected ? 14 : 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: selected ? color : AppColors.border,
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${currentPage + 1} / $pageCount',
+                    style: const TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TextButton.icon(
+                onPressed: currentPage == pageCount - 1
+                    ? null
+                    : () => onPageSelected(currentPage + 1),
+                iconAlignment: IconAlignment.end,
+                icon: const Icon(Icons.chevron_right, size: 20),
+                label: Text(EncyclopediaStrings.nextPage.of(language)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

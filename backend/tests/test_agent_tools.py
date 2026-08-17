@@ -6,8 +6,8 @@ from app.agent.tools import build_tools
 _ORGS_JSON = Path(__file__).resolve().parent.parent / "app" / "data" / "organizations.json"
 
 
-def _tool(name: str, uid=None):
-    tools = build_tools(uid=uid)
+def _tool(name: str, uid=None, latitude=None, longitude=None):
+    tools = build_tools(uid=uid, latitude=latitude, longitude=longitude)
     return next(t for t in tools if t.__name__ == name)
 
 
@@ -71,12 +71,26 @@ def test_search_support_orgs_filters_by_situation_via_keyword_fallback():
 def test_search_support_orgs_sorts_by_distance_when_location_given():
     data = json.loads(_ORGS_JSON.read_text(encoding="utf-8"))
     target = next(o for o in data if o.get("latitude") is not None)
-    search_support_orgs = _tool("search_support_orgs")
+    search_support_orgs = _tool(
+        "search_support_orgs",
+        latitude=target["latitude"],
+        longitude=target["longitude"],
+    )
 
-    result = search_support_orgs(lat=target["latitude"], lng=target["longitude"])
+    result = search_support_orgs()
 
     distances = [o["distance_km"] for o in result["orgs"]]
-    assert distances == sorted(distances)
+    known_distances = [distance for distance in distances if distance is not None]
+    assert known_distances == sorted(known_distances)
+    assert distances[0] == 0.0
+
+
+def test_search_support_orgs_without_location_does_not_report_false_zero():
+    search_support_orgs = _tool("search_support_orgs")
+
+    result = search_support_orgs(situation="임금체불 진정 제기")
+
+    assert all(o["distance_km"] is None for o in result["orgs"])
 
 
 def test_search_reference_documents_returns_empty_when_datastore_unconfigured():
