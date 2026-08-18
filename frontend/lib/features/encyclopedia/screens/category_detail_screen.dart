@@ -135,6 +135,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                           pageNumber: i + 1,
                           groupColor: group.color,
                           language: widget.language,
+                          source: item.source,
                         ),
                       ],
                     ),
@@ -160,12 +161,14 @@ class _BookPageSection extends StatelessWidget {
     required this.pageNumber,
     required this.groupColor,
     required this.language,
+    required this.source,
   });
 
   final BookPage page;
   final int pageNumber;
   final Color groupColor;
   final AppLanguage language;
+  final String source;
 
   @override
   Widget build(BuildContext context) {
@@ -284,6 +287,19 @@ class _BookPageSection extends StatelessWidget {
             ),
             const SizedBox(height: 10),
           ],
+          const SizedBox(height: 2),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '${EncyclopediaStrings.sourceLabel.of(language)}: $source',
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                fontSize: 9,
+                color: AppColors.textMuted,
+                height: 1.45,
+              ),
+            ),
+          ),
         ],
       ),
     );

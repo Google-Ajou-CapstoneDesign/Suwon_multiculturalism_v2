@@ -138,6 +138,12 @@ class EncyclopediaStrings {
     vi: 'Trước',
   );
   static const nextPage = L10nText(ko: '다음', en: 'Next', zh: '下一页', vi: 'Tiếp');
+  static const sourceLabel = L10nText(
+    ko: '출처',
+    en: 'Source',
+    zh: '来源',
+    vi: 'Nguồn',
+  );
   static String itemCount(AppLanguage lang, int n) {
     switch (lang) {
       case AppLanguage.ko:
