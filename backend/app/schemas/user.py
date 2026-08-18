@@ -15,6 +15,14 @@ class UpsertUserProfileRequest(CamelModel):
     preferred_language: str = "ko"
 
 
+class VaultUpdateRequest(CamelModel):
+    """PATCH /api/users/me/vault — 사업주 공식 증빙 보관함(계약서/명세서)
+    등록 여부 토글. 둘 다 optional이라 바꾸고 싶은 항목만 보내면 된다."""
+
+    contract_stored: Optional[bool] = None
+    payslip_stored: Optional[bool] = None
+
+
 class UserProfile(CamelModel):
     """GET/PUT /api/users/me 응답. docs/firestore_스키마.md의 users/{uid} 스키마와
     필드를 맞춘다 — password는 애초에 저장하지 않으므로 여기도 없다."""

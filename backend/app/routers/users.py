@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..core.auth import CurrentUser, get_current_user
-from ..schemas.user import UpsertUserProfileRequest, UserProfile
+from ..schemas.user import UpsertUserProfileRequest, UserProfile, VaultUpdateRequest
 from ..services import user_service
 
 router = APIRouter(prefix="/api/users", tags=["users"])
@@ -25,4 +25,21 @@ def get_my_profile(user: CurrentUser = Depends(get_current_user)) -> UserProfile
     profile = user_service.get_user(user.uid)
     if profile is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="프로필이 없습니다.")
+    return profile
+
+
+@router.patch("/me/vault", response_model=UserProfile)
+def update_vault_status(
+    request: VaultUpdateRequest, user: CurrentUser = Depends(get_current_user)
+) -> UserProfile:
+    profile = user_service.update_vault_status(
+        user.uid,
+        contract_stored=request.contract_stored,
+        payslip_stored=request.payslip_stored,
+    )
+    if profile is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="프로필이 없거나 Firestore가 설정되지 않았습니다.",
+        )
     return profile

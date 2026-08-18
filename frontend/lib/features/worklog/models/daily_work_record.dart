@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
 
+String? _timeToHm(TimeOfDay? time) => time == null
+    ? null
+    : '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+
+TimeOfDay? _timeFromHm(String? value) {
+  if (value == null) return null;
+  final parts = value.split(':');
+  return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+}
+
 /// 하루치 근무기록. 임금체불·산재 신고의 1차 증거로 쓰인다.
 class DailyWorkRecord {
   const DailyWorkRecord({
@@ -38,6 +48,27 @@ class DailyWorkRecord {
     final minutes = (endMinutes - startMinutes) - breakMinutes;
     return Duration(minutes: minutes < 0 ? 0 : minutes);
   }
+
+  /// 백엔드 GET/PUT /api/worklog/days 응답(worklogs 문서)을 그대로 반영한다.
+  factory DailyWorkRecord.fromJson(Map<String, dynamic> json) => DailyWorkRecord(
+    clockIn: _timeFromHm(json['clockIn'] as String?),
+    clockOut: _timeFromHm(json['clockOut'] as String?),
+    breakMinutes: json['breakMinutes'] as int? ?? 0,
+    memo: json['memo'] as String? ?? '',
+    isOvertime: json['isOvertime'] as bool? ?? false,
+    isRisk: json['isRisk'] as bool? ?? false,
+    gpsVerified: json['gpsVerified'] as bool? ?? false,
+  );
+
+  /// PUT /api/worklog/days/{date} 요청 바디 — isOvertime/isRisk는 서버가
+  /// 판정하는 값이라 클라이언트가 보내지 않는다.
+  Map<String, dynamic> toUpsertJson() => {
+    'clockIn': _timeToHm(clockIn),
+    'clockOut': _timeToHm(clockOut),
+    'breakMinutes': breakMinutes,
+    'memo': memo,
+    'gpsVerified': gpsVerified,
+  };
 
   DailyWorkRecord copyWith({
     TimeOfDay? clockIn,

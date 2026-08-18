@@ -57,6 +57,19 @@ class ApiClient {
     return _decode(response);
   }
 
+  Future<dynamic> patchJson(
+    String path,
+    Map<String, dynamic> body, {
+    String? idToken,
+  }) async {
+    final response = await _client.patch(
+      _base.replace(path: path),
+      headers: _headers(idToken),
+      body: jsonEncode(body),
+    );
+    return _decode(response);
+  }
+
   Future<dynamic> getJson(
     String path, {
     Map<String, String>? query,

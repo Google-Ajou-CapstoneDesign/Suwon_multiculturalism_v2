@@ -48,6 +48,17 @@ class _MainShellState extends State<MainShell> {
 
   /// 홈 화면의 "오늘의 근무" 위젯과 근무기록장 시트가 같은 인스턴스를 공유한다.
   final _workLogController = WorkLogController();
+  bool? _lastSignedIn;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final signedIn = UserProfileScope.of(context).isSignedIn;
+    if (_lastSignedIn != signedIn) {
+      _lastSignedIn = signedIn;
+      _workLogController.setSignedIn(signedIn);
+    }
+  }
 
   @override
   void dispose() {

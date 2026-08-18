@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
+import '../../auth/services/auth_service.dart';
+import '../../auth/services/user_profile_api_service.dart';
 import '../controllers/work_log_controller.dart';
 import '../models/daily_work_record.dart';
 import '../screens/accident_navigator_screen.dart';
@@ -1376,6 +1378,8 @@ class _VaultBox extends StatefulWidget {
 
 class _VaultBoxState extends State<_VaultBox> {
   bool _open = false;
+  final _authService = AuthService();
+  final _userProfileApi = UserProfileApiService();
 
   void _showComingSoon(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1386,6 +1390,35 @@ class _VaultBoxState extends State<_VaultBox> {
         duration: const Duration(seconds: 2),
       ),
     );
+  }
+
+  void _toggleContract(UserProfileController profile) {
+    profile.toggleContractStored();
+    _syncVault(profile, contractStored: profile.contractStored);
+  }
+
+  void _togglePayslip(UserProfileController profile) {
+    profile.togglePayslipStored();
+    _syncVault(profile, payslipStored: profile.payslipStored);
+  }
+
+  Future<void> _syncVault(
+    UserProfileController profile, {
+    bool? contractStored,
+    bool? payslipStored,
+  }) async {
+    if (!profile.isSignedIn) return;
+    try {
+      final idToken = await _authService.currentIdToken();
+      if (idToken == null) return;
+      await _userProfileApi.updateVaultStatus(
+        idToken: idToken,
+        contractStored: contractStored,
+        payslipStored: payslipStored,
+      );
+    } catch (_) {
+      // 저장 실패해도 로컬 상태는 이미 반영돼 있으니 조용히 넘어간다.
+    }
   }
 
   @override
@@ -1477,7 +1510,7 @@ class _VaultBoxState extends State<_VaultBox> {
                               ),
                         stored: profile.contractStored,
                         language: lang,
-                        onTap: profile.toggleContractStored,
+                        onTap: () => _toggleContract(profile),
                       ),
                       const SizedBox(height: 8),
                       _VaultFileRow(
@@ -1490,7 +1523,7 @@ class _VaultBoxState extends State<_VaultBox> {
                               ),
                         stored: profile.payslipStored,
                         language: lang,
-                        onTap: profile.togglePayslipStored,
+                        onTap: () => _togglePayslip(profile),
                       ),
                       const SizedBox(height: 8),
                       _VaultFileRow(

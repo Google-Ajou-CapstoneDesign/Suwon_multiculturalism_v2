@@ -26,4 +26,18 @@ class UserProfileApiService {
     final json = await _client.getJson('/api/users/me', idToken: idToken);
     return json as Map<String, dynamic>?;
   }
+
+  /// 사업주 공식 증빙 보관함(계약서/명세서) 등록 여부를 서버에 반영한다.
+  /// 둘 다 optional이라 바꾸고 싶은 항목만 보내면 된다.
+  Future<Map<String, dynamic>> updateVaultStatus({
+    required String idToken,
+    bool? contractStored,
+    bool? payslipStored,
+  }) async {
+    final json = await _client.patchJson('/api/users/me/vault', {
+      'contractStored': ?contractStored,
+      'payslipStored': ?payslipStored,
+    }, idToken: idToken);
+    return json as Map<String, dynamic>;
+  }
 }

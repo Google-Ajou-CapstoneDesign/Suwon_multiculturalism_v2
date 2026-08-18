@@ -57,6 +57,29 @@ def upsert_user(uid: str, email: Optional[str], req: UpsertUserProfileRequest) -
         return None
 
 
+def update_vault_status(
+    uid: str, *, contract_stored: Optional[bool], payslip_stored: Optional[bool]
+) -> Optional[UserProfile]:
+    db = _client()
+    if db is None:
+        return None
+    try:
+        doc_ref = db.collection(_COLLECTION).document(uid)
+        if not doc_ref.get().exists:
+            return None
+        data = {"updated_at": datetime.now(timezone.utc)}
+        if contract_stored is not None:
+            data["contract_stored"] = contract_stored
+        if payslip_stored is not None:
+            data["payslip_stored"] = payslip_stored
+        doc_ref.set(data, merge=True)
+        return get_user(uid)
+    except Exception as exc:
+        log_exception_summary(logger, "보관함 상태 저장 실패", exc)
+        logger.exception("보관함 상태 저장 실패 전체 트레이스백")
+        return None
+
+
 def get_user(uid: str) -> Optional[UserProfile]:
     db = _client()
     if db is None:
