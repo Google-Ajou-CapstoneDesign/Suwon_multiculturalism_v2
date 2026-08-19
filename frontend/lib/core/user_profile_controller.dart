@@ -38,6 +38,18 @@ class UserProfileController extends ChangeNotifier {
 
   bool get isSignedIn => _uid != null;
 
+  /// 화면에 보여줄 이름 — 프로필에 저장된 이름이 없으면(예: 아직 백엔드에
+  /// name을 채우지 않은 계정) 이메일의 '@' 앞부분을 대신 쓴다. 비로그인이면
+  /// null이라 호출부가 게스트 문구로 대체한다.
+  String? get displayNameOrEmailPrefix {
+    if (!isSignedIn) return null;
+    if (_displayName != null && _displayName!.isNotEmpty) return _displayName;
+    final email = _email;
+    if (email == null || email.isEmpty) return null;
+    final at = email.indexOf('@');
+    return at > 0 ? email.substring(0, at) : email;
+  }
+
   /// 로그인/회원가입 성공 직후 한 번에 반영한다.
   void applyAuthenticatedProfile({
     required String uid,

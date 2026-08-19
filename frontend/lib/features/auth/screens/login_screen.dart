@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../../core/api_client.dart';
 import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
 import '../../../core/visa_status.dart';
@@ -51,10 +52,10 @@ class _S {
     vi: 'Chưa đăng ký? Đăng ký ngay',
   );
   static const errorInvalid = L10nText(
-    ko: '이메일 또는 비밀번호가 올바르지 않아요.',
+    ko: '올바르지 않은 아이디 또는 비밀번호 입니다',
     en: 'Incorrect email or password.',
-    zh: '邮箱或密码不正确。',
-    vi: 'Email hoặc mật khẩu không đúng.',
+    zh: '账号或密码不正确。',
+    vi: 'Tài khoản hoặc mật khẩu không đúng.',
   );
   static const googleFailed = L10nText(
     ko: 'Google 로그인에 실패했어요. 잠시 후 다시 시도해주세요.',
@@ -90,11 +91,27 @@ class _LoginFormBodyState extends State<LoginFormBody> {
     super.dispose();
   }
 
-  Future<void> _applyProfileAfterLogin(String uid, String? email) async {
+  Future<void> _applyProfileAfterLogin(
+    String uid,
+    String? email,
+    AppLanguage lang,
+  ) async {
+    if (!mounted) return;
+    // Firebase Auth 로그인 자체는 이미 성공했으니, 아래 백엔드 프로필 조회
+    // 결과와 무관하게 uid/email부터 즉시 반영한다 — isSignedIn이 이 조회
+    // 성공 여부에 좌우되면, 조회가 실패했을 때(네트워크·백엔드 미기동·
+    // Firestore 미설정 등) 로그인 자체가 안 된 것처럼 보이는 문제가 생긴다.
+    UserProfileScope.of(
+      context,
+    ).applyAuthenticatedProfile(uid: uid, email: email);
     try {
       final idToken = await _authService.currentIdToken();
       if (idToken == null) return;
-      final profile = await _userProfileApi.fetchProfile(idToken: idToken);
+      final profile = await _fetchOrCreateProfile(
+        idToken: idToken,
+        email: email,
+        lang: lang,
+      );
       if (!mounted) return;
       final visaCode = profile?['visaType'] as String?;
       final visa = VisaStatus.values
@@ -108,7 +125,31 @@ class _LoginFormBodyState extends State<LoginFormBody> {
         nationality: profile?['nationality'] as String?,
       );
     } catch (_) {
-      // 프로필 조회 실패해도 로그인 자체는 성공한 상태이므로 조용히 넘어간다.
+      // 프로필 조회/생성 실패해도 uid는 이미 반영돼 로그인 상태로 보이니 조용히 넘어간다.
+    }
+  }
+
+  /// 프로필을 조회하되, 404(Firestore에 users/{uid} 문서가 아직 없는 계정 —
+  /// 이 엔드포인트가 생기기 전에 가입했거나 가입 중 PUT이 실패한 경우)면
+  /// 최소 정보로 지금 만들어서 다음부터는 정상 조회되게 한다(자가치유).
+  Future<Map<String, dynamic>?> _fetchOrCreateProfile({
+    required String idToken,
+    required String? email,
+    required AppLanguage lang,
+  }) async {
+    try {
+      return await _userProfileApi.fetchProfile(idToken: idToken);
+    } on ApiException catch (e) {
+      if (e.statusCode != 404) rethrow;
+      final fallbackName =
+          _authService.currentUser?.displayName ??
+          email?.split('@').first ??
+          '';
+      return await _userProfileApi.upsertProfile(
+        idToken: idToken,
+        name: fallbackName,
+        preferredLanguage: lang.code.toLowerCase(),
+      );
     }
   }
 
@@ -119,7 +160,11 @@ class _LoginFormBodyState extends State<LoginFormBody> {
         _emailController.text.trim(),
         _passwordController.text,
       );
-      await _applyProfileAfterLogin(credential.user!.uid, credential.user!.email);
+      await _applyProfileAfterLogin(
+        credential.user!.uid,
+        credential.user!.email,
+        lang,
+      );
       if (!mounted) return;
       widget.onSuccess();
     } on FirebaseAuthException catch (_) {
@@ -137,7 +182,11 @@ class _LoginFormBodyState extends State<LoginFormBody> {
     try {
       final credential = await _authService.signInWithGoogle();
       if (credential == null) return; // 취소 또는 웹 리다이렉트로 페이지 이동
-      await _applyProfileAfterLogin(credential.user!.uid, credential.user!.email);
+      await _applyProfileAfterLogin(
+        credential.user!.uid,
+        credential.user!.email,
+        lang,
+      );
       if (!mounted) return;
       widget.onSuccess();
     } catch (_) {

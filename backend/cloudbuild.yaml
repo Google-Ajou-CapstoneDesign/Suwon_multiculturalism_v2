@@ -41,9 +41,15 @@ steps:
       # FIREBASE_CREDENTIALS_JSON처럼 시크릿인 값은 여기 넣지 않고
       # --set-secrets(Secret Manager 연동)로 별도 관리한다.
       - --set-env-vars=GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=us-central1,GENAI_MODEL=gemini-2.5-flash,DISCOVERY_ENGINE_ID=capstone-design-document_1786499678311,DISCOVERY_ENGINE_LOCATION=global
-      # TODO(backend): FIREBASE_STORAGE_BUCKET(실제 버킷명 확인 후 채우기)과
-      # FIREBASE_CREDENTIALS_JSON(Secret Manager --set-secrets)은 아직 여기
-      # 없다 — 실제 값을 확인하기 전까지 추측값을 넣지 않았다.
+      # Secret Manager의 service_account_firebase 시크릿(Firebase 서비스 계정
+      # 키 JSON 원문)을 FIREBASE_CREDENTIALS_JSON 환경변수로 그대로 주입한다
+      # — core/firebase.py가 이 값을 json.loads()로 바로 파싱하므로 시크릿
+      # 값 자체가 파일 경로가 아니라 JSON 내용이어야 한다. Cloud Build
+      # 서비스 계정에 이 시크릿의 Secret Manager Secret Accessor 권한이
+      # 없으면 배포 자체가 실패한다.
+      - --set-secrets=FIREBASE_CREDENTIALS_JSON=service_account_firebase:latest
+      # TODO(backend): FIREBASE_STORAGE_BUCKET(실제 버킷명 확인 후 채우기)은
+      # 아직 여기 없다 — 실제 값을 확인하기 전까지 추측값을 넣지 않았다.
 
 images:
   - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE_NAME}:$SHORT_SHA"

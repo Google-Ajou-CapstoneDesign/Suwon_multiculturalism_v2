@@ -131,9 +131,7 @@ class _HomeHeader extends StatelessWidget {
       < 18 => HomeStrings.greetingAfternoon,
       _ => HomeStrings.greetingEvening,
     };
-    final name = profile.isSignedIn
-        ? (profile.displayName ?? HomeStrings.guestName.of(lang))
-        : HomeStrings.guestName.of(lang);
+    final name = profile.displayNameOrEmailPrefix ?? HomeStrings.guestName.of(lang);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 14, 10),
