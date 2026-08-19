@@ -16,9 +16,11 @@ def test_logs_thought_parts(caplog):
     )
 
     with caplog.at_level(logging.INFO, logger="app.agent.pipeline"):
-        _log_agent_event(event)
+        _log_agent_event(event, "월급을 못 받았어요")
 
-    assert any("사고 과정" in r.message for r in caplog.records)
+    assert any(
+        "사고 과정" in r.message and "월급을 못 받았어요" in r.message for r in caplog.records
+    )
 
 
 def test_logs_function_call_and_response(caplog):
@@ -38,12 +40,16 @@ def test_logs_function_call_and_response(caplog):
     )
 
     with caplog.at_level(logging.INFO, logger="app.agent.pipeline"):
-        _log_agent_event(call_event)
-        _log_agent_event(response_event)
+        _log_agent_event(call_event, "월급을 못 받았어요")
+        _log_agent_event(response_event, "월급을 못 받았어요")
 
     messages = [r.message for r in caplog.records]
-    assert any("도구 호출" in m and "calculate_wage" in m for m in messages)
-    assert any("도구 결과" in m and "calculate_wage" in m for m in messages)
+    assert any(
+        "도구 호출" in m and "calculate_wage" in m and "월급을 못 받았어요" in m for m in messages
+    )
+    assert any(
+        "도구 결과" in m and "calculate_wage" in m and "월급을 못 받았어요" in m for m in messages
+    )
 
 
 def test_no_log_for_plain_final_answer(caplog):
@@ -53,6 +59,6 @@ def test_no_log_for_plain_final_answer(caplog):
     )
 
     with caplog.at_level(logging.INFO, logger="app.agent.pipeline"):
-        _log_agent_event(event)
+        _log_agent_event(event, "월급을 못 받았어요")
 
     assert caplog.records == []

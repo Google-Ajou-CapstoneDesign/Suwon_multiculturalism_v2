@@ -96,21 +96,31 @@ class AgentResult:
     orgs: List[Org] = field(default_factory=list)
 
 
-def _log_agent_event(event: Event) -> None:
+def _log_agent_event(event: Event, message: str) -> None:
     """에이전트 루프에서 일어난 사고 과정·도구 호출·도구 결과를 로그로 남긴다.
 
     에이전트구상.png의 Agent loop 내부(Gemini 응답 → 함수 호출 판단 → Tools 실행
     → 재전송)를 로그만으로도 그대로 따라갈 수 있게 하기 위함이다 — 사용자에게
-    나가는 답변에는 영향을 주지 않는다.
+    나가는 답변에는 영향을 주지 않는다. 매 줄에 사용자 질문(message)을 같이
+    남겨서, 여러 요청이 뒤섞여 찍히는 Cloud Run 로그에서도 이 사고 과정/도구
+    호출이 어떤 질문에 대한 것인지 줄 하나만 보고 바로 알 수 있게 한다.
     """
     if event.content and event.content.parts:
         for part in event.content.parts:
             if part.thought and part.text:
-                logger.info("🤔 [%s] 사고 과정: %s", event.author, part.text)
+                logger.info("🤔 [%s] 질문: %s | 사고 과정: %s", event.author, message, part.text)
     for call in event.get_function_calls():
-        logger.info("🔧 [%s] 도구 호출: %s(%s)", event.author, call.name, call.args)
+        logger.info(
+            "🔧 [%s] 질문: %s | 도구 호출: %s(%s)", event.author, message, call.name, call.args
+        )
     for response in event.get_function_responses():
-        logger.info("✅ [%s] 도구 결과: %s → %s", event.author, response.name, response.response)
+        logger.info(
+            "✅ [%s] 질문: %s | 도구 결과: %s → %s",
+            event.author,
+            message,
+            response.name,
+            response.response,
+        )
 
 
 _LANGUAGE_NAMES = {
@@ -200,7 +210,7 @@ async def run_agent(
     async for event in runner.run_async(
         user_id=effective_uid, session_id=session_id, new_message=new_message
     ):
-        _log_agent_event(event)
+        _log_agent_event(event, message)
         for call in event.get_function_calls():
             if call.name == "flag_urgent_action":
                 urgent = True
