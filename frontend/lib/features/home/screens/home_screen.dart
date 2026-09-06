@@ -510,8 +510,14 @@ class _WorkWidget extends StatelessWidget {
                           const SizedBox(height: 4.5),
                           _HomeLocationVerification(
                             verified: record.gpsVerified,
+                            address: record.verifiedAddress,
                             language: lang,
-                            onVerified: controller.markTodayLocationVerified,
+                            onVerified: (lat, lng, address) => controller
+                                .markTodayLocationVerified(
+                                  latitude: lat,
+                                  longitude: lng,
+                                  address: address,
+                                ),
                           ),
                         ],
                       ],
@@ -588,13 +594,19 @@ class _WorkWidget extends StatelessWidget {
 class _HomeLocationVerification extends StatefulWidget {
   const _HomeLocationVerification({
     required this.verified,
+    this.address,
     required this.language,
     required this.onVerified,
   });
 
   final bool verified;
+
+  /// 서버가 역지오코딩으로 돌려준 주소 — verified == true일 때만 값이 있을
+  /// 수 있다(지오코딩 실패 시엔 인증은 됐어도 null).
+  final String? address;
   final AppLanguage language;
-  final VoidCallback onVerified;
+  final void Function(double latitude, double longitude, String? address)
+  onVerified;
 
   @override
   State<_HomeLocationVerification> createState() =>
@@ -607,11 +619,17 @@ class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
   Future<void> _verify() async {
     setState(() => _verifying = true);
     try {
-      final status = await LocationVerifyService().verifyCurrentLocation();
+      final outcome = await LocationVerifyService().verifyCurrentLocation(
+        language: widget.language,
+      );
       if (!mounted) return;
-      switch (status) {
+      switch (outcome.status) {
         case LocationVerifyStatus.verified:
-          widget.onVerified();
+          widget.onVerified(
+            outcome.result!.latitude,
+            outcome.result!.longitude,
+            outcome.result!.address,
+          );
           break;
         case LocationVerifyStatus.serviceDisabled:
           _showMessage(HomeStrings.workGpsServiceDisabled.of(widget.language));
@@ -640,6 +658,8 @@ class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
   @override
   Widget build(BuildContext context) {
     if (widget.verified) {
+      // 좌표 숫자 대신 서버가 역지오코딩으로 돌려준 주소 문자열을 보여준다 —
+      // 지오코딩 실패 시(address == null)엔 인증 완료 문구만 남긴다.
       return Row(
         children: [
           Container(
@@ -652,12 +672,26 @@ class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
           ),
           const SizedBox(width: 7.5),
           Expanded(
-            child: Text(
-              HomeStrings.workGpsVerified.of(widget.language),
-              style: const TextStyle(
-                fontSize: 17,
-                color: AppColors.textSecondary,
+            child: Text.rich(
+              TextSpan(
+                text: HomeStrings.workGpsVerified.of(widget.language),
+                style: const TextStyle(
+                  fontSize: 17,
+                  color: AppColors.textSecondary,
+                ),
+                children: widget.address == null
+                    ? null
+                    : [
+                        TextSpan(
+                          text: ' (${widget.address})',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ],
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

@@ -70,6 +70,9 @@ def _to_model(data: dict) -> WorklogDay:
         is_overtime=data.get("is_overtime", False),
         is_risk=data.get("is_risk", False),
         gps_verified=data.get("gps_verified", False),
+        verified_latitude=data.get("verified_latitude"),
+        verified_longitude=data.get("verified_longitude"),
+        verified_address=data.get("verified_address"),
         evidence_file_ids=data.get("evidence_file_ids", []),
     )
 
@@ -92,6 +95,9 @@ def upsert_day(uid: str, day: date, patch: WorklogDayUpsert) -> Optional[Worklog
             "break_minutes": patch.break_minutes,
             "memo": patch.memo,
             "gps_verified": patch.gps_verified,
+            "verified_latitude": patch.verified_latitude,
+            "verified_longitude": patch.verified_longitude,
+            "verified_address": patch.verified_address,
             "is_overtime": worked_minutes > _OVERTIME_THRESHOLD_MINUTES,
             "updated_at": now,
         }

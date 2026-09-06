@@ -23,6 +23,16 @@ class WorklogDayUpsert(CamelModel):
     break_minutes: int = 0
     memo: str = ""
     gps_verified: bool = False
+    # /api/location/verify가 이미 좌표를 받아 그대로 돌려주고 있다 — 그 값을
+    # 프론트가 여기 실어 보내면(위치 인증 성공 시에만) 근무기록에 근거 좌표로
+    # 같이 남긴다. docs/firestore_스키마.md §2에서 제안했던 필드.
+    verified_latitude: Optional[float] = Field(default=None, ge=-90, le=90)
+    verified_longitude: Optional[float] = Field(default=None, ge=-180, le=180)
+    # /api/location/verify가 역지오코딩으로 이미 변환해 돌려준 주소 문자열을
+    # 그대로 실어 보낸다 — 좌표만 저장하면 화면에 다시 띄울 때마다 매번
+    # 재지오코딩해야 해서 비효율적이고, 인증 시점의 표시값을 그대로 남겨두는
+    # 편이 나중에 봐도 그때 무슨 주소로 인증됐는지 정확히 알 수 있다.
+    verified_address: Optional[str] = None
 
 
 class WorklogDay(CamelModel):
@@ -38,6 +48,9 @@ class WorklogDay(CamelModel):
     is_overtime: bool = False
     is_risk: bool = False
     gps_verified: bool = False
+    verified_latitude: Optional[float] = None
+    verified_longitude: Optional[float] = None
+    verified_address: Optional[str] = None
     evidence_file_ids: List[str] = []
 
 

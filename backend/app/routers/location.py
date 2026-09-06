@@ -14,4 +14,4 @@ async def verify_location(
     payload: LocationVerifyRequest,
     _user: Optional[CurrentUser] = Depends(get_optional_user),
 ) -> LocationVerifyResponse:
-    return location_service.verify_location(payload)
+    return await location_service.verify_location(payload)

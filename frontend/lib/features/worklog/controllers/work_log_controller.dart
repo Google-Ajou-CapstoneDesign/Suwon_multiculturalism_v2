@@ -139,11 +139,20 @@ class WorkLogController extends ChangeNotifier {
     _persistDay(key);
   }
 
-  void markTodayLocationVerified() {
+  void markTodayLocationVerified({
+    required double latitude,
+    required double longitude,
+    String? address,
+  }) {
     final key = today;
     final current = _records[key] ?? DailyWorkRecord.empty;
     if (current.clockIn == null || current.gpsVerified) return;
-    _records[key] = current.copyWith(gpsVerified: true);
+    _records[key] = current.copyWith(
+      gpsVerified: true,
+      verifiedLatitude: latitude,
+      verifiedLongitude: longitude,
+      verifiedAddress: address,
+    );
     notifyListeners();
     _persistDay(key);
   }

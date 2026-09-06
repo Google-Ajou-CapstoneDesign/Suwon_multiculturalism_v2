@@ -56,7 +56,8 @@
 | `is_overtime` | boolean | ✅ | 연장/야간 플래그(달력 점 표시용). 기본 `false`. |
 | `is_risk` | boolean | ✅ | 급여 미지급 의심 플래그(달력 붉은 테두리). 기본 `false`. |
 | `location_verified` | boolean | ✅ | 위치인증여부. `DailyWorkRecord.gpsVerified` — "📍 위치 인증 완료" vs "📍 사업장 외부 기록" 배지에 대응. 기본 `false`. |
-| `verified_latitude` / `verified_longitude` | number | – | ✨(제안) 위치 인증 시점의 좌표. 현재 클라이언트는 bool만 다루지만, 서버 스키마에는 근거 좌표를 남겨 두는 편이 나중에 임금체불·산재 진정 시 증빙력이 있다. |
+| `verified_latitude` / `verified_longitude` | number | – | (구현됨) 위치 인증 시점의 좌표. `POST /api/location/verify` 응답을 그대로 실어 `PUT /api/worklog/days/{date}`로 저장한다 — 임금체불·산재 진정 시 증빙력이 있다. |
+| `verified_address` | string | – | (구현됨) 위 좌표를 서버가 역지오코딩(OpenStreetMap Nominatim, `location_service.py`)해 사용자 언어로 변환한 주소 문자열. 화면에는 좌표 숫자 대신 이 값을 보여준다 — 지오코딩 실패 시 null(그래도 인증 자체는 막지 않는다). |
 | `evidence_file_ids` | array\<string\> | – | ✨(제안) 첨부된 사진/명세서 — 아래 §4 `evidence_files.file_id` 참조. 클라이언트의 📷/📎 첨부 버튼(🔧 `work_log_sheet.dart`의 TODO)이 최종적으로 채우게 될 필드. |
 | `created_at` / `updated_at` | timestamp | ✅ | 생성/수정 시각. |
 

@@ -13,3 +13,6 @@
     - Cloud run에서 API 빌드 후 사용
 - DB
     - firebase 사용
+
+## 인지할 사항
+- 현재 디렉토리의 커밋이 그대로 Cloud Run에 올라가는게 아닌, Local_Bridge_Backend라는 다른 디렉토리에 복사하고 거기서 커밋을 진행한다. 따라서 Cloud Run의 리비전과 현재 디렉토리 커밋 리비전이 다를 수 있다.

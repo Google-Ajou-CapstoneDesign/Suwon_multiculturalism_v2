@@ -88,3 +88,8 @@ Suwon_multiculturalism_v2'
 ### 2026-08-18 — 백과사전 출처 표기 + 근무기록장 백엔드 연동
 - 백과사전 콘텐츠에 문서 출처 표기 추가
 - 근무기록장(캘린더) 전용 Firestore 컬렉션(`worklogs`, `evidence_files`) 및 API(`GET/PUT /api/worklog/days`, `PATCH /api/users/me/vault`) 신설 — 게스트는 데모 데이터, 로그인 사용자는 실제 서버 데이터로 표시되도록 프론트 연동
+
+### 2026-09-06 — 위치인증 좌표를 근무기록에 저장 + 주소 문자열 표시
+- `POST /api/location/verify`가 좌표를 OpenStreetMap Nominatim으로 역지오코딩해 사용자 언어(ko/en/zh/vi)의 주소 문자열을 같이 반환하도록 확장(`location_service.py`) — 지오코딩 실패해도 위치 인증 자체는 막지 않고 주소만 null로 폴백
+- `worklogs` 문서에 `verified_latitude`/`verified_longitude`/`verified_address` 필드 추가 — 위치 인증 시점의 근거 좌표·주소를 캘린더 근무기록에 그대로 저장(임금체불·산재 진정 시 증빙력 확보)
+- 홈 화면·근무기록장 캘린더의 "위치 인증 완료" 배지가 좌표 숫자 대신 변환된 주소 문자열을 보여주도록 변경

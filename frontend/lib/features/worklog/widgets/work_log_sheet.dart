@@ -1018,9 +1018,15 @@ class _DailyHookBody extends StatelessWidget {
                     record: record,
                     isToday: DateUtils.isSameDay(day, controller.today),
                     language: language,
-                    onVerified: () => controller.updateSelectedRecord(
-                      (r) => r.copyWith(gpsVerified: true),
-                    ),
+                    onVerified: (lat, lng, address) =>
+                        controller.updateSelectedRecord(
+                          (r) => r.copyWith(
+                            gpsVerified: true,
+                            verifiedLatitude: lat,
+                            verifiedLongitude: lng,
+                            verifiedAddress: address,
+                          ),
+                        ),
                   ),
                 ],
               ),
@@ -1251,7 +1257,8 @@ class _LocationVerifyBadge extends StatefulWidget {
   final DailyWorkRecord record;
   final bool isToday;
   final AppLanguage language;
-  final VoidCallback onVerified;
+  final void Function(double latitude, double longitude, String? address)
+  onVerified;
 
   @override
   State<_LocationVerifyBadge> createState() => _LocationVerifyBadgeState();
@@ -1264,10 +1271,16 @@ class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
     final lang = widget.language;
     setState(() => _verifying = true);
     try {
-      final status = await LocationVerifyService().verifyCurrentLocation();
-      switch (status) {
+      final outcome = await LocationVerifyService().verifyCurrentLocation(
+        language: lang,
+      );
+      switch (outcome.status) {
         case LocationVerifyStatus.verified:
-          widget.onVerified();
+          widget.onVerified(
+            outcome.result!.latitude,
+            outcome.result!.longitude,
+            outcome.result!.address,
+          );
           break;
         case LocationVerifyStatus.serviceDisabled:
           _showMessage(_WorkLogStrings.gpsServiceDisabled.of(lang));
@@ -1339,6 +1352,7 @@ class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
     }
 
     return Container(
+      constraints: const BoxConstraints(maxWidth: 150),
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
         color: record.gpsVerified
@@ -1346,17 +1360,34 @@ class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
             : const Color(0xFFE3F2FD),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        record.gpsVerified
-            ? _WorkLogStrings.gpsVerified.of(lang)
-            : _WorkLogStrings.gpsUnverified.of(lang),
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          color: record.gpsVerified
-              ? const Color(0xFF1B5E20)
-              : const Color(0xFF0D47A1),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            record.gpsVerified
+                ? _WorkLogStrings.gpsVerified.of(lang)
+                : _WorkLogStrings.gpsUnverified.of(lang),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: record.gpsVerified
+                  ? const Color(0xFF1B5E20)
+                  : const Color(0xFF0D47A1),
+            ),
+          ),
+          // 좌표 숫자 대신 서버가 역지오코딩으로 돌려준 주소 문자열을 보여준다
+          // — 지오코딩 실패 시(verifiedAddress == null)엔 위 완료 문구만
+          // 남기고 조용히 생략한다.
+          if (record.gpsVerified && record.verifiedAddress != null)
+            Text(
+              record.verifiedAddress!,
+              maxLines: 2,
+              textAlign: TextAlign.right,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 8.5, color: Color(0xFF1B5E20)),
+            ),
+        ],
       ),
     );
   }

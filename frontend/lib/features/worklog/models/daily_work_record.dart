@@ -20,6 +20,9 @@ class DailyWorkRecord {
     this.isOvertime = false,
     this.isRisk = false,
     this.gpsVerified = false,
+    this.verifiedLatitude,
+    this.verifiedLongitude,
+    this.verifiedAddress,
   });
 
   static const empty = DailyWorkRecord();
@@ -38,6 +41,18 @@ class DailyWorkRecord {
   /// 사업장 위치에서 기록됐는지 — 판정하지 않고 사실만 기록한다는 원칙에 따라
   /// "위치 인증 완료" / "사업장 외부 기록" 두 상태만 둔다.
   final bool gpsVerified;
+
+  /// 위치 인증 성공 시점의 좌표(POST /api/location/verify가 돌려준 값을 그대로
+  /// 보관). gpsVerified == false거나 인증 이전 기록이면 null. 화면에는 좌표
+  /// 숫자 대신 [verifiedAddress]를 보여준다 — 증빙용 원본 값이라 계속 갖고
+  /// 있는다.
+  final double? verifiedLatitude;
+  final double? verifiedLongitude;
+
+  /// 서버가 좌표를 역지오코딩해 돌려준 주소 문자열. 지오코딩 실패 시 null일
+  /// 수 있다 — 그럴 땐 화면에서 "위치 인증 완료" 문구만 보여주고 주소는
+  /// 생략한다.
+  final String? verifiedAddress;
 
   bool get hasEntry => clockIn != null && clockOut != null;
 
@@ -58,16 +73,24 @@ class DailyWorkRecord {
     isOvertime: json['isOvertime'] as bool? ?? false,
     isRisk: json['isRisk'] as bool? ?? false,
     gpsVerified: json['gpsVerified'] as bool? ?? false,
+    verifiedLatitude: (json['verifiedLatitude'] as num?)?.toDouble(),
+    verifiedLongitude: (json['verifiedLongitude'] as num?)?.toDouble(),
+    verifiedAddress: json['verifiedAddress'] as String?,
   );
 
   /// PUT /api/worklog/days/{date} 요청 바디 — isOvertime/isRisk는 서버가
-  /// 판정하는 값이라 클라이언트가 보내지 않는다.
+  /// 판정하는 값이라 클라이언트가 보내지 않는다. verifiedLatitude/Longitude/
+  /// Address는 인증 시점에 받은 값을 그대로 실어 보낸다(재저장 시에도 기존
+  /// 값을 유지).
   Map<String, dynamic> toUpsertJson() => {
     'clockIn': _timeToHm(clockIn),
     'clockOut': _timeToHm(clockOut),
     'breakMinutes': breakMinutes,
     'memo': memo,
     'gpsVerified': gpsVerified,
+    'verifiedLatitude': verifiedLatitude,
+    'verifiedLongitude': verifiedLongitude,
+    'verifiedAddress': verifiedAddress,
   };
 
   DailyWorkRecord copyWith({
@@ -78,6 +101,9 @@ class DailyWorkRecord {
     bool? isOvertime,
     bool? isRisk,
     bool? gpsVerified,
+    double? verifiedLatitude,
+    double? verifiedLongitude,
+    String? verifiedAddress,
   }) {
     return DailyWorkRecord(
       clockIn: clockIn ?? this.clockIn,
@@ -87,6 +113,9 @@ class DailyWorkRecord {
       isOvertime: isOvertime ?? this.isOvertime,
       isRisk: isRisk ?? this.isRisk,
       gpsVerified: gpsVerified ?? this.gpsVerified,
+      verifiedLatitude: verifiedLatitude ?? this.verifiedLatitude,
+      verifiedLongitude: verifiedLongitude ?? this.verifiedLongitude,
+      verifiedAddress: verifiedAddress ?? this.verifiedAddress,
     );
   }
 }
