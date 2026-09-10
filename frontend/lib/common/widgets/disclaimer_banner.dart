@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 
-/// 법률 판단이 아님을 알리는 고지문 배너. Amber 배경으로 고정.
+/// 법률 판단이 아님을 알리는 고지문 배너. 주황(notice) 배경으로 고정 —
+/// design_files/App_Design.html의 .notice 스펙을 따른다.
 class DisclaimerBanner extends StatelessWidget {
   const DisclaimerBanner({
     super.key,
@@ -16,7 +17,7 @@ class DisclaimerBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: AppColors.noticeBg,
         borderRadius: BorderRadius.circular(12),
@@ -33,7 +34,7 @@ class DisclaimerBanner extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12,
                 color: AppColors.noticeText,
-                height: 1.4,
+                height: 1.6,
               ),
             ),
           ),

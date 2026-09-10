@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
-import '../../auth/services/auth_service.dart';
-import '../../auth/services/user_profile_api_service.dart';
+import '../../wage_calculator/models/wage_diagnosis.dart' show formatWon;
 import '../controllers/work_log_controller.dart';
 import '../models/daily_work_record.dart';
 import '../screens/accident_navigator_screen.dart';
 import '../screens/wage_navigator_screen.dart';
 import '../services/location_verify_service.dart';
+import 'vault_box.dart';
 
 /// 근무기록장 UI 문구.
 class _WorkLogStrings {
@@ -115,18 +115,6 @@ class _WorkLogStrings {
     zh: '下班',
     vi: 'Tan ca',
   );
-  static const clockInNow = L10nText(
-    ko: '출근하기',
-    en: 'Clock in',
-    zh: '上班打卡',
-    vi: 'Chấm công vào',
-  );
-  static const clockOutNow = L10nText(
-    ko: '퇴근하기',
-    en: 'Clock out',
-    zh: '下班打卡',
-    vi: 'Chấm công ra',
-  );
   static const breakLabel = L10nText(
     ko: '휴게',
     en: 'Break',
@@ -139,6 +127,37 @@ class _WorkLogStrings {
     en: 'Actual hours worked',
     zh: '实际工作时长',
     vi: 'Thời gian làm việc thực tế',
+  );
+  static const estimatedWage = L10nText(
+    ko: '예상 임금(세전)',
+    en: 'Estimated wage (pre-tax)',
+    zh: '预计工资（税前）',
+    vi: 'Lương dự kiến (trước thuế)',
+  );
+
+  static const monthTotalWage = L10nText(
+    ko: '이번 달 총 임금',
+    en: "This month's total wage",
+    zh: '本月总工资',
+    vi: 'Tổng lương tháng này',
+  );
+  static const monthTotalWageHint = L10nText(
+    ko: '탭하여 시급 수정',
+    en: 'Tap to edit hourly wage',
+    zh: '点击修改时薪',
+    vi: 'Chạm để sửa lương theo giờ',
+  );
+  static const hourlyWageDialogTitle = L10nText(
+    ko: '적용 시급',
+    en: 'Hourly wage',
+    zh: '适用时薪',
+    vi: 'Lương theo giờ',
+  );
+  static const hourlyWageDialogSubtitle = L10nText(
+    ko: '실근무시간 × 시급으로 대략적인 임금을 계산해요. 정확한 계산은 임금계산기 탭을 이용하세요.',
+    en: 'We estimate wages as hours worked × hourly wage. For an exact calculation, use the Wage Calculator tab.',
+    zh: '按"实际工作时长 × 时薪"估算工资。精确计算请使用工资计算器标签页。',
+    vi: 'Lương được ước tính bằng giờ làm thực tế × lương theo giờ. Để tính chính xác, hãy dùng tab Máy tính lương.',
   );
 
   static const photoAttach = L10nText(
@@ -172,103 +191,6 @@ class _WorkLogStrings {
     en: 'Once you have records',
     zh: '记录积累之后',
     vi: 'Khi đã có đủ ghi chép',
-  );
-
-  static const vaultTitle = L10nText(
-    ko: '사업주 공식 증빙 보관함',
-    en: 'Employer document vault',
-    zh: '雇主正式凭证保管箱',
-    vi: 'Kho giấy tờ của chủ sử dụng',
-  );
-  static const vaultSubtitle = L10nText(
-    ko: '근로계약서 · 임금명세서 · 사업주 메시지 — 눌러서 펼치기',
-    en: 'Contract · payslips · employer messages — tap to expand',
-    zh: '劳动合同·工资单·雇主消息 — 点击展开',
-    vi: 'Hợp đồng · phiếu lương · tin nhắn của chủ — nhấn để mở',
-  );
-  static const vaultContractTitle = L10nText(
-    ko: '근로계약서',
-    en: 'Employment contract',
-    zh: '劳动合同',
-    vi: 'Hợp đồng lao động',
-  );
-  static const vaultPayslipTitle = L10nText(
-    ko: '임금명세서',
-    en: 'Payslip',
-    zh: '工资单',
-    vi: 'Phiếu lương',
-  );
-  static const vaultMessageTitle = L10nText(
-    ko: '사업주 카톡 · 문자',
-    en: 'Employer messages',
-    zh: '雇主KakaoTalk·短信',
-    vi: 'Tin nhắn của chủ',
-  );
-  static const vaultCallTitle = L10nText(
-    ko: '사업주 통화 녹음',
-    en: 'Recorded call with employer',
-    zh: '与雇主的通话录音',
-    vi: 'Ghi âm cuộc gọi với chủ',
-  );
-  static const vaultStoredSubtitle = L10nText(
-    ko: '보관함에 등록되어 있습니다',
-    en: 'Registered in your vault',
-    zh: '已在保管箱中登记',
-    vi: 'Đã lưu trong kho',
-  );
-  static const vaultContractEmptySubtitle = L10nText(
-    ko: '아직 없습니다 — 사업주에게 사본을 요청하세요',
-    en: 'None yet — ask your employer for a copy',
-    zh: '尚无 — 请向雇主索取副本',
-    vi: 'Chưa có — hãy yêu cầu chủ cấp bản sao',
-  );
-  static const vaultPayslipEmptySubtitle = L10nText(
-    ko: '아직 없습니다 — 매달 명세서를 저장해 두세요',
-    en: 'None yet — save your payslip each month',
-    zh: '尚无 — 请每月保存工资单',
-    vi: 'Chưa có — hãy lưu phiếu lương mỗi tháng',
-  );
-  static const vaultMessageEmptySubtitle = L10nText(
-    ko: '아직 없습니다 — 지급 약속 메시지를 저장해 두세요',
-    en: 'None yet — save any message promising payment',
-    zh: '尚无 — 请保存承诺支付的消息',
-    vi: 'Chưa có — hãy lưu tin nhắn hứa trả lương',
-  );
-  static const vaultCallEmptySubtitle = L10nText(
-    ko: '아직 없습니다 — 본인이 참여한 대화만 녹음할 수 있습니다',
-    en: 'None yet — you may only record conversations you take part in',
-    zh: '尚无 — 只能录制本人参与的对话',
-    vi: 'Chưa có — chỉ được ghi âm cuộc trò chuyện bạn tham gia',
-  );
-  static const vaultStoredTag = L10nText(
-    ko: '보관됨',
-    en: 'Stored',
-    zh: '已保存',
-    vi: 'Đã lưu',
-  );
-  static const vaultAddTag = L10nText(
-    ko: '추가',
-    en: 'Add',
-    zh: '添加',
-    vi: 'Thêm',
-  );
-  static const vaultComingSoonMessage = L10nText(
-    ko: '아직 준비 중인 기능입니다. 곧 연동될 예정이에요.',
-    en: "This feature isn't ready yet. It's coming soon.",
-    zh: '该功能尚在准备中，即将上线。',
-    vi: 'Tính năng này đang được chuẩn bị và sẽ sớm ra mắt.',
-  );
-  static const vaultOcrButton = L10nText(
-    ko: '📷 OCR로 읽기 (베타)',
-    en: '📷 Read with OCR (beta)',
-    zh: '📷 用OCR读取（测试版）',
-    vi: '📷 Đọc bằng OCR (beta)',
-  );
-  static const vaultStrongNote = L10nText(
-    ko: '이 서랍의 문서가 다툼이 생겼을 때 가장 먼저 요구받는 것들입니다. 계약서를 못 받았다면 지금 사업주에게 사본을 요청하세요. 교부는 사업주의 의무입니다.',
-    en: 'These are the documents you will be asked for first if a dispute arises. If you never received a contract, ask your employer for a copy now — providing one is their obligation.',
-    zh: '这些是发生争议时最先被索取的文件。若未拿到合同，请立即向雇主索取副本，交付是雇主的义务。',
-    vi: 'Đây là những giấy tờ được yêu cầu đầu tiên khi có tranh chấp. Nếu chưa nhận hợp đồng, hãy yêu cầu chủ cấp bản sao ngay — đó là nghĩa vụ của chủ.',
   );
 
   static const wageEntryTitle = L10nText(
@@ -448,7 +370,7 @@ class _WorkLogSheetState extends State<WorkLogSheet> {
                               onDayTap: (day) => _openDayRecord(day, lang),
                               language: lang,
                             ),
-                            _TodayClockActions(
+                            _MonthlyWageCard(
                               controller: _controller,
                               language: lang,
                             ),
@@ -467,95 +389,139 @@ class _WorkLogSheetState extends State<WorkLogSheet> {
   }
 }
 
-class _TodayClockActions extends StatelessWidget {
-  const _TodayClockActions({required this.controller, required this.language});
+/// 출퇴근 버튼이 있던 자리 — 대신 이번 달 총 예상 임금을 보여준다.
+/// html_files/frontend_근무기록장_총임금추가.html의 "9월 총합계" 배너와
+/// 같은 자리·역할이다. 탭하면 계산에 쓸 시급을 바꿀 수 있다.
+class _MonthlyWageCard extends StatelessWidget {
+  const _MonthlyWageCard({required this.controller, required this.language});
 
   final WorkLogController controller;
   final AppLanguage language;
 
-  String _formatTime(TimeOfDay time) =>
-      '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  Future<void> _editHourlyWage(BuildContext context) async {
+    final textController = TextEditingController(
+      text: controller.hourlyWage.round().toString(),
+    );
+    final result = await showDialog<double>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            _WorkLogStrings.hourlyWageDialogTitle.of(language),
+            style: const TextStyle(fontSize: 15),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _WorkLogStrings.hourlyWageDialogSubtitle.of(language),
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  color: AppColors.textMuted,
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: textController,
+                keyboardType: TextInputType.number,
+                autofocus: true,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                ),
+                decoration: InputDecoration(
+                  suffixText: language == AppLanguage.ko ? '원' : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(_WorkLogStrings.cancel.of(language)),
+            ),
+            FilledButton(
+              onPressed: () =>
+                  Navigator.of(context).pop(double.tryParse(textController.text)),
+              child: Text(_WorkLogStrings.confirm.of(language)),
+            ),
+          ],
+        );
+      },
+    );
+    if (result != null && result > 0) controller.setHourlyWage(result);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final record = controller.todayRecord;
-    final hasClockIn = record.clockIn != null;
-    final hasClockOut = record.clockOut != null;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 16, 15, 24),
-      child: Row(
-        children: [
-          Expanded(
-            child: FilledButton.icon(
-              onPressed: hasClockIn ? null : controller.clockInToday,
-              icon: Icon(
-                hasClockIn ? Icons.check_circle : Icons.login_rounded,
-                size: 18,
-              ),
-              label: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  hasClockIn
-                      ? '${_WorkLogStrings.clockIn.of(language)} ${_formatTime(record.clockIn!)}'
-                      : _WorkLogStrings.clockInNow.of(language),
-                ),
-              ),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(52),
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: AppColors.blueBg,
-                disabledForegroundColor: AppColors.primary,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-              ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onTap: () => _editHourlyWage(context),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF2196F3), Color(0xFF0D47A1)],
             ),
+            borderRadius: BorderRadius.circular(15),
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: FilledButton.icon(
-              onPressed: hasClockIn && !hasClockOut
-                  ? controller.clockOutToday
-                  : null,
-              icon: Icon(
-                hasClockOut ? Icons.check_circle : Icons.logout_rounded,
-                size: 18,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _WorkLogStrings.monthTotalWage.of(language),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    formatWon(controller.monthTotalWage, language),
+                    style: const TextStyle(
+                      fontSize: 21,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
               ),
-              label: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  hasClockOut
-                      ? '${_WorkLogStrings.clockOut.of(language)} ${_formatTime(record.clockOut!)}'
-                      : _WorkLogStrings.clockOutNow.of(language),
-                ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.edit_outlined,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _WorkLogStrings.monthTotalWageHint.of(language),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 8.5,
+                      color: Colors.white.withValues(alpha: 0.85),
+                    ),
+                  ),
+                ],
               ),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(52),
-                backgroundColor: AppColors.secondary,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: hasClockOut
-                    ? AppColors.green50
-                    : AppColors.border,
-                disabledForegroundColor: hasClockOut
-                    ? AppColors.green900
-                    : AppColors.textMuted,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -1080,6 +1046,38 @@ class _DailyHookBody extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 11,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.green50,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _WorkLogStrings.estimatedWage.of(language),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.green900,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      formatWon(controller.wageForDay(day), language),
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.green900,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 10),
               Row(
                 children: [
@@ -1135,7 +1133,7 @@ class _DailyHookBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 11),
-        _VaultBox(language: language),
+        VaultBox(language: language),
         const SizedBox(height: 14),
         Text(
           _WorkLogStrings.nextStepsLabel.of(language),
@@ -1388,309 +1386,6 @@ class _LocationVerifyBadgeState extends State<_LocationVerifyBadge> {
               style: const TextStyle(fontSize: 8.5, color: Color(0xFF1B5E20)),
             ),
         ],
-      ),
-    );
-  }
-}
-
-/// 근로계약서·임금명세서·사업주 메시지·통화 녹음을 모아 보여주는 접이식
-/// 보관함. html_files/프론트엔드_최종.html의 "사업주 공식 증빙 보관함"을
-/// 그대로 옮겼다. 계약서·명세서는 이 보관함에서
-/// UserProfileController.contractStored/payslipStored 상태를 직접 변경하며,
-/// 실제 파일 업로드는 아직 없어 "넣어뒀다"는 상태만 기록한다.
-/// 카톡·문자와 통화 녹음은 아직 저장할 방법이 없어 "준비 중" 안내만 띄운다.
-class _VaultBox extends StatefulWidget {
-  const _VaultBox({required this.language});
-  final AppLanguage language;
-
-  @override
-  State<_VaultBox> createState() => _VaultBoxState();
-}
-
-class _VaultBoxState extends State<_VaultBox> {
-  bool _open = false;
-  final _authService = AuthService();
-  final _userProfileApi = UserProfileApiService();
-
-  void _showComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          _WorkLogStrings.vaultComingSoonMessage.of(widget.language),
-        ),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
-  void _toggleContract(UserProfileController profile) {
-    profile.toggleContractStored();
-    _syncVault(profile, contractStored: profile.contractStored);
-  }
-
-  void _togglePayslip(UserProfileController profile) {
-    profile.togglePayslipStored();
-    _syncVault(profile, payslipStored: profile.payslipStored);
-  }
-
-  Future<void> _syncVault(
-    UserProfileController profile, {
-    bool? contractStored,
-    bool? payslipStored,
-  }) async {
-    if (!profile.isSignedIn) return;
-    try {
-      final idToken = await _authService.currentIdToken();
-      if (idToken == null) return;
-      await _userProfileApi.updateVaultStatus(
-        idToken: idToken,
-        contractStored: contractStored,
-        payslipStored: payslipStored,
-      );
-    } catch (_) {
-      // 저장 실패해도 로컬 상태는 이미 반영돼 있으니 조용히 넘어간다.
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final profile = UserProfileScope.of(context);
-    final lang = widget.language;
-    return AnimatedBuilder(
-      animation: profile,
-      builder: (context, _) {
-        return Container(
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(13),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: () => setState(() => _open = !_open),
-                child: Padding(
-                  padding: const EdgeInsets.all(13),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE3F2FD),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text('📁', style: TextStyle(fontSize: 15)),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _WorkLogStrings.vaultTitle.of(lang),
-                              style: const TextStyle(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              _WorkLogStrings.vaultSubtitle.of(lang),
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: AppColors.textMuted,
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      AnimatedRotation(
-                        turns: _open ? 0.5 : 0,
-                        duration: const Duration(milliseconds: 200),
-                        child: const Icon(
-                          Icons.keyboard_arrow_down,
-                          size: 18,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (_open)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(13, 0, 13, 13),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Divider(height: 1, color: AppColors.border),
-                      const SizedBox(height: 11),
-                      _VaultFileRow(
-                        icon: '📄',
-                        title: _WorkLogStrings.vaultContractTitle.of(lang),
-                        subtitle: profile.contractStored
-                            ? _WorkLogStrings.vaultStoredSubtitle.of(lang)
-                            : _WorkLogStrings.vaultContractEmptySubtitle.of(
-                                lang,
-                              ),
-                        stored: profile.contractStored,
-                        language: lang,
-                        onTap: () => _toggleContract(profile),
-                      ),
-                      const SizedBox(height: 8),
-                      _VaultFileRow(
-                        icon: '🧾',
-                        title: _WorkLogStrings.vaultPayslipTitle.of(lang),
-                        subtitle: profile.payslipStored
-                            ? _WorkLogStrings.vaultStoredSubtitle.of(lang)
-                            : _WorkLogStrings.vaultPayslipEmptySubtitle.of(
-                                lang,
-                              ),
-                        stored: profile.payslipStored,
-                        language: lang,
-                        onTap: () => _togglePayslip(profile),
-                      ),
-                      const SizedBox(height: 8),
-                      _VaultFileRow(
-                        icon: '💬',
-                        title: _WorkLogStrings.vaultMessageTitle.of(lang),
-                        subtitle: _WorkLogStrings.vaultMessageEmptySubtitle.of(
-                          lang,
-                        ),
-                        stored: false,
-                        language: lang,
-                        onTap: () => _showComingSoon(context),
-                      ),
-                      const SizedBox(height: 8),
-                      _VaultFileRow(
-                        icon: '🎙',
-                        title: _WorkLogStrings.vaultCallTitle.of(lang),
-                        subtitle: _WorkLogStrings.vaultCallEmptySubtitle.of(
-                          lang,
-                        ),
-                        stored: false,
-                        language: lang,
-                        onTap: () => _showComingSoon(context),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          onPressed: () => _showComingSoon(context),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.textSecondary,
-                            side: const BorderSide(color: AppColors.border),
-                            padding: const EdgeInsets.symmetric(vertical: 9),
-                          ),
-                          child: Text(
-                            _WorkLogStrings.vaultOcrButton.of(lang),
-                            style: const TextStyle(fontSize: 11),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 9),
-                      Text(
-                        _WorkLogStrings.vaultStrongNote.of(lang),
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: AppColors.textMuted,
-                          height: 1.6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _VaultFileRow extends StatelessWidget {
-  const _VaultFileRow({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.stored,
-    required this.language,
-    required this.onTap,
-  });
-
-  final String icon;
-  final String title;
-  final String subtitle;
-  final bool stored;
-  final AppLanguage language;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(9),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          children: [
-            Text(icon, style: const TextStyle(fontSize: 15)),
-            const SizedBox(width: 9),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 9.5,
-                      color: AppColors.textMuted,
-                      height: 1.4,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: stored
-                    ? const Color(0xFFE8F5E9)
-                    : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                (stored
-                        ? _WorkLogStrings.vaultStoredTag
-                        : _WorkLogStrings.vaultAddTag)
-                    .of(language),
-                style: TextStyle(
-                  fontSize: 9.5,
-                  fontWeight: FontWeight.w700,
-                  color: stored
-                      ? const Color(0xFF1B5E20)
-                      : AppColors.textSecondary,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

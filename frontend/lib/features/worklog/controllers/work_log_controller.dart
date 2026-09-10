@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../auth/services/auth_service.dart';
+import '../../wage_calculator/models/wage_diagnosis.dart' show minWage;
 import '../models/daily_work_record.dart';
 import '../services/work_log_api_service.dart';
 
@@ -33,6 +34,61 @@ class WorkLogController extends ChangeNotifier {
   DateTime get today => DateUtils.dateOnly(DateTime.now());
 
   final Map<DateTime, DailyWorkRecord> _records = {};
+
+  /// 이번 달 총 임금·일별 예상 임금 계산에 쓰는 시급 — 아직 서버에 저장하지
+  /// 않는(세션 한정) 값이라 기본값은 올해 최저임금으로 시작한다.
+  /// TODO(backend): 근로계약서에 등록된 실제 계약 시급이 생기면 그 값으로 대체한다.
+  double _hourlyWage = minWage().$1;
+  double get hourlyWage => _hourlyWage;
+
+  void setHourlyWage(double value) {
+    if (value <= 0 || value == _hourlyWage) return;
+    _hourlyWage = value;
+    notifyListeners();
+  }
+
+  /// 하루치 예상 임금(세전, 시급 × 실근무시간) — 연장·야간 가산 등 정밀 계산은
+  /// 임금계산기 탭의 몫이고, 여기서는 간단한 곱셈으로 대략적인 금액만 보여준다.
+  double wageForDay(DateTime day) =>
+      recordFor(day).workedDuration.inMinutes / 60 * _hourlyWage;
+
+  /// [focusedMonth] 기준 이번 달 총 예상 임금 — 출퇴근 버튼이 있던 자리에
+  /// 대신 보여준다.
+  double get monthTotalWage {
+    final month = focusedMonth;
+    var total = 0.0;
+    for (final entry in _records.entries) {
+      if (entry.key.year == month.year && entry.key.month == month.month) {
+        total += entry.value.workedDuration.inMinutes / 60 * _hourlyWage;
+      }
+    }
+    return total;
+  }
+
+  /// [focusedMonth] 기준 출퇴근이 모두 기록된 날 수 — 홈 화면 "이번 달 근무" 카드.
+  int get monthWorkedDays {
+    final month = focusedMonth;
+    return _records.entries
+        .where(
+          (e) =>
+              e.key.year == month.year &&
+              e.key.month == month.month &&
+              e.value.hasEntry,
+        )
+        .length;
+  }
+
+  /// [focusedMonth] 기준 총 실근무시간 — 홈 화면 "이번 달 근무" 카드.
+  Duration get monthTotalWorkedDuration {
+    final month = focusedMonth;
+    var total = Duration.zero;
+    for (final entry in _records.entries) {
+      if (entry.key.year == month.year && entry.key.month == month.month) {
+        total += entry.value.workedDuration;
+      }
+    }
+    return total;
+  }
 
   void _seedDemoData() {
     final now = today;

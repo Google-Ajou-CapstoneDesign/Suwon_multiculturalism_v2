@@ -10,7 +10,11 @@ import 'category_detail_screen.dart';
 import 'category_search_screen.dart';
 import 'favorites_screen.dart';
 
-/// Tab 1 · 백과사전. "책 표지 + 세로 북마크" 컨셉(프론트엔드_구상.html 기반).
+/// (주의) 현재 메인 하단 탭에서는 연결되어 있지 않다 — 해당 자리는 네비게이터
+/// 화면(NavigatorHomeScreen)으로 교체되었다. 추후 재사용을 위해 코드와 데이터를
+/// 그대로 보존 중이니 죽은 코드로 보고 지우지 말 것.
+///
+/// (구) Tab 1 · 백과사전. "책 표지 + 세로 북마크" 컨셉(프론트엔드_구상.html 기반).
 /// 표지(닫힌 책)를 기본으로 보여주고, 우측 세로 북마크(A/B/C)를 탭하면 해당
 /// 그룹의 목차로 전환된다. 상세·즐겨찾기는 별도 화면으로 push한다. 언어는
 /// 앱 전역 UserProfileScope에서 읽는다(홈 화면 버튼에서 바꾼 값이 여기도 반영됨).

@@ -105,6 +105,7 @@ class PdfActionsSection extends StatelessWidget {
                   onPressed: () => _download(AppLanguage.ko),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,
+                    backgroundColor: Colors.transparent,
                     side: const BorderSide(color: Colors.white54),
                     padding: const EdgeInsets.symmetric(vertical: 11),
                   ),
@@ -122,6 +123,7 @@ class PdfActionsSection extends StatelessWidget {
                       : () => _download(lang),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,
+                    backgroundColor: Colors.transparent,
                     side: const BorderSide(color: Colors.white54),
                     padding: const EdgeInsets.symmetric(vertical: 11),
                   ),

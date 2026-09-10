@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import '../../../common/widgets/language_sheet.dart';
 import '../../../core/app_language.dart';
@@ -15,62 +13,78 @@ import '../models/home_strings.dart';
 import '../models/weather_info.dart';
 import '../services/weather_api_service.dart';
 
-/// Tab 1 · 홈. html_files/홈화면.html의 위젯 그리드 리디자인을 옮겼다 — 위젯을
-/// 사용자가 직접 추가/삭제하는 편집 모드는 만들지 않고 구성을 고정했다(기본 6개
-/// 세트 + 즐겨찾기/도움처 2개 = 총 8개).
+/// Tab 1 · 홈. design_files/App_Design.html의 homeHTML() 레이아웃·구성을
+/// 그대로 옮겼다 — 인사말(비자 태그만, D-day 없음) → 오늘의 근무/이번 달 근무
+/// 2장 → 빠른 접근 4개 → 도움 가이드 2개 → 증빙 보관함 카드 → 하단 안내문
+/// 순서. 시안엔 없지만 안전 관련 기능인 폭염 경고만 "이번 달 근무" 카드에
+/// 조건부로 남겨뒀다.
 ///
-/// 핵심 기능: 내 비자 위젯은 게스트(비로그인)면 데모 표시, 로그인하면 실제
-/// 프로필의 체류자격으로 바뀐다 — UserProfileController.isSignedIn/visaStatus를 그대로 읽는다.
-///
-/// TODO(backend): 날씨는 목업(WeatherInfo.mock), 비자 만료일(D-day)·이번달 근무
-/// 요약·즐겨찾기·가까운 도움처는 아직 백엔드 데이터가 없어 데모 값을 보여준다.
+/// TODO(backend): 날씨는 목업(WeatherInfo.mock), 이번달 근무 요약은 로컬
+/// 캘린더 데이터 기준이라 아직 백엔드 집계가 아니다.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
     super.key,
     required this.workLogController,
     required this.onOpenWorkLog,
+    required this.onOpenWageCalculator,
+    required this.onOpenNavigator,
   });
 
   final WorkLogController workLogController;
   final VoidCallback onOpenWorkLog;
+  final VoidCallback onOpenWageCalculator;
+  final VoidCallback onOpenNavigator;
 
   @override
   Widget build(BuildContext context) {
     final profile = UserProfileScope.of(context);
     final lang = profile.language;
-    final now = DateTime.now();
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(14, 8, 14, 24),
           children: [
-            _HomeHeader(profile: profile, lang: lang, now: now),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(14, 4, 14, 24),
-                children: [
-                  _WorkWidget(
-                    controller: workLogController,
-                    lang: lang,
-                    onOpenWorkLog: onOpenWorkLog,
-                  ),
-                  const SizedBox(height: 9),
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: _VisaWidget(profile: profile, lang: lang),
-                        ),
-                        const SizedBox(width: 9),
-                        Expanded(child: _WeatherWidget(lang: lang)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 9),
-                  _NavigatorLinksRow(lang: lang),
-                ],
+            _GreetingSection(profile: profile, lang: lang),
+            const SizedBox(height: 16),
+            _TodayWorkCard(
+              controller: workLogController,
+              lang: lang,
+              onOpenWorkLog: onOpenWorkLog,
+            ),
+            const SizedBox(height: 10),
+            _MonthlyWorkCard(
+              controller: workLogController,
+              lang: lang,
+              onOpenWorkLog: onOpenWorkLog,
+            ),
+            const SizedBox(height: 22),
+            _SectionTitle(text: HomeStrings.quickAccessTitle.of(lang)),
+            const SizedBox(height: 10),
+            _QuickAccessGrid(
+              lang: lang,
+              onOpenWorkLog: onOpenWorkLog,
+              onOpenWageCalculator: onOpenWageCalculator,
+              onOpenNavigator: onOpenNavigator,
+            ),
+            const SizedBox(height: 22),
+            _SectionTitle(text: HomeStrings.helpGuidesTitle.of(lang)),
+            const SizedBox(height: 10),
+            _HelpGuidesSection(lang: lang),
+            const SizedBox(height: 10),
+            _VaultStatusCard(
+              profile: profile,
+              lang: lang,
+              onOpenWorkLog: onOpenWorkLog,
+            ),
+            const SizedBox(height: 18),
+            Text(
+              HomeStrings.bottomNote.of(lang),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppColors.textMuted,
               ),
             ),
           ],
@@ -78,349 +92,6 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-const _weekdayKo = ['월', '화', '수', '목', '금', '토', '일'];
-const _weekdayEn = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const _weekdayZh = ['一', '二', '三', '四', '五', '六', '日'];
-const _weekdayVi = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-
-String _formatDate(AppLanguage lang, DateTime now) {
-  final idx = now.weekday - 1;
-  switch (lang) {
-    case AppLanguage.ko:
-      return '${now.month}월 ${now.day}일 ${_weekdayKo[idx]}요일';
-    case AppLanguage.en:
-      return '${_weekdayEn[idx]}, ${_monthNameEn(now.month)} ${now.day}';
-    case AppLanguage.zh:
-      return '${now.month}月${now.day}日 周${_weekdayZh[idx]}';
-    case AppLanguage.vi:
-      return '${_weekdayVi[idx]}, ${now.day}/${now.month}';
-  }
-}
-
-String _monthNameEn(int month) => const [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-][month - 1];
-
-class _HomeHeader extends StatelessWidget {
-  const _HomeHeader({
-    required this.profile,
-    required this.lang,
-    required this.now,
-  });
-  final UserProfileController profile;
-  final AppLanguage lang;
-  final DateTime now;
-
-  @override
-  Widget build(BuildContext context) {
-    final greeting = switch (now.hour) {
-      < 12 => HomeStrings.greetingMorning,
-      < 18 => HomeStrings.greetingAfternoon,
-      _ => HomeStrings.greetingEvening,
-    };
-    final name = profile.displayNameOrEmailPrefix ?? HomeStrings.guestName.of(lang);
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 14, 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _formatDate(lang, now),
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textMuted,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text.rich(
-                  TextSpan(
-                    style: const TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.navy,
-                      height: 1.25,
-                      letterSpacing: -0.4,
-                    ),
-                    children: [
-                      TextSpan(text: '${greeting.of(lang)}\n'),
-                      TextSpan(
-                        text: name,
-                        style: const TextStyle(color: AppColors.primary),
-                      ),
-                      if (lang == AppLanguage.ko) const TextSpan(text: '님'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () => showLanguageSheet(
-              context,
-              current: lang,
-              onSelect: profile.setLanguage,
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: const Color(0xFFE3F2FD)),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('🌐', style: TextStyle(fontSize: 11)),
-                  const SizedBox(width: 4),
-                  Text(
-                    lang.code,
-                    style: const TextStyle(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 위젯 카드 공통 셸 — 흰 배경(또는 그라데이션) + 옅은 그림자.
-class _HomeWidgetCard extends StatelessWidget {
-  const _HomeWidgetCard({
-    required this.child,
-    this.minHeight = 129,
-    this.onTap,
-    this.padding = const EdgeInsets.symmetric(horizontal: 13, vertical: 18),
-  });
-
-  final Widget child;
-  final double minHeight;
-  final VoidCallback? onTap;
-  final EdgeInsetsGeometry padding;
-
-  @override
-  Widget build(BuildContext context) {
-    final content = Container(
-      width: double.infinity,
-      constraints: BoxConstraints(minHeight: minHeight),
-      padding: padding,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE3F2FD)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.navy.withValues(alpha: 0.04),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-          BoxShadow(
-            color: AppColors.navy.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: child,
-    );
-    if (onTap == null) return content;
-    return InkWell(
-      borderRadius: BorderRadius.circular(18),
-      onTap: onTap,
-      child: content,
-    );
-  }
-}
-
-class _WidgetLabel extends StatelessWidget {
-  const _WidgetLabel({
-    required this.icon,
-    required this.text,
-    this.compact = false,
-  });
-  final String icon;
-  final String text;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(icon, style: TextStyle(fontSize: compact ? 11 : 18)),
-        SizedBox(width: compact ? 5 : 8),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: compact ? 10 : 17,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textMuted,
-              letterSpacing: -0.1,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _DemoTag extends StatelessWidget {
-  const _DemoTag({required this.text});
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: AppColors.noticeBg,
-        border: Border.all(color: AppColors.noticeBorder),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 9,
-          fontWeight: FontWeight.w800,
-          color: AppColors.noticeText,
-        ),
-      ),
-    );
-  }
-}
-
-/// 원형 진행률 링 — 근무기록·비자 위젯이 공용으로 쓴다.
-class _RingIndicator extends StatelessWidget {
-  const _RingIndicator({
-    required this.size,
-    required this.strokeWidth,
-    required this.fraction,
-    required this.color,
-    required this.big,
-    required this.small,
-    this.bigFontSize = 22,
-    this.smallFontSize = 12.5,
-  });
-
-  final double size;
-  final double strokeWidth;
-  final double fraction;
-  final Color color;
-  final String big;
-  final String small;
-  final double bigFontSize;
-  final double smallFontSize;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          CustomPaint(
-            size: Size(size, size),
-            painter: _RingPainter(
-              fraction: fraction,
-              color: color,
-              strokeWidth: strokeWidth,
-            ),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                big,
-                style: TextStyle(
-                  fontSize: bigFontSize,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.navy,
-                  height: 1,
-                ),
-              ),
-              Text(
-                small,
-                style: TextStyle(
-                  fontSize: smallFontSize,
-                  color: AppColors.textMuted,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RingPainter extends CustomPainter {
-  _RingPainter({
-    required this.fraction,
-    required this.color,
-    required this.strokeWidth,
-  });
-  final double fraction;
-  final Color color;
-  final double strokeWidth;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = size.center(Offset.zero);
-    final radius = (size.width - strokeWidth) / 2;
-    final bg = Paint()
-      ..color = const Color(0xFFE3F2FD)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-    final fg = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-    canvas.drawCircle(center, radius, bg);
-    final sweep = 2 * math.pi * fraction.clamp(0.0, 1.0);
-    if (sweep > 0) {
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        -math.pi / 2,
-        sweep,
-        false,
-        fg,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _RingPainter oldDelegate) =>
-      oldDelegate.fraction != fraction || oldDelegate.color != color;
 }
 
 Duration _elapsedToday(DailyWorkRecord record) {
@@ -433,17 +104,218 @@ Duration _elapsedToday(DailyWorkRecord record) {
   return Duration(minutes: minutes < 0 ? 0 : minutes);
 }
 
-String _formatDuration(Duration d) {
-  final h = d.inHours;
-  final m = d.inMinutes % 60;
-  return '$h:${m.toString().padLeft(2, '0')}';
+String _formatHours(Duration d) {
+  final totalMinutes = d.inMinutes;
+  final h = totalMinutes ~/ 60;
+  final m = totalMinutes % 60;
+  return m == 0 ? '$h' : '$h.${(m * 10 / 60).round()}';
 }
 
-String _formatTimeOfDay(TimeOfDay t) =>
-    '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+String _formatTimeOfDay(TimeOfDay? t) => t == null
+    ? '--:--'
+    : '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
-class _WorkWidget extends StatelessWidget {
-  const _WorkWidget({
+/// 인사말 — eyebrow + h1(그리팅+이름) + subtitle + 비자 태그 + 언어 버튼.
+class _GreetingSection extends StatelessWidget {
+  const _GreetingSection({required this.profile, required this.lang});
+  final UserProfileController profile;
+  final AppLanguage lang;
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final greeting = switch (now.hour) {
+      < 12 => HomeStrings.greetingMorning,
+      < 18 => HomeStrings.greetingAfternoon,
+      _ => HomeStrings.greetingEvening,
+    };
+    final name = profile.displayNameOrEmailPrefix ?? HomeStrings.guestName.of(lang);
+    final signedIn = profile.isSignedIn;
+    final visaLabel = signedIn
+        ? (profile.visaStatus?.fullLabel ?? HomeStrings.visaNotSet.of(lang))
+        : HomeStrings.visaSampleLabel.of(lang);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(6, 6, 6, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  HomeStrings.greetingEyebrow.of(lang),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text.rich(
+                  TextSpan(
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.navy,
+                      height: 1.3,
+                      letterSpacing: -0.4,
+                    ),
+                    children: [
+                      TextSpan(text: '${greeting.of(lang)}\n'),
+                      TextSpan(
+                        text: name,
+                        style: const TextStyle(color: AppColors.primary),
+                      ),
+                      if (lang == AppLanguage.ko) const TextSpan(text: '님'),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  HomeStrings.greetingSubtitle.of(lang),
+                  style: const TextStyle(
+                    fontSize: 12.5,
+                    color: AppColors.textMuted,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: signedIn
+                    ? null
+                    : () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 11,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.pale,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    visaLabel,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () => showLanguageSheet(
+                  context,
+                  current: lang,
+                  onSelect: profile.setLanguage,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: AppColors.border),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('🌐', style: TextStyle(fontSize: 10)),
+                      const SizedBox(width: 4),
+                      Text(
+                        lang.code,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 공용 흰 카드 셸(빠른 접근/도움 가이드/증빙 보관함이 재사용). "오늘의 근무"만
+/// 별도로 파란 그라데이션을 쓴다.
+class _HomeCard extends StatelessWidget {
+  const _HomeCard({
+    required this.child,
+    this.padding = const EdgeInsets.all(18),
+    this.onTap,
+    this.gradient,
+  });
+
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+  final VoidCallback? onTap;
+  final Gradient? gradient;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(AppColors.cardRadius);
+    final content = Container(
+      width: double.infinity,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: gradient == null ? Colors.white : null,
+        gradient: gradient,
+        borderRadius: radius,
+        border: gradient == null
+            ? Border.all(color: AppColors.border)
+            : null,
+        boxShadow: AppColors.cardShadow,
+      ),
+      child: child,
+    );
+    if (onTap == null) return content;
+    return InkWell(borderRadius: radius, onTap: onTap, child: content);
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w800,
+        color: AppColors.navy,
+      ),
+    );
+  }
+}
+
+/// 오늘의 근무 — 파란 그라데이션 hero 카드. 큰 실근무시간 숫자 + 출근/퇴근/휴게
+/// 3항목 행 + 출퇴근·근무기록장 버튼 2개 + 위치 인증 행.
+class _TodayWorkCard extends StatelessWidget {
+  const _TodayWorkCard({
     required this.controller,
     required this.lang,
     required this.onOpenWorkLog,
@@ -461,71 +333,99 @@ class _WorkWidget extends StatelessWidget {
         final hasClockIn = record.clockIn != null;
         final hasClockOut = record.clockOut != null;
         final elapsed = _elapsedToday(record);
-        final fraction = elapsed.inMinutes / (8 * 60);
         final status = !hasClockIn
             ? HomeStrings.workStatusBeforeStart
             : (hasClockOut
                   ? HomeStrings.workStatusDone
                   : HomeStrings.workStatusWorking);
 
-        return _HomeWidgetCard(
-          minHeight: 204,
+        return _HomeCard(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF1769EF), Color(0xFF2860DF)],
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _WidgetLabel(icon: '🕐', text: HomeStrings.workTitle.of(lang)),
-              const SizedBox(height: 13.5),
               Row(
                 children: [
-                  _RingIndicator(
-                    size: 92,
-                    strokeWidth: 9,
-                    fraction: fraction,
-                    color: AppColors.primary,
-                    big: _formatDuration(elapsed),
-                    small: HomeStrings.workRingLabel.of(lang),
-                  ),
-                  const SizedBox(width: 16.5),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          hasClockIn
-                              ? HomeStrings.workClockedInAt(
-                                  lang,
-                                  _formatTimeOfDay(record.clockIn!),
-                                  status.of(lang),
-                                )
-                              : status.of(lang),
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.navy,
-                            letterSpacing: -0.2,
-                          ),
-                        ),
-                        if (hasClockIn) ...[
-                          const SizedBox(height: 4.5),
-                          _HomeLocationVerification(
-                            verified: record.gpsVerified,
-                            address: record.verifiedAddress,
-                            language: lang,
-                            onVerified: (lat, lng, address) => controller
-                                .markTodayLocationVerified(
-                                  latitude: lat,
-                                  longitude: lng,
-                                  address: address,
-                                ),
-                          ),
-                        ],
-                      ],
+                    child: Text(
+                      HomeStrings.workTitle.of(lang),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      status.of(lang),
+                      style: const TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 15),
+              // work-numbers — 오늘 실근무시간 큰 숫자.
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      _formatHours(elapsed),
+                      style: const TextStyle(
+                        fontSize: 44,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: -1,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      HomeStrings.workHoursUnit.of(lang),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFFC9DEFF),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // clock-row — 출근/퇴근/휴게 3항목.
+              Row(
+                children: [
+                  _ClockItem(
+                    label: HomeStrings.workClockLabel.of(lang),
+                    value: _formatTimeOfDay(record.clockIn),
+                  ),
+                  _ClockItem(
+                    label: HomeStrings.workClockOutLabel.of(lang),
+                    value: _formatTimeOfDay(record.clockOut),
+                  ),
+                  _ClockItem(
+                    label: HomeStrings.workBreakLabel.of(lang),
+                    value: '${record.breakMinutes}m',
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
@@ -536,13 +436,15 @@ class _WorkWidget extends StatelessWidget {
                                 ? controller.clockOutToday
                                 : controller.clockInToday),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: const Color(0xFFE3F2FD),
-                        disabledForegroundColor: AppColors.textMuted,
-                        padding: const EdgeInsets.symmetric(vertical: 13.5),
+                        backgroundColor: Colors.white,
+                        foregroundColor: AppColors.primary,
+                        disabledBackgroundColor: Colors.white.withValues(
+                          alpha: 0.35,
+                        ),
+                        disabledForegroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: Text(
@@ -552,29 +454,29 @@ class _WorkWidget extends StatelessWidget {
                                   ? HomeStrings.workClockOutButton.of(lang)
                                   : HomeStrings.workClockInButton.of(lang)),
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 9),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: onOpenWorkLog,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.primary,
-                        backgroundColor: AppColors.blueBg,
-                        side: BorderSide.none,
-                        padding: const EdgeInsets.symmetric(vertical: 13.5),
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.transparent,
+                        side: const BorderSide(color: Colors.white54),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: Text(
                         HomeStrings.workMemoButton.of(lang),
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -582,6 +484,20 @@ class _WorkWidget extends StatelessWidget {
                   ),
                 ],
               ),
+              if (hasClockIn) ...[
+                const SizedBox(height: 12),
+                _HomeLocationVerification(
+                  verified: record.gpsVerified,
+                  address: record.verifiedAddress,
+                  language: lang,
+                  onVerified: (lat, lng, address) => controller
+                      .markTodayLocationVerified(
+                        latitude: lat,
+                        longitude: lng,
+                        address: address,
+                      ),
+                ),
+              ],
             ],
           ),
         );
@@ -590,7 +506,38 @@ class _WorkWidget extends StatelessWidget {
   }
 }
 
-/// 핵심 기능: 게스트(비로그인)면 데모 값, 로그인하면 실제 프로필 체류자격을 보여준다.
+class _ClockItem extends StatelessWidget {
+  const _ClockItem({required this.label, required this.value});
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 10.5, color: Color(0xFFC9DEFF)),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 위치 인증 행 — 인증 완료면 초록 점+주소, 아니면 인증 버튼(로딩 상태 포함).
+/// 파란 배경 카드 위에 올라가므로 흰색 계열 텍스트/보더를 쓴다.
 class _HomeLocationVerification extends StatefulWidget {
   const _HomeLocationVerification({
     required this.verified,
@@ -663,30 +610,27 @@ class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
       return Row(
         children: [
           Container(
-            width: 7.5,
-            height: 7.5,
+            width: 7,
+            height: 7,
             decoration: const BoxDecoration(
-              color: AppColors.secondary,
+              color: Color(0xFF7FE0B0),
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 7.5),
+          const SizedBox(width: 7),
           Expanded(
             child: Text.rich(
               TextSpan(
                 text: HomeStrings.workGpsVerified.of(widget.language),
-                style: const TextStyle(
-                  fontSize: 17,
-                  color: AppColors.textSecondary,
-                ),
+                style: const TextStyle(fontSize: 11.5, color: Colors.white),
                 children: widget.address == null
                     ? null
                     : [
                         TextSpan(
                           text: ' (${widget.address})',
                           style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textMuted,
+                            fontSize: 10.5,
+                            color: Color(0xFFC9DEFF),
                           ),
                         ),
                       ],
@@ -706,8 +650,8 @@ class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: AppColors.blueBg,
-            border: Border.all(color: AppColors.primary),
+            color: Colors.white.withValues(alpha: 0.14),
+            border: Border.all(color: Colors.white54),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
@@ -715,19 +659,19 @@ class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
             children: [
               if (_verifying) ...[
                 const SizedBox(
-                  width: 14,
-                  height: 14,
+                  width: 12,
+                  height: 12,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: AppColors.primary,
+                    color: Colors.white,
                   ),
                 ),
-                const SizedBox(width: 7),
+                const SizedBox(width: 6),
               ] else ...[
                 const Icon(
                   Icons.location_on_outlined,
-                  size: 17,
-                  color: AppColors.primary,
+                  size: 14,
+                  color: Colors.white,
                 ),
                 const SizedBox(width: 5),
               ],
@@ -735,9 +679,9 @@ class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
                 child: Text(
                   HomeStrings.workGpsVerifyButton.of(widget.language),
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -749,116 +693,25 @@ class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
   }
 }
 
-class _VisaWidget extends StatelessWidget {
-  const _VisaWidget({required this.profile, required this.lang});
-  final UserProfileController profile;
+/// 이번 달 근무 — stats 2개 + 이번 주 7일 미니 달력 + 날씨 한 줄(+폭염 경고).
+class _MonthlyWorkCard extends StatefulWidget {
+  const _MonthlyWorkCard({
+    required this.controller,
+    required this.lang,
+    required this.onOpenWorkLog,
+  });
+  final WorkLogController controller;
   final AppLanguage lang;
-
-  static const _demoDDay = 42;
-  static const _dDayScale = 90;
+  final VoidCallback onOpenWorkLog;
 
   @override
-  Widget build(BuildContext context) {
-    final signedIn = profile.isSignedIn;
-    final visa = profile.visaStatus;
-    final showRing = !signedIn || visa != null;
-    // TODO(backend): 실제 체류 만료일이 없어 로그인 여부와 무관하게 예시 D-day를 쓴다.
-    const dDay = _demoDDay;
-
-    return _HomeWidgetCard(
-      minHeight: 150,
-      padding: const EdgeInsets.all(13),
-      onTap: signedIn
-          ? null
-          : () => Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const LoginScreen())),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _WidgetLabel(
-                  icon: '🪪',
-                  text: HomeStrings.visaTitle.of(lang),
-                  compact: true,
-                ),
-              ),
-              if (!signedIn) _DemoTag(text: HomeStrings.visaDemoTag.of(lang)),
-            ],
-          ),
-          SizedBox(
-            height: 82,
-            child: Center(
-              child: showRing
-                  ? Opacity(
-                      opacity: signedIn ? 1 : 0.55,
-                      child: _RingIndicator(
-                        size: 70,
-                        strokeWidth: 6,
-                        fraction: dDay / _dDayScale,
-                        color: AppColors.primary,
-                        big: '$dDay',
-                        small: HomeStrings.visaDaysLeft.of(lang),
-                        bigFontSize: 19,
-                        smallFontSize: 8,
-                      ),
-                    )
-                  : const Icon(
-                      Icons.badge_outlined,
-                      size: 34,
-                      color: AppColors.textMuted,
-                    ),
-            ),
-          ),
-          Column(
-            children: [
-              Text(
-                signedIn
-                    ? (visa?.fullLabel ?? HomeStrings.visaNotSet.of(lang))
-                    : HomeStrings.visaSampleLabel.of(lang),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.navy,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                signedIn
-                    ? (visa != null ? HomeStrings.visaExpiry(lang, dDay) : '')
-                    : HomeStrings.visaDemoHint.of(lang),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 9.5,
-                  color: AppColors.textMuted,
-                  height: 1.4,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  State<_MonthlyWorkCard> createState() => _MonthlyWorkCardState();
 }
 
-class _WeatherWidget extends StatefulWidget {
-  const _WeatherWidget({required this.lang});
-  final AppLanguage lang;
-
-  @override
-  State<_WeatherWidget> createState() => _WeatherWidgetState();
-}
-
-class _WeatherWidgetState extends State<_WeatherWidget> {
+class _MonthlyWorkCardState extends State<_MonthlyWorkCard> {
   final _api = WeatherApiService();
 
-  // 실제 응답이 올 때까지(또는 조회 실패 시 계속) 목업을 보여준다 — 빈 화면·
-  // 로딩 스피너보다 그럴듯한 값을 먼저 보여주는 편이 이 카드 하나만을 위해
-  // 스켈레톤 UI를 새로 만드는 것보다 낫다.
+  // 실제 응답이 올 때까지(또는 조회 실패 시 계속) 목업을 보여준다.
   WeatherInfo _weather = WeatherInfo.mock;
 
   @override
@@ -879,113 +732,316 @@ class _WeatherWidgetState extends State<_WeatherWidget> {
   @override
   Widget build(BuildContext context) {
     final lang = widget.lang;
-    final weather = _weather;
-    return _HomeWidgetCard(
-      minHeight: 150,
-      padding: const EdgeInsets.all(13),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _WidgetLabel(
-            icon: '📍',
-            text: weather.location.of(lang),
-            compact: true,
-          ),
-          const SizedBox(height: 7),
-          Row(
+    final controller = widget.controller;
+
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final today = controller.today;
+        final weekStart = today.subtract(Duration(days: today.weekday - 1));
+        final weekDays = List.generate(
+          7,
+          (i) => weekStart.add(Duration(days: i)),
+        );
+
+        return _HomeCard(
+          onTap: widget.onOpenWorkLog,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${weather.tempC}°',
-                      style: const TextStyle(
-                        fontSize: 27,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.navy,
-                        letterSpacing: -0.6,
-                        height: 1,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${weather.condition.of(lang)} · ${HomeStrings.weatherFeelsLike(lang, weather.feelsLikeC)}',
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Text(weather.emoji, style: const TextStyle(fontSize: 20)),
-            ],
-          ),
-          if (weather.heatWarning) ...[
-            Container(
-              margin: const EdgeInsets.only(top: 7),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
-              decoration: BoxDecoration(
-                color: AppColors.noticeBg,
-                borderRadius: BorderRadius.circular(9),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  const Text('🥵', style: TextStyle(fontSize: 10)),
-                  const SizedBox(width: 5),
                   Expanded(
                     child: Text(
-                      HomeStrings.weatherHeatAlert(lang, weather.feelsLikeC),
+                      HomeStrings.monthlyTitle.of(lang),
                       style: const TextStyle(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.noticeText,
-                        height: 1.4,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.navy,
                       ),
+                    ),
+                  ),
+                  const Icon(
+                    Icons.chevron_right,
+                    size: 18,
+                    color: AppColors.textMuted,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  _MonthlyStat(
+                    value: '${controller.monthWorkedDays}',
+                    label: HomeStrings.monthlyDaysLabel.of(lang),
+                  ),
+                  const SizedBox(width: 26),
+                  _MonthlyStat(
+                    value: _formatHours(controller.monthTotalWorkedDuration),
+                    label: HomeStrings.monthlyHoursLabel.of(lang),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: weekDays.map((day) {
+                  final isToday = DateUtils.isSameDay(day, today);
+                  final has = controller.hasRecord(day);
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isToday
+                              ? AppColors.primary
+                              : (has ? AppColors.pale : Colors.transparent),
+                          borderRadius: BorderRadius.circular(9),
+                        ),
+                        child: Text(
+                          '${day.day}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: isToday
+                                ? Colors.white
+                                : (has
+                                      ? AppColors.primary
+                                      : AppColors.textMuted),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${_weather.location.of(lang)} · ${_weather.tempC}°',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textMuted,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    HomeStrings.monthlyViewAll.of(lang),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+              if (_weather.heatWarning) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.noticeBg,
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('🥵', style: TextStyle(fontSize: 10)),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                          HomeStrings.weatherHeatAlert(
+                            lang,
+                            _weather.feelsLikeC,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.noticeText,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _MonthlyStat extends StatelessWidget {
+  const _MonthlyStat({required this.value, required this.label});
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: AppColors.navy,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 10.5, color: AppColors.textMuted),
+        ),
+      ],
+    );
+  }
+}
+
+/// 빠른 접근 — 4열 아이콘 그리드.
+class _QuickAccessGrid extends StatelessWidget {
+  const _QuickAccessGrid({
+    required this.lang,
+    required this.onOpenWorkLog,
+    required this.onOpenWageCalculator,
+    required this.onOpenNavigator,
+  });
+  final AppLanguage lang;
+  final VoidCallback onOpenWorkLog;
+  final VoidCallback onOpenWageCalculator;
+  final VoidCallback onOpenNavigator;
+
+  @override
+  Widget build(BuildContext context) {
+    return _HomeCard(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      child: Row(
+        children: [
+          _QuickAccessItem(
+            icon: Icons.calendar_month_outlined,
+            iconBg: AppColors.pale,
+            iconFg: AppColors.primary,
+            label: HomeStrings.quickWorklog.of(lang),
+            onTap: onOpenWorkLog,
+          ),
+          _QuickAccessItem(
+            icon: Icons.calculate_outlined,
+            iconBg: AppColors.greenBg,
+            iconFg: AppColors.greenFg,
+            label: HomeStrings.quickWageCalc.of(lang),
+            onTap: onOpenWageCalculator,
+          ),
+          _QuickAccessItem(
+            icon: Icons.explore_outlined,
+            iconBg: AppColors.orangeBg,
+            iconFg: AppColors.orangeFg,
+            label: HomeStrings.quickNavigator.of(lang),
+            onTap: onOpenNavigator,
+          ),
+          _QuickAccessItem(
+            icon: Icons.folder_shared_outlined,
+            iconBg: AppColors.purpleBg,
+            iconFg: AppColors.purpleFg,
+            label: HomeStrings.quickVault.of(lang),
+            onTap: onOpenWorkLog,
+          ),
         ],
       ),
     );
   }
 }
 
-class _NavigatorLinksRow extends StatelessWidget {
-  const _NavigatorLinksRow({required this.lang});
+class _QuickAccessItem extends StatelessWidget {
+  const _QuickAccessItem({
+    required this.icon,
+    required this.iconBg,
+    required this.iconFg,
+    required this.label,
+    required this.onTap,
+  });
+  final IconData icon;
+  final Color iconBg;
+  final Color iconFg;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Icon(icon, size: 22, color: iconFg),
+              ),
+              const SizedBox(height: 7),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                  height: 1.3,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 도움 가이드 — 임금체불/산재처리 네비게이터로 이동하는 리스트형 카드 2개.
+class _HelpGuidesSection extends StatelessWidget {
+  const _HelpGuidesSection({required this.lang});
   final AppLanguage lang;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: _NavigatorLinkCard(
-            gradient: const [Color(0xFF2196F3), Color(0xFF0D47A1)],
-            emoji: '💸',
-            title: HomeStrings.wageNavTitle.of(lang),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const WageNavigatorScreen()),
-            ),
+        _GuideCard(
+          emoji: '💸',
+          iconBg: AppColors.pale,
+          title: HomeStrings.wageNavTitle.of(lang),
+          description: HomeStrings.wageNavDesc.of(lang),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const WageNavigatorScreen()),
           ),
         ),
-        const SizedBox(width: 9),
-        Expanded(
-          child: _NavigatorLinkCard(
-            gradient: const [Color(0xFF4CAF50), Color(0xFF1B5E20)],
-            emoji: '⛑️',
-            title: HomeStrings.injuryNavTitle.of(lang),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const AccidentNavigatorScreen(),
-              ),
-            ),
+        const SizedBox(height: 9),
+        _GuideCard(
+          emoji: '⛑️',
+          iconBg: AppColors.greenBg,
+          title: HomeStrings.injuryNavTitle.of(lang),
+          description: HomeStrings.injuryNavDesc.of(lang),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const AccidentNavigatorScreen()),
           ),
         ),
       ],
@@ -993,49 +1049,186 @@ class _NavigatorLinksRow extends StatelessWidget {
   }
 }
 
-class _NavigatorLinkCard extends StatelessWidget {
-  const _NavigatorLinkCard({
-    required this.gradient,
+class _GuideCard extends StatelessWidget {
+  const _GuideCard({
     required this.emoji,
+    required this.iconBg,
     required this.title,
+    required this.description,
     required this.onTap,
   });
-  final List<Color> gradient;
   final String emoji;
+  final Color iconBg;
   final String title;
+  final String description;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return _HomeCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        padding: const EdgeInsets.all(13),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: gradient,
-          ),
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(emoji, style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 7),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-                height: 1.3,
-              ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: iconBg,
+              borderRadius: BorderRadius.circular(13),
             ),
-          ],
-        ),
+            child: Text(emoji, style: const TextStyle(fontSize: 19)),
+          ),
+          const SizedBox(width: 13),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.navy,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.chevron_right,
+            size: 18,
+            color: AppColors.textMuted,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 사업주 공식 증빙 보관함 — 근로계약서/임금명세서 등록 여부만 보여주고,
+/// 실제 등록/토글은 근무기록장 시트 안 보관함 섹션에서 한다.
+class _VaultStatusCard extends StatelessWidget {
+  const _VaultStatusCard({
+    required this.profile,
+    required this.lang,
+    required this.onOpenWorkLog,
+  });
+  final UserProfileController profile;
+  final AppLanguage lang;
+  final VoidCallback onOpenWorkLog;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: profile,
+      builder: (context, _) {
+        return _HomeCard(
+          onTap: onOpenWorkLog,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                HomeStrings.vaultCardTitle.of(lang),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.navy,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: _VaultItem(
+                      icon: Icons.description_outlined,
+                      label: HomeStrings.vaultContract.of(lang),
+                      registered: profile.contractStored,
+                      lang: lang,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _VaultItem(
+                      icon: Icons.receipt_long_outlined,
+                      label: HomeStrings.vaultPayslip.of(lang),
+                      registered: profile.payslipStored,
+                      lang: lang,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _VaultItem extends StatelessWidget {
+  const _VaultItem({
+    required this.icon,
+    required this.label,
+    required this.registered,
+    required this.lang,
+  });
+  final IconData icon;
+  final String label;
+  final bool registered;
+  final AppLanguage lang;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F9FC),
+        borderRadius: BorderRadius.circular(13),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: AppColors.textSecondary),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.navy,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  registered
+                      ? HomeStrings.vaultRegistered.of(lang)
+                      : HomeStrings.vaultNotRegistered.of(lang),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: registered
+                        ? AppColors.greenFg
+                        : AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

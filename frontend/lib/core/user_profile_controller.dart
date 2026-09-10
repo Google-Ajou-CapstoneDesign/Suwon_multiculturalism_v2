@@ -2,7 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'app_language.dart';
 import 'visa_status.dart';
 
-/// 앱 전역 사용자 프로필 상태 — 온보딩(언어·체류자격·서류 보관)에서 채워지고,
+/// 앱 전역 사용자 프로필 상태 — 언어는 온보딩에서, 체류자격·서류 보관 상태는
+/// 회원가입/로그인 및 설정 화면에서 채워지고,
 /// 백과사전의 언어 전환·MY VISA 카드가 이 값을 그대로 읽고 쓴다.
 /// TODO(backend): 로그인 연동 전까지는 세션 동안만 유지되는 로컬 상태다(재시작 시 초기화).
 class UserProfileController extends ChangeNotifier {
@@ -21,6 +22,12 @@ class UserProfileController extends ChangeNotifier {
 
   bool _onboardingCompleted = false;
   bool get onboardingCompleted => _onboardingCompleted;
+
+  /// 알림 설정 — 실제 푸시 인프라(FCM 등)는 아직 없어 이 기기에만 저장되는
+  /// 로컬 선호값이다. 기본값 true는 지금까지 설정 화면에 하드코딩돼 있던
+  /// "켜짐" 표시와 동일하게 맞춘 것.
+  bool _notificationsEnabled = true;
+  bool get notificationsEnabled => _notificationsEnabled;
 
   /// Firebase Auth uid — null이면 로그인하지 않은 게스트 상태.
   String? _uid;
@@ -66,11 +73,18 @@ class UserProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 계정 관련 정보를 전부 지운다 — visaStatus/증빙 보관함 상태까지 지워야
+  /// 로그아웃 뒤 게스트로 돌아가거나 다른 계정으로 로그인했을 때 이전
+  /// 사용자의 정보가 남아있지 않는다. onboardingCompleted는 기기 단위
+  /// 값이라 그대로 둔다.
   void signOut() {
     _uid = null;
     _email = null;
     _displayName = null;
     _nationality = null;
+    _visaStatus = null;
+    _contractStored = false;
+    _payslipStored = false;
     notifyListeners();
   }
 
@@ -82,6 +96,21 @@ class UserProfileController extends ChangeNotifier {
 
   void setVisaStatus(VisaStatus status) {
     _visaStatus = status;
+    notifyListeners();
+  }
+
+  /// 설정 화면의 프로필 편집 모달이 쓴다 — 로그인 여부와 무관하게 로컬
+  /// 상태만 갱신한다(백엔드에 저장할지는 호출부 책임 — 게스트는 저장할
+  /// 서버 계정이 없으니 로컬에만 남긴다).
+  void updateProfileFields({String? name, String? nationality, VisaStatus? visa}) {
+    if (name != null) _displayName = name;
+    if (nationality != null) _nationality = nationality;
+    if (visa != null) _visaStatus = visa;
+    notifyListeners();
+  }
+
+  void toggleNotifications() {
+    _notificationsEnabled = !_notificationsEnabled;
     notifyListeners();
   }
 

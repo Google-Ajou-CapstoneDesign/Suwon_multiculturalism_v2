@@ -27,6 +27,45 @@ flutter:
   uses-material-design: true
   assets:
     - img/Logo.png
-    - assets/fonts/NotoSansKR.ttf
-    - assets/fonts/NotoSansSC.ttf
-    - assets/fonts/NotoSans.ttf
+  fonts:
+    # design_files/App_Design.html에 내장돼 있던 커스텀 폰트("LB KR"/"LB SC")를
+    # 추출한 것 — 실제로는 Noto Sans KR/SC 가변 폰트를 서브셋한 것인데, 처음
+    # 추출했을 때는 Thin(100) 굵기 하나만 있어서 글자가 전부 얇게 보였다.
+    # fonttools의 가변폰트 instancer로 400/500/600/700/800 굵기를 각각
+    # 고정 인스턴스로 뽑아 weight별로 등록한다 — Flutter는 요청된
+    # FontWeight에 가장 가까운 굵기 파일을 자동으로 골라 쓴다.
+    - family: LB KR
+      fonts:
+        - asset: assets/fonts/LBKR-400.ttf
+          weight: 400
+        - asset: assets/fonts/LBKR-500.ttf
+          weight: 500
+        - asset: assets/fonts/LBKR-600.ttf
+          weight: 600
+        - asset: assets/fonts/LBKR-700.ttf
+          weight: 700
+        - asset: assets/fonts/LBKR-800.ttf
+          weight: 800
+    - family: LB SC
+      fonts:
+        - asset: assets/fonts/LBSC-400.ttf
+          weight: 400
+        - asset: assets/fonts/LBSC-500.ttf
+          weight: 500
+        - asset: assets/fonts/LBSC-600.ttf
+          weight: 600
+        - asset: assets/fonts/LBSC-700.ttf
+          weight: 700
+        - asset: assets/fonts/LBSC-800.ttf
+          weight: 800
+    # 커스텀 폰트가 못 그리는 글자(예: 베트남어 발음부호)를 위한 폴백 —
+    # 기존에 PDF 서식 생성에만 쓰이던 에셋을 폰트 family로도 등록해 재사용한다.
+    - family: NotoSansKR
+      fonts:
+        - asset: assets/fonts/NotoSansKR.ttf
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/NotoSansSC.ttf
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans.ttf

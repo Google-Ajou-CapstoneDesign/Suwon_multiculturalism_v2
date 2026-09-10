@@ -30,6 +30,20 @@ class HomeStrings {
     vi: 'Hướng dẫn yêu cầu bồi thường tai nạn lao động',
   );
 
+  // ---------- 인사말 ----------
+  static const greetingEyebrow = L10nText(
+    ko: 'MY LOCAL BRIDGE',
+    en: 'MY LOCAL BRIDGE',
+    zh: 'MY LOCAL BRIDGE',
+    vi: 'MY LOCAL BRIDGE',
+  );
+  static const greetingSubtitle = L10nText(
+    ko: '나의 근무와 생활 정보를 한곳에서 확인하세요.',
+    en: 'Check your work and daily-life info all in one place.',
+    zh: '在这里一站式查看您的工作和生活信息。',
+    vi: 'Xem thông tin công việc và đời sống của bạn ở một nơi.',
+  );
+
   static const greetingMorning = L10nText(
     ko: '좋은 아침이에요,',
     en: 'Good morning,',
@@ -61,12 +75,6 @@ class HomeStrings {
     en: "Today's work",
     zh: '今日出勤',
     vi: 'Công việc hôm nay',
-  );
-  static const workRingLabel = L10nText(
-    ko: '실근무',
-    en: 'Worked',
-    zh: '实际工时',
-    vi: 'Đã làm',
   );
   static const workStatusWorking = L10nText(
     ko: '근무 중',
@@ -147,6 +155,149 @@ class HomeStrings {
     vi: 'Ghi nhận công việc',
   );
 
+  static const workClockLabel = L10nText(
+    ko: '출근',
+    en: 'Clock in',
+    zh: '上班',
+    vi: 'Vào ca',
+  );
+  static const workClockOutLabel = L10nText(
+    ko: '퇴근',
+    en: 'Clock out',
+    zh: '下班',
+    vi: 'Tan ca',
+  );
+  static const workBreakLabel = L10nText(
+    ko: '휴게',
+    en: 'Break',
+    zh: '休息',
+    vi: 'Nghỉ',
+  );
+  static const workHoursUnit = L10nText(
+    ko: '시간',
+    en: 'hrs',
+    zh: '小时',
+    vi: 'giờ',
+  );
+
+  // ---------- 이번 달 근무 ----------
+  static const monthlyTitle = L10nText(
+    ko: '이번 달 근무',
+    en: "This month's work",
+    zh: '本月出勤',
+    vi: 'Công việc tháng này',
+  );
+  static const monthlyDaysLabel = L10nText(
+    ko: '근무일',
+    en: 'Days worked',
+    zh: '出勤天数',
+    vi: 'Số ngày làm',
+  );
+  static const monthlyHoursLabel = L10nText(
+    ko: '총 근무시간',
+    en: 'Total hours',
+    zh: '总工时',
+    vi: 'Tổng giờ làm',
+  );
+  static const monthlyViewAll = L10nText(
+    ko: '전체 기록 →',
+    en: 'View all →',
+    zh: '查看全部 →',
+    vi: 'Xem tất cả →',
+  );
+
+  // ---------- 빠른 접근 ----------
+  static const quickAccessTitle = L10nText(
+    ko: '빠르게 이용하세요',
+    en: 'Quick access',
+    zh: '快速使用',
+    vi: 'Truy cập nhanh',
+  );
+  static const quickWorklog = L10nText(
+    ko: '근무기록장',
+    en: 'Work log',
+    zh: '工作记录本',
+    vi: 'Nhật ký làm việc',
+  );
+  static const quickWageCalc = L10nText(
+    ko: '임금계산기',
+    en: 'Wage calculator',
+    zh: '工资计算器',
+    vi: 'Máy tính lương',
+  );
+  static const quickNavigator = L10nText(
+    ko: '네비게이터',
+    en: 'Navigator',
+    zh: '导航',
+    vi: 'Điều hướng',
+  );
+  static const quickVault = L10nText(
+    ko: '내 증빙 보관함',
+    en: 'My document vault',
+    zh: '我的证明保管箱',
+    vi: 'Kho tài liệu của tôi',
+  );
+
+  // ---------- 도움 가이드 ----------
+  static const helpGuidesTitle = L10nText(
+    ko: '도움이 필요할 때',
+    en: 'When you need help',
+    zh: '需要帮助时',
+    vi: 'Khi bạn cần giúp đỡ',
+  );
+  static const wageNavDesc = L10nText(
+    ko: '단계별로 진정서까지 안내해드려요.',
+    en: 'Step-by-step guidance all the way to filing a report.',
+    zh: '逐步引导您完成申诉书。',
+    vi: 'Hướng dẫn từng bước đến khi nộp đơn khiếu nại.',
+  );
+  static const injuryNavDesc = L10nText(
+    ko: '단계별로 요양급여 신청까지 안내해드려요.',
+    en: 'Step-by-step guidance all the way to your benefit claim.',
+    zh: '逐步引导您完成疗养补偿申请。',
+    vi: 'Hướng dẫn từng bước đến khi yêu cầu trợ cấp.',
+  );
+
+  // ---------- 증빙 보관함 카드 ----------
+  static const vaultCardTitle = L10nText(
+    ko: '사업주 공식 증빙 보관함',
+    en: 'Employer document vault',
+    zh: '雇主正式凭证保管箱',
+    vi: 'Kho giấy tờ của chủ sử dụng',
+  );
+  static const vaultContract = L10nText(
+    ko: '근로계약서',
+    en: 'Employment contract',
+    zh: '劳动合同',
+    vi: 'Hợp đồng lao động',
+  );
+  static const vaultPayslip = L10nText(
+    ko: '임금명세서',
+    en: 'Payslip',
+    zh: '工资单',
+    vi: 'Phiếu lương',
+  );
+  static const vaultRegistered = L10nText(
+    ko: '등록됨',
+    en: 'Registered',
+    zh: '已登记',
+    vi: 'Đã đăng ký',
+  );
+  static const vaultNotRegistered = L10nText(
+    ko: '등록 전',
+    en: 'Not yet',
+    zh: '尚未登记',
+    vi: 'Chưa đăng ký',
+  );
+
+  // ---------- 하단 ----------
+  static const bottomNote = L10nText(
+    ko: '수원시 이주민 노동·생활 정보 · Local Bridge',
+    en: 'Suwon migrant worker & daily-life information · Local Bridge',
+    zh: '水原市移民劳动·生活信息 · Local Bridge',
+    vi: 'Thông tin lao động & đời sống người di cư Suwon · Local Bridge',
+  );
+
   static String workClockedInAt(AppLanguage lang, String time, String status) {
     switch (lang) {
       case AppLanguage.ko:
@@ -161,30 +312,6 @@ class HomeStrings {
   }
 
   // ---------- 내 비자 ----------
-  static const visaTitle = L10nText(
-    ko: '내 비자',
-    en: 'My visa',
-    zh: '我的签证',
-    vi: 'Visa của tôi',
-  );
-  static const visaDaysLeft = L10nText(
-    ko: 'DAYS LEFT',
-    en: 'DAYS LEFT',
-    zh: 'DAYS LEFT',
-    vi: 'DAYS LEFT',
-  );
-  static const visaDemoTag = L10nText(
-    ko: '데모',
-    en: 'Demo',
-    zh: '演示',
-    vi: 'Demo',
-  );
-  static const visaDemoHint = L10nText(
-    ko: '로그인하면 내 정보로 표시돼요',
-    en: 'Log in to see your own info here',
-    zh: '登录后将显示您本人的信息',
-    vi: 'Đăng nhập để xem thông tin của bạn',
-  );
   static const visaSampleLabel = L10nText(
     ko: '예시: E-9 비전문취업',
     en: 'Example: E-9 Non-professional',
@@ -192,33 +319,7 @@ class HomeStrings {
     vi: 'Ví dụ: E-9 Lao động phổ thông',
   );
 
-  static String visaExpiry(AppLanguage lang, int dDay) {
-    switch (lang) {
-      case AppLanguage.ko:
-        return '만료 D-$dDay';
-      case AppLanguage.en:
-        return 'Expires in D-$dDay';
-      case AppLanguage.zh:
-        return '距到期 D-$dDay';
-      case AppLanguage.vi:
-        return 'Hết hạn D-$dDay';
-    }
-  }
-
   // ---------- 날씨 ----------
-  static String weatherFeelsLike(AppLanguage lang, int feelsLikeC) {
-    switch (lang) {
-      case AppLanguage.ko:
-        return '체감 $feelsLikeC°';
-      case AppLanguage.en:
-        return 'Feels like $feelsLikeC°';
-      case AppLanguage.zh:
-        return '体感 $feelsLikeC°';
-      case AppLanguage.vi:
-        return 'Cảm nhận $feelsLikeC°';
-    }
-  }
-
   static String weatherHeatAlert(AppLanguage lang, int feelsLikeC) {
     switch (lang) {
       case AppLanguage.ko:

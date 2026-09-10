@@ -9,6 +9,7 @@ import '../services/auth_service.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/country_sheet.dart';
 import '../widgets/google_signin_button.dart';
+import '../widgets/visa_picker.dart';
 import 'consent_screen.dart';
 
 class _S {
@@ -61,18 +62,6 @@ class _S {
     en: 'Confirm password',
     zh: '确认密码',
     vi: 'Xác nhận mật khẩu',
-  );
-  static const visaLabel = L10nText(
-    ko: '체류자격(비자)',
-    en: 'Visa status',
-    zh: '居留资格（签证）',
-    vi: 'Tư cách lưu trú (visa)',
-  );
-  static const customVisaPlaceholder = L10nText(
-    ko: '체류자격을 직접 입력해주세요',
-    en: 'Enter your visa status',
-    zh: '请输入居留资格',
-    vi: 'Nhập tư cách lưu trú của bạn',
   );
   static const nationalityLabel = L10nText(
     ko: '국적',
@@ -384,47 +373,12 @@ class _SignupFormScreenState extends State<SignupFormScreen> {
               ),
             ],
             const SizedBox(height: 18),
-            Text(
-              _S.visaLabel.of(lang),
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textSecondary,
-              ),
+            VisaPicker(
+              language: lang,
+              value: _visa,
+              onChanged: (v) => setState(() => _visa = v),
+              customTextController: _customVisaController,
             ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 7,
-              runSpacing: 7,
-              children: VisaStatus.values.map((visa) {
-                final selected = _visa == visa;
-                return ChoiceChip(
-                  label: Text(
-                    visa.fullLabel,
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                  selected: selected,
-                  onSelected: (_) => setState(() => _visa = visa),
-                  selectedColor: AppColors.blueBg,
-                  labelStyle: TextStyle(
-                    color: selected
-                        ? AppColors.primary
-                        : AppColors.textSecondary,
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-                  ),
-                  side: BorderSide(
-                    color: selected ? AppColors.primary : AppColors.border,
-                  ),
-                );
-              }).toList(),
-            ),
-            if (_visa == VisaStatus.etc) ...[
-              const SizedBox(height: 10),
-              AuthTextField(
-                label: _S.customVisaPlaceholder.of(lang),
-                controller: _customVisaController,
-              ),
-            ],
             const SizedBox(height: 18),
             Text(
               _S.nationalityLabel.of(lang),

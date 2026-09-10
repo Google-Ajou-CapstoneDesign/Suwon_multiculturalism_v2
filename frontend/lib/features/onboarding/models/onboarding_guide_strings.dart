@@ -44,16 +44,16 @@ class OnboardingGuideStrings {
   static const modules = <OnboardingGuideModuleText>[
     OnboardingGuideModuleText(
       title: L10nText(
-        ko: '생활 백과사전',
-        en: 'Daily Life Encyclopedia',
-        zh: '生活百科全书',
-        vi: 'Bách khoa đời sống',
+        ko: '네비게이터',
+        en: 'Navigator',
+        zh: '导航',
+        vi: 'Điều hướng',
       ),
       description: L10nText(
-        ko: '한국 생활에 필요한 정보를 필수 행정, 생활 정착, 노동 권익의 3대 분야와 12개 카테고리로 정리합니다.',
-        en: 'Organizes essential information for life in Korea into 12 categories across three areas: essential administration, daily settlement, and labor rights.',
-        zh: '将韩国生活所需的信息按必备行政、生活安顿、劳动权益三大领域整理为 12 个类别。',
-        vi: 'Sắp xếp thông tin cần thiết cho cuộc sống tại Hàn Quốc thành 12 danh mục thuộc ba lĩnh vực: hành chính thiết yếu, ổn định cuộc sống và quyền lợi lao động.',
+        ko: '임금체불·산재처리 중 필요한 것을 고르면 신고·신청서 작성까지 단계별로 안내합니다.',
+        en: 'Choose whether you need help with unpaid wages or a workplace injury, and get step-by-step guidance all the way to filling out the report.',
+        zh: '选择您需要处理欠薪还是工伤，逐步引导您完成申诉书或申请书的撰写。',
+        vi: 'Chọn bạn cần hỗ trợ về nợ lương hay tai nạn lao động, được hướng dẫn từng bước đến khi hoàn thành đơn.',
       ),
     ),
     OnboardingGuideModuleText(

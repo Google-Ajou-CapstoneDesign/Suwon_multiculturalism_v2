@@ -27,7 +27,7 @@ Future<void> showLanguageSheet(
     context: context,
     backgroundColor: Colors.white,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(23)),
     ),
     builder: (context) {
       return Padding(
@@ -93,6 +93,7 @@ class _LanguageOption extends StatelessWidget {
           color: selected ? AppColors.blueBg : Colors.white,
           border: Border.all(
             color: selected ? AppColors.primary : AppColors.border,
+            width: selected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(11),
         ),

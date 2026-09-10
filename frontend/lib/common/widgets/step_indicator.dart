@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 
 /// 임금체불/산재 대응 네비게이터 공통 단계 표시기.
-/// done=Teal, now=Amber, upcoming=Gray
+/// done=secondary(green), now=accent(blue-dark), upcoming=border(gray)
 class StepIndicator extends StatelessWidget {
   const StepIndicator({super.key, required this.total, required this.current});
 
