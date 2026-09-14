@@ -15,6 +15,8 @@ import '../../auth/widgets/visa_picker.dart';
 import '../../onboarding/screens/guide_screen.dart';
 import '../../worklog/widgets/vault_box.dart';
 import '../models/settings_strings.dart';
+import '../models/bug_report_strings.dart';
+import 'bug_report_screen.dart';
 
 /// Tab 4 · 설정. design_files/App_Design.html의 settingsHTML() 레이아웃을
 /// 그대로 옮겼다 — 프로필 요약 카드 → 기본 설정(언어/비자/프로필/알림) →
@@ -66,9 +68,7 @@ class SettingsHomeScreen extends StatelessWidget {
                 ),
               ),
               Flexible(
-                child: SingleChildScrollView(
-                  child: VaultBox(language: lang),
-                ),
+                child: SingleChildScrollView(child: VaultBox(language: lang)),
               ),
             ],
           ),
@@ -259,14 +259,23 @@ class SettingsHomeScreen extends StatelessWidget {
                   _SettingsRow(
                     icon: Icons.menu_book_outlined,
                     label: SettingsStrings.guideLabel.of(lang),
-                    onTap: () => Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (_) => const GuideScreen())),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const GuideScreen()),
+                    ),
                   ),
                   _SettingsRow(
                     icon: Icons.smart_toy_outlined,
                     label: SettingsStrings.aiGuideLabel.of(lang),
                     onTap: onOpenAiChat,
+                  ),
+                  _SettingsRow(
+                    icon: Icons.bug_report_outlined,
+                    label: BugReportStrings.title.of(lang),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const BugReportScreen(),
+                      ),
+                    ),
                     isLast: true,
                   ),
                 ],
@@ -288,7 +297,11 @@ class SettingsHomeScreen extends StatelessWidget {
             Text(
               SettingsStrings.bottomNote.of(lang),
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 11, color: AppColors.textMuted, height: 1.5),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppColors.textMuted,
+                height: 1.5,
+              ),
             ),
           ],
         ),
@@ -458,7 +471,8 @@ class _ProfileEditSheetState extends State<_ProfileEditSheet> {
   Future<void> _save(AppLanguage lang) async {
     final name = _nameController.text.trim();
     setState(
-      () => _nameError = name.isEmpty ? SettingsStrings.errorName.of(lang) : null,
+      () =>
+          _nameError = name.isEmpty ? SettingsStrings.errorName.of(lang) : null,
     );
     if (name.isEmpty) return;
     if (_visa == VisaStatus.etc && _customVisaController.text.trim().isEmpty) {
@@ -509,7 +523,9 @@ class _ProfileEditSheetState extends State<_ProfileEditSheet> {
   Widget build(BuildContext context) {
     final lang = widget.profile.language;
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: DraggableScrollableSheet(
         expand: false,
         initialChildSize: 0.65,
@@ -581,7 +597,10 @@ class _ProfileEditSheetState extends State<_ProfileEditSheet> {
                             ),
                           ),
                         ),
-                        const Icon(Icons.expand_more, color: AppColors.textMuted),
+                        const Icon(
+                          Icons.expand_more,
+                          color: AppColors.textMuted,
+                        ),
                       ],
                     ),
                   ),
