@@ -52,6 +52,45 @@ class WorkLogController extends ChangeNotifier {
   double wageForDay(DateTime day) =>
       recordFor(day).workedDuration.inMinutes / 60 * _hourlyWage;
 
+  /// 오늘 실근무시간(시간 단위) — 간편 입력 시트의 초기값.
+  double get todayWorkedHours => todayRecord.workedDuration.inMinutes / 60;
+
+  /// 오늘 예상 임금.
+  double get todayWage => wageForDay(today);
+
+  /// 간편 입력 시트에서 "오늘 일한 시간"을 직접 정할 때 쓴다. 이 앱의 기록은
+  /// 출퇴근 시각이 원본이라, 입력받은 실근무시간에 맞춰 퇴근 시각을 거꾸로
+  /// 계산해 넣는다(출근 시각이 없으면 09:00으로 시작). 휴게시간은 그대로 두고
+  /// 그만큼 퇴근 시각을 뒤로 민다.
+  void setTodayWorkedHours(double hours) {
+    // 자정을 넘기는 기록은 TimeOfDay 두 개로 표현할 수 없어 하루 안에 맞춘다.
+    const dayEndMinutes = 23 * 60 + 59;
+    final key = today;
+    final current = _records[key] ?? DailyWorkRecord.empty;
+
+    final workMinutes = (hours * 60).round().clamp(0, dayEndMinutes);
+    final spanMinutes = (workMinutes + current.breakMinutes).clamp(
+      0,
+      dayEndMinutes,
+    );
+    var startMinutes = current.clockIn == null
+        ? 9 * 60
+        : current.clockIn!.hour * 60 + current.clockIn!.minute;
+    if (startMinutes + spanMinutes > dayEndMinutes) {
+      startMinutes = dayEndMinutes - spanMinutes;
+    }
+    final endMinutes = startMinutes + spanMinutes;
+
+    _records[key] = current.copyWith(
+      clockIn: TimeOfDay(hour: startMinutes ~/ 60, minute: startMinutes % 60),
+      clockOut: TimeOfDay(hour: endMinutes ~/ 60, minute: endMinutes % 60),
+    );
+    _selectedDay = key;
+    _focusedMonth = key;
+    notifyListeners();
+    _persistDay(key);
+  }
+
   /// [focusedMonth] 기준 이번 달 총 예상 임금 — 출퇴근 버튼이 있던 자리에
   /// 대신 보여준다.
   double get monthTotalWage {
@@ -90,6 +129,27 @@ class WorkLogController extends ChangeNotifier {
     return total;
   }
 
+  /// 홈 요약은 캘린더에서 선택한 달과 무관하게 실제 이번 달을 집계한다.
+  Iterable<DailyWorkRecord> get _currentMonthRecords {
+    final now = today;
+    return _records.entries
+        .where(
+          (entry) => entry.key.year == now.year && entry.key.month == now.month,
+        )
+        .map((entry) => entry.value);
+  }
+
+  int get currentMonthWorkedDays =>
+      _currentMonthRecords.where((record) => record.hasEntry).length;
+
+  Duration get currentMonthWorkedDuration => _currentMonthRecords.fold(
+    Duration.zero,
+    (total, record) => total + record.workedDuration,
+  );
+
+  double get currentMonthWage =>
+      currentMonthWorkedDuration.inMinutes / 60 * _hourlyWage;
+
   void _seedDemoData() {
     final now = today;
     // 오늘은 실제 출근/퇴근 버튼으로 기록할 수 있도록 비워 둔다.
@@ -118,7 +178,11 @@ class WorkLogController extends ChangeNotifier {
     _signedIn = signedIn;
     _records.clear();
     if (signedIn) {
-      await _loadMonth(_focusedMonth);
+      final now = today;
+      await _loadMonth(now);
+      if (_focusedMonth.year != now.year || _focusedMonth.month != now.month) {
+        await _loadMonth(_focusedMonth);
+      }
     } else {
       _seedDemoData();
       notifyListeners();

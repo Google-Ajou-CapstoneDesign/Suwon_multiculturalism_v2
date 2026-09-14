@@ -4,6 +4,7 @@ import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
 import '../../auth/screens/login_screen.dart';
+import '../../wage_calculator/models/wage_diagnosis.dart' show formatWon;
 import '../../worklog/controllers/work_log_controller.dart';
 import '../../worklog/models/daily_work_record.dart';
 import '../../worklog/screens/accident_navigator_screen.dart';
@@ -82,10 +83,7 @@ class HomeScreen extends StatelessWidget {
             Text(
               HomeStrings.bottomNote.of(lang),
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 11,
-                color: AppColors.textMuted,
-              ),
+              style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
             ),
           ],
         ),
@@ -129,7 +127,8 @@ class _GreetingSection extends StatelessWidget {
       < 18 => HomeStrings.greetingAfternoon,
       _ => HomeStrings.greetingEvening,
     };
-    final name = profile.displayNameOrEmailPrefix ?? HomeStrings.guestName.of(lang);
+    final name =
+        profile.displayNameOrEmailPrefix ?? HomeStrings.guestName.of(lang);
     final signedIn = profile.isSignedIn;
     final visaLabel = signedIn
         ? (profile.visaStatus?.fullLabel ?? HomeStrings.visaNotSet.of(lang))
@@ -283,9 +282,7 @@ class _HomeCard extends StatelessWidget {
         color: gradient == null ? Colors.white : null,
         gradient: gradient,
         borderRadius: radius,
-        border: gradient == null
-            ? Border.all(color: AppColors.border)
-            : null,
+        border: gradient == null ? Border.all(color: AppColors.border) : null,
         boxShadow: AppColors.cardShadow,
       ),
       child: child,
@@ -490,8 +487,8 @@ class _TodayWorkCard extends StatelessWidget {
                   verified: record.gpsVerified,
                   address: record.verifiedAddress,
                   language: lang,
-                  onVerified: (lat, lng, address) => controller
-                      .markTodayLocationVerified(
+                  onVerified: (lat, lng, address) =>
+                      controller.markTodayLocationVerified(
                         latitude: lat,
                         longitude: lng,
                         address: address,
@@ -693,7 +690,7 @@ class _HomeLocationVerificationState extends State<_HomeLocationVerification> {
   }
 }
 
-/// 이번 달 근무 — stats 2개 + 이번 주 7일 미니 달력 + 날씨 한 줄(+폭염 경고).
+/// 이번 달 근무 — 근무일·시간·임금 + 이번 주 미니 달력 + 날씨.
 class _MonthlyWorkCard extends StatefulWidget {
   const _MonthlyWorkCard({
     required this.controller,
@@ -771,14 +768,30 @@ class _MonthlyWorkCardState extends State<_MonthlyWorkCard> {
               const SizedBox(height: 14),
               Row(
                 children: [
-                  _MonthlyStat(
-                    value: '${controller.monthWorkedDays}',
-                    label: HomeStrings.monthlyDaysLabel.of(lang),
+                  Expanded(
+                    child: _MonthlyStat(
+                      value: '${controller.currentMonthWorkedDays}',
+                      label: HomeStrings.monthlyDaysLabel.of(lang),
+                    ),
                   ),
-                  const SizedBox(width: 26),
-                  _MonthlyStat(
-                    value: _formatHours(controller.monthTotalWorkedDuration),
-                    label: HomeStrings.monthlyHoursLabel.of(lang),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _MonthlyStat(
+                      value: _formatHours(
+                        controller.currentMonthWorkedDuration,
+                      ),
+                      label: HomeStrings.monthlyHoursLabel.of(lang),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: _MonthlyStat(
+                      value: controller.loading
+                          ? '…'
+                          : formatWon(controller.currentMonthWage, lang),
+                      label: HomeStrings.monthlyWageLabel.of(lang),
+                    ),
                   ),
                 ],
               ),
@@ -891,12 +904,16 @@ class _MonthlyStat extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: AppColors.navy,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              color: AppColors.navy,
+            ),
           ),
         ),
         const SizedBox(height: 2),
@@ -1105,11 +1122,7 @@ class _GuideCard extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
-            Icons.chevron_right,
-            size: 18,
-            color: AppColors.textMuted,
-          ),
+          const Icon(Icons.chevron_right, size: 18, color: AppColors.textMuted),
         ],
       ),
     );
@@ -1220,9 +1233,7 @@ class _VaultItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: registered
-                        ? AppColors.greenFg
-                        : AppColors.textMuted,
+                    color: registered ? AppColors.greenFg : AppColors.textMuted,
                   ),
                 ),
               ],

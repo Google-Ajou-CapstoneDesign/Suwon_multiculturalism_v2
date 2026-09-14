@@ -30,12 +30,6 @@ const wageFlowDefinition = FlowDefinition(
         zh: '您的工资是以何种方式被拖欠的？',
         vi: 'Lương của bạn bị thiếu theo cách nào?',
       ),
-      lead: L10nText(
-        ko: '상황을 선택하시면 다음 단계에서 맞춤형 계산과 설명을 도와드립니다. 정해진 선택지로만 나누어, AI가 임의로 법적 판단을 내리지 않도록 설계했습니다.',
-        en: 'Choose your situation and the next step tailors the calculation and guidance to it. We use fixed options only, by design, so the AI never makes its own legal judgement.',
-        zh: '选择您的情况，下一步会据此提供定制计算与说明。特意仅使用固定选项，以避免AI自行做出法律判断。',
-        vi: 'Chọn tình huống của bạn để bước sau tính toán và hướng dẫn phù hợp. Chỉ dùng lựa chọn cố định, để AI không tự phán đoán pháp lý.',
-      ),
       blocks: [
         OptionsBlock([
           FlowOption(
@@ -150,12 +144,6 @@ const wageFlowDefinition = FlowDefinition(
         zh: '请核对并下载申诉书',
         vi: 'Xem lại và tải đơn khiếu nại',
       ),
-      lead: L10nText(
-        ko: '앞에서 적은 내용이 실제 진정서 서식에 이렇게 들어갑니다. 한국어와 본인 언어, 두 가지 PDF로 받을 수 있습니다.',
-        en: 'What you wrote is placed into the actual complaint form like this. You can download it as a PDF in Korean and in your own language.',
-        zh: '您填写的内容将这样填入实际申诉书格式，可下载韩语版与您的语言版两份PDF。',
-        vi: 'Nội dung bạn đã viết được đưa vào mẫu đơn thật như sau. Bạn có thể tải PDF bằng tiếng Hàn và ngôn ngữ của mình.',
-      ),
       blocks: [
         LegendBlock(),
         FormReviewBlock(
@@ -187,12 +175,6 @@ const wageFlowDefinition = FlowDefinition(
         en: 'Choose how to submit',
         zh: '请选择提交方式',
         vi: 'Chọn cách nộp đơn',
-      ),
-      lead: L10nText(
-        ko: 'Local Bridge는 서류를 대신 제출하지 않습니다. 아래 네 가지 중에서 고르세요.',
-        en: 'Local Bridge does not submit the document on your behalf. Choose one of the four options below.',
-        zh: 'Local Bridge 不会代为提交材料，请从以下四种方式中选择。',
-        vi: 'Local Bridge không nộp hồ sơ thay bạn. Hãy chọn một trong bốn cách dưới đây.',
       ),
       blocks: [
         NoticeBlock(
@@ -400,12 +382,6 @@ const wageFlowDefinition = FlowDefinition(
         en: "From here, it's a waiting game",
         zh: '从这里开始是等待期',
         vi: 'Từ đây là thời gian chờ',
-      ),
-      lead: L10nText(
-        ko: '접수 이후 8단계를 여기서 계속 확인할 수 있습니다. 단계를 누르면 안내가 열리고, 안내 안에서 완료로 표시할 수 있습니다.',
-        en: 'Track all eight stages here after filing. Tap a stage to open the guide, and mark it complete from inside the guide.',
-        zh: '提交后可在此追踪全部8个阶段。点击某阶段可打开说明，并可在说明内标记为完成。',
-        vi: 'Theo dõi cả 8 giai đoạn tại đây sau khi nộp đơn. Nhấn vào giai đoạn để mở hướng dẫn, và đánh dấu hoàn thành trong đó.',
       ),
       blocks: [
         TrackerBlock(now: 3),

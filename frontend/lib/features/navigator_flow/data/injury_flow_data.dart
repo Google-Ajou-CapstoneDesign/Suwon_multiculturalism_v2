@@ -29,12 +29,6 @@ const injuryFlowDefinition = FlowDefinition(
         zh: '您是在什么情况下受伤或患病的？',
         vi: 'Bạn bị thương hoặc mắc bệnh trong tình huống nào?',
       ),
-      lead: L10nText(
-        ko: '사고성 재해와 질병성 재해는 행정 절차가 완전히 다릅니다. 아래에서 상황을 고르면 다음 단계부터 맞춤 안내를 보여드립니다.',
-        en: 'The procedure differs completely between an accident and an occupational illness. Choose your situation below and the next steps will be tailored to it.',
-        zh: '事故性灾害与疾病性灾害的行政程序完全不同。请在下方选择您的情况，接下来的步骤将据此为您提供定制指引。',
-        vi: 'Thủ tục hành chính khác nhau hoàn toàn giữa tai nạn và bệnh nghề nghiệp. Hãy chọn tình huống của bạn bên dưới để các bước tiếp theo được điều chỉnh phù hợp.',
-      ),
       help: StepHelp(
         icon: '❓',
         title: L10nText(
@@ -91,12 +85,6 @@ const injuryFlowDefinition = FlowDefinition(
         en: 'Guidance matched to your situation',
         zh: '这是符合您情况的应对指南',
         vi: 'Hướng dẫn phù hợp với tình huống của bạn',
-      ),
-      lead: L10nText(
-        ko: '노무사 검수를 마친 안내입니다. 카드를 눌러 자세히 보고, 아래에서 다음 행동을 골라주세요.',
-        en: 'This guidance has been reviewed by a labor attorney. Tap a card to read more, then choose what to do next below.',
-        zh: '本指南已经过劳务士审核。点击卡片查看详情，并在下方选择下一步操作。',
-        vi: 'Đây là hướng dẫn đã được luật sư lao động thẩm định. Nhấn vào thẻ để xem chi tiết, sau đó chọn hành động tiếp theo bên dưới.',
       ),
       blocks: [
         InjuryGuideBlock(
@@ -299,12 +287,6 @@ const injuryFlowDefinition = FlowDefinition(
         zh: '疗养给付申请书中将这样填写',
         vi: 'Đây là nội dung sẽ được đưa vào đơn xin trợ cấp',
       ),
-      lead: L10nText(
-        ko: '근로복지공단 별지 제2호 서식에 앞 단계 내용이 1:1로 매핑됩니다. 한국어·모국어 PDF를 각각 받을 수 있습니다.',
-        en: 'This is COMWEL Form No.2. What you wrote in the previous step is mapped one-to-one. You can download it as a PDF in Korean and in your own language.',
-        zh: '前一步骤的内容将1:1对应填入劳动福利公团别纸第2号表格。您可以分别下载韩语版与您本国语言版的PDF。',
-        vi: 'Nội dung ở bước trước sẽ được ánh xạ 1:1 vào mẫu số 2 của Cơ quan Phúc lợi Lao động. Bạn có thể tải PDF bằng tiếng Hàn và ngôn ngữ của mình.',
-      ),
       blocks: [
         LegendBlock(),
         FormReviewBlock(
@@ -366,12 +348,6 @@ const injuryFlowDefinition = FlowDefinition(
         en: 'Agencies and experts who can help',
         zh: '这是可以帮助您的机构与专家',
         vi: 'Đây là các cơ quan và chuyên gia có thể giúp bạn',
-      ),
-      lead: L10nText(
-        ko: '버튼을 누르면 주소·전화번호와 함께 자세한 안내가 열립니다.',
-        en: 'Tap a card to see the address, phone number and detailed guidance.',
-        zh: '点击卡片即可查看地址、电话号码及详细说明。',
-        vi: 'Nhấn vào thẻ để xem địa chỉ, số điện thoại và hướng dẫn chi tiết.',
       ),
       blocks: [
         AccordionBlock([
@@ -563,12 +539,6 @@ const injuryFlowDefinition = FlowDefinition(
         en: "From here, it's a waiting game",
         zh: '从这里开始就是等待期',
         vi: 'Từ đây trở đi là thời gian chờ',
-      ),
-      lead: L10nText(
-        ko: '접수 이후 6단계를 여기서 계속 확인할 수 있습니다. 단계를 누르면 안내가 열리고, 안내 안에서 완료로 표시할 수 있습니다.',
-        en: 'Track all six stages here after filing. Tap a stage to open the guide, and mark it complete from inside the guide.',
-        zh: '提交后可在此持续查看全部6个阶段。点击某阶段即可打开说明，并可在说明内标记为完成。',
-        vi: 'Bạn có thể theo dõi cả 6 giai đoạn tại đây sau khi nộp đơn. Nhấn vào giai đoạn để mở hướng dẫn, và đánh dấu hoàn thành trong đó.',
       ),
       blocks: [
         TrackerBlock(now: 2),

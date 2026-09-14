@@ -333,15 +333,17 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 5),
-                  Text(
-                    step.lead.of(lang),
-                    style: const TextStyle(
-                      fontSize: 11.5,
-                      color: AppColors.textMuted,
-                      height: 1.6,
+                  if (step.lead case final lead?) ...[
+                    const SizedBox(height: 5),
+                    Text(
+                      lead.of(lang),
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        color: AppColors.textMuted,
+                        height: 1.6,
+                      ),
                     ),
-                  ),
+                  ],
                   const SizedBox(height: 13),
                   for (final block in step.blocks) _buildBlock(block, lang),
                 ],

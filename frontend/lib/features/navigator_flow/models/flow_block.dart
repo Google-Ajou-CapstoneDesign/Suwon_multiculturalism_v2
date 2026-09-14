@@ -75,12 +75,12 @@ class TrackerBlock extends FlowBlock {
 class FlowStep {
   const FlowStep({
     required this.title,
-    required this.lead,
+    this.lead,
     required this.blocks,
     this.help,
   });
   final L10nText title;
-  final L10nText lead;
+  final L10nText? lead;
   final List<FlowBlock> blocks;
 
   /// 제목 옆 "❓" 버튼으로 여는 보충 설명 팝업 — 없으면 버튼 자체가 안 뜬다.

@@ -42,15 +42,6 @@ class NavigatorHomeScreen extends StatelessWidget {
                 color: AppColors.navy,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              NavigatorHomeStrings.subtitle.of(lang),
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.textMuted,
-                height: 1.4,
-              ),
-            ),
             const SizedBox(height: 20),
             _NavigatorOptionCard(
               emoji: '💸',
@@ -138,11 +129,7 @@ class _NavigatorOptionCard extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
-            Icons.chevron_right,
-            size: 18,
-            color: AppColors.textMuted,
-          ),
+          const Icon(Icons.chevron_right, size: 18, color: AppColors.textMuted),
         ],
       ),
     );

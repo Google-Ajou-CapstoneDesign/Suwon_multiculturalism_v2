@@ -199,6 +199,12 @@ class HomeStrings {
     zh: '总工时',
     vi: 'Tổng giờ làm',
   );
+  static const monthlyWageLabel = L10nText(
+    ko: '이번 달 임금',
+    en: "This month's wages",
+    zh: '本月工资',
+    vi: 'Lương tháng này',
+  );
   static const monthlyViewAll = L10nText(
     ko: '전체 기록 →',
     en: 'View all →',
