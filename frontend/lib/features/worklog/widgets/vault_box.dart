@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
-import '../../auth/services/auth_service.dart';
-import '../../auth/services/user_profile_api_service.dart';
+import '../screens/evidence_files_screen.dart';
 
 class _VaultStrings {
   _VaultStrings._();
@@ -63,16 +62,16 @@ class _VaultStrings {
     vi: 'Chưa có — hãy lưu phiếu lương mỗi tháng',
   );
   static const vaultMessageEmptySubtitle = L10nText(
-    ko: '아직 없습니다 — 지급 약속 메시지를 저장해 두세요',
-    en: 'None yet — save any message promising payment',
-    zh: '尚无 — 请保存承诺支付的消息',
-    vi: 'Chưa có — hãy lưu tin nhắn hứa trả lương',
+    ko: '메시지 캡처 파일 보기 · 추가',
+    en: 'View or add message screenshots',
+    zh: '查看或添加消息截图',
+    vi: 'Xem hoặc thêm ảnh chụp tin nhắn',
   );
   static const vaultCallEmptySubtitle = L10nText(
-    ko: '아직 없습니다 — 본인이 참여한 대화만 녹음할 수 있습니다',
-    en: 'None yet — you may only record conversations you take part in',
-    zh: '尚无 — 只能录制本人参与的对话',
-    vi: 'Chưa có — chỉ được ghi âm cuộc trò chuyện bạn tham gia',
+    ko: '녹음 파일 보기 · 추가',
+    en: 'View or add audio files',
+    zh: '查看或添加录音文件',
+    vi: 'Xem hoặc thêm tệp ghi âm',
   );
   static const vaultStoredTag = L10nText(
     ko: '보관됨',
@@ -107,9 +106,7 @@ class _VaultStrings {
 }
 
 /// 사업주 공식 증빙 보관함 — 근무기록장 시트와 설정 화면이 공용으로 쓴다.
-/// 근로계약서/임금명세서는 실제로 등록 여부를 토글하고 로그인 상태면
-/// 백엔드(PATCH /api/users/me/vault)에도 반영한다. 카톡·통화녹음은 아직
-/// 저장할 방법이 없어 "준비 중" 안내만 띄운다.
+/// 각 자료를 선택하면 인증된 업로드·목록 화면을 연다.
 class VaultBox extends StatefulWidget {
   const VaultBox({super.key, required this.language});
   final AppLanguage language;
@@ -120,47 +117,22 @@ class VaultBox extends StatefulWidget {
 
 class _VaultBoxState extends State<VaultBox> {
   bool _open = false;
-  final _authService = AuthService();
-  final _userProfileApi = UserProfileApiService();
 
   void _showComingSoon(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          _VaultStrings.vaultComingSoonMessage.of(widget.language),
-        ),
+        content: Text(_VaultStrings.vaultComingSoonMessage.of(widget.language)),
         duration: const Duration(seconds: 2),
       ),
     );
   }
 
-  void _toggleContract(UserProfileController profile) {
-    profile.toggleContractStored();
-    _syncVault(profile, contractStored: profile.contractStored);
-  }
-
-  void _togglePayslip(UserProfileController profile) {
-    profile.togglePayslipStored();
-    _syncVault(profile, payslipStored: profile.payslipStored);
-  }
-
-  Future<void> _syncVault(
-    UserProfileController profile, {
-    bool? contractStored,
-    bool? payslipStored,
-  }) async {
-    if (!profile.isSignedIn) return;
-    try {
-      final idToken = await _authService.currentIdToken();
-      if (idToken == null) return;
-      await _userProfileApi.updateVaultStatus(
-        idToken: idToken,
-        contractStored: contractStored,
-        payslipStored: payslipStored,
-      );
-    } catch (_) {
-      // 저장 실패해도 로컬 상태는 이미 반영돼 있으니 조용히 넘어간다.
-    }
+  void _openFiles(String category, String title) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => EvidenceFilesScreen(title: title, category: category),
+      ),
+    );
   }
 
   @override
@@ -247,12 +219,13 @@ class _VaultBoxState extends State<VaultBox> {
                         title: _VaultStrings.vaultContractTitle.of(lang),
                         subtitle: profile.contractStored
                             ? _VaultStrings.vaultStoredSubtitle.of(lang)
-                            : _VaultStrings.vaultContractEmptySubtitle.of(
-                                lang,
-                              ),
+                            : _VaultStrings.vaultContractEmptySubtitle.of(lang),
                         stored: profile.contractStored,
                         language: lang,
-                        onTap: () => _toggleContract(profile),
+                        onTap: () => _openFiles(
+                          'contract',
+                          _VaultStrings.vaultContractTitle.of(lang),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       _VaultFileRow(
@@ -260,12 +233,13 @@ class _VaultBoxState extends State<VaultBox> {
                         title: _VaultStrings.vaultPayslipTitle.of(lang),
                         subtitle: profile.payslipStored
                             ? _VaultStrings.vaultStoredSubtitle.of(lang)
-                            : _VaultStrings.vaultPayslipEmptySubtitle.of(
-                                lang,
-                              ),
+                            : _VaultStrings.vaultPayslipEmptySubtitle.of(lang),
                         stored: profile.payslipStored,
                         language: lang,
-                        onTap: () => _togglePayslip(profile),
+                        onTap: () => _openFiles(
+                          'payslip',
+                          _VaultStrings.vaultPayslipTitle.of(lang),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       _VaultFileRow(
@@ -276,18 +250,22 @@ class _VaultBoxState extends State<VaultBox> {
                         ),
                         stored: false,
                         language: lang,
-                        onTap: () => _showComingSoon(context),
+                        onTap: () => _openFiles(
+                          'message',
+                          _VaultStrings.vaultMessageTitle.of(lang),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       _VaultFileRow(
                         icon: '🎙',
                         title: _VaultStrings.vaultCallTitle.of(lang),
-                        subtitle: _VaultStrings.vaultCallEmptySubtitle.of(
-                          lang,
-                        ),
+                        subtitle: _VaultStrings.vaultCallEmptySubtitle.of(lang),
                         stored: false,
                         language: lang,
-                        onTap: () => _showComingSoon(context),
+                        onTap: () => _openFiles(
+                          'recording',
+                          _VaultStrings.vaultCallTitle.of(lang),
+                        ),
                       ),
                       const SizedBox(height: 10),
                       SizedBox(
@@ -387,7 +365,9 @@ class _VaultFileRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                (stored ? _VaultStrings.vaultStoredTag : _VaultStrings.vaultAddTag)
+                (stored
+                        ? _VaultStrings.vaultStoredTag
+                        : _VaultStrings.vaultAddTag)
                     .of(language),
                 style: TextStyle(
                   fontSize: 9.5,

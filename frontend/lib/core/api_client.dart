@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 import 'api_config.dart';
 
@@ -89,6 +90,34 @@ class ApiClient {
       return jsonDecode(utf8.decode(response.bodyBytes));
     }
     throw ApiException(response.statusCode, response.body);
+  }
+
+  Future<dynamic> uploadFile(
+    String path, {
+    required String idToken,
+    required String filename,
+    required List<int> bytes,
+    required String contentType,
+    Map<String, String>? query,
+  }) async {
+    final request =
+        http.MultipartRequest(
+            'POST',
+            _base.replace(path: path, queryParameters: query),
+          )
+          ..headers['Authorization'] = 'Bearer $idToken'
+          ..files.add(
+            http.MultipartFile.fromBytes(
+              'file',
+              bytes,
+              filename: filename,
+              contentType: MediaType.parse(contentType),
+            ),
+          );
+    final response = await (() async {
+      return http.Response.fromStream(await _client.send(request));
+    })().timeout(const Duration(seconds: 90));
+    return _decode(response);
   }
 
   void dispose() => _client.close();

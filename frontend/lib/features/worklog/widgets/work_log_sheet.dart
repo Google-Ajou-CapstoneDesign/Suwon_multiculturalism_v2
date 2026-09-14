@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/evidence_files_screen.dart';
 import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
 import '../../../theme/app_colors.dart';
@@ -177,13 +178,12 @@ class _WorkLogStrings {
   );
 
   /// "시급 10,320원 (세전)" — 오늘 예상 임금 카드의 보조 문구.
-  static String hourlyWageMeta(AppLanguage lang, String wage) =>
-      switch (lang) {
-        AppLanguage.ko => '시급 $wage (세전)',
-        AppLanguage.en => '$wage/hour (pre-tax)',
-        AppLanguage.zh => '时薪 $wage（税前）',
-        AppLanguage.vi => '$wage/giờ (trước thuế)',
-      };
+  static String hourlyWageMeta(AppLanguage lang, String wage) => switch (lang) {
+    AppLanguage.ko => '시급 $wage (세전)',
+    AppLanguage.en => '$wage/hour (pre-tax)',
+    AppLanguage.zh => '时薪 $wage（税前）',
+    AppLanguage.vi => '$wage/giờ (trước thuế)',
+  };
 
   static const hourlyWageDialogTitle = L10nText(
     ko: '적용 시급',
@@ -229,10 +229,10 @@ class _WorkLogStrings {
   );
 
   static const photoAttach = L10nText(
-    ko: '📷 타임스탬프 사진',
-    en: '📷 Timestamped photo',
-    zh: '📷 时间戳照片',
-    vi: '📷 Ảnh có dấu thời gian',
+    ko: '📷 사진 첨부',
+    en: '📷 Attach photo',
+    zh: '📷 添加照片',
+    vi: '📷 Thêm ảnh',
   );
   static const transitCardAttach = L10nText(
     ko: '🚌 교통카드 기록',
@@ -241,10 +241,10 @@ class _WorkLogStrings {
     vi: '🚌 Lịch sử thẻ giao thông',
   );
   static const audioRecord = L10nText(
-    ko: '🎙️ 녹음하기',
-    en: '🎙️ Record audio',
-    zh: '🎙️ 录音',
-    vi: '🎙️ Ghi âm',
+    ko: '🎙️ 녹음 첨부',
+    en: '🎙️ Attach audio',
+    zh: '🎙️ 添加录音',
+    vi: '🎙️ Thêm bản ghi âm',
   );
 
   static const memoHint = L10nText(
@@ -1626,21 +1626,47 @@ class _DailyHookBody extends StatelessWidget {
                   Expanded(
                     child: _AttachButton(
                       label: _WorkLogStrings.photoAttach.of(language),
-                      onTap: () {},
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => EvidenceFilesScreen(
+                            title: _WorkLogStrings.photoAttach.of(language),
+                            category: 'worklog_photo',
+                            day: day,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 7),
                   Expanded(
                     child: _AttachButton(
                       label: _WorkLogStrings.audioRecord.of(language),
-                      onTap: () {},
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => EvidenceFilesScreen(
+                            title: _WorkLogStrings.audioRecord.of(language),
+                            category: 'worklog_audio',
+                            day: day,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 7),
                   Expanded(
                     child: _AttachButton(
                       label: _WorkLogStrings.transitCardAttach.of(language),
-                      onTap: () {},
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => EvidenceFilesScreen(
+                            title: _WorkLogStrings.transitCardAttach.of(
+                              language,
+                            ),
+                            category: 'worklog_transit',
+                            day: day,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -1940,7 +1966,6 @@ class _AttachButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO(backend): image_picker/파일 첨부 + Firebase Storage 업로드 연동.
     return OutlinedButton(
       onPressed: onTap,
       style: OutlinedButton.styleFrom(
