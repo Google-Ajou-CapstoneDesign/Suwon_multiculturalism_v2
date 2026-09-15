@@ -7,7 +7,7 @@ from app.agent.pipeline import _LANGUAGE_NAMES
 from app.services import chat_service
 
 
-def test_uzbek_chat_reaches_agent_and_has_translated_fallback(monkeypatch):
+def test_uzbek_chat_reaches_agent_and_has_translated_fallback(monkeypatch, chat_quota):
     monkeypatch.setattr(chat_service, "get_genai_client", lambda: None)
     monkeypatch.setattr(chat_service, "_fallback_orgs", lambda *args, **kwargs: [])
     agent = AsyncMock(side_effect=RuntimeError("unavailable"))

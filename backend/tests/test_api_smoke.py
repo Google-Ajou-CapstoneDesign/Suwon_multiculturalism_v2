@@ -11,7 +11,7 @@ def test_health():
     assert response.json() == {"status": "ok"}
 
 
-def test_chat_wage_keyword_routes_to_wage_navigator():
+def test_chat_wage_keyword_routes_to_wage_navigator(chat_quota):
     response = client.post("/api/chat", json={"message": "임금 못받은지 3주됐어요"})
     assert response.status_code == 200
     body = response.json()

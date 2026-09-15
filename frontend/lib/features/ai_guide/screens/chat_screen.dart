@@ -1,4 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../../core/api_client.dart';
 import '../../../core/api_config.dart';
 import '../../../core/app_language.dart';
 import '../../../core/user_profile_controller.dart';
@@ -55,13 +58,36 @@ class _ChatStrings {
     vi: 'Không thể kết nối máy chủ. Vui lòng thử lại sau.',
     uz: "Serverga ulanib boʻlmadi. Iltimos, birozdan keyin qayta urinib koʻring.",
   );
+  static const wait = L10nText(
+    ko: '{seconds}초 후 다시 전송할 수 있어요.',
+    en: 'You can send again in {seconds} seconds.',
+    zh: '{seconds}秒后可以再次发送。',
+    vi: 'Bạn có thể gửi lại sau {seconds} giây.',
+    uz: '{seconds} soniyadan keyin yana yuborishingiz mumkin.',
+  );
+  static const daily = L10nText(
+    ko: '오늘의 AI 이용 한도에 도달했어요. 한국 시간 자정에 초기화됩니다.',
+    en: 'You have reached your daily AI limit. It resets at midnight in Korea.',
+    zh: '已达到今日AI使用上限，将在韩国时间午夜重置。',
+    vi: 'Bạn đã đạt giới hạn AI hôm nay. Giới hạn đặt lại lúc nửa đêm giờ Hàn Quốc.',
+    uz: 'Bugungi AI limitiga yetdingiz. Limit Koreya vaqti bilan yarim tunda yangilanadi.',
+  );
+  static const tooLong = L10nText(
+    ko: '메시지는 2,000자 이내로 입력해 주세요.',
+    en: 'Please keep your message within 2,000 characters.',
+    zh: '消息请勿超过2,000个字符。',
+    vi: 'Vui lòng nhập tin nhắn không quá 2.000 ký tự.',
+    uz: 'Xabaringiz 2 000 belgidan oshmasin.',
+  );
 }
 
 /// AI 가이드 챗봇. 라이트 라우팅 기반 안내 화면.
 /// 하단 탭이 아니라 우측 하단 AI 버블 → 슬라이드업 시트로 진입한다(AiChatSheet).
 /// 사용자가 보내는 메시지는 실제 백엔드(POST /api/chat)를 호출한다.
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key, this.onClose});
+  const ChatScreen({super.key, this.onClose, this.chatApi});
+
+  final ChatApiService? chatApi;
 
   /// 시트로 띄워졌을 때 닫기 버튼에 연결한다. null이면 닫기 버튼을 숨긴다.
   final VoidCallback? onClose;
@@ -73,8 +99,51 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
-  final _chatApi = ChatApiService();
+  late final _chatApi = widget.chatApi ?? ChatApiService();
   bool _isSending = false;
+  Timer? _retryTimer;
+  DateTime? _retryAt;
+  bool _dailyLimit = false;
+  L10nText? _error;
+  String? _actorUid;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final uid = UserProfileScope.of(context).uid;
+    if (_actorUid != uid) {
+      _actorUid = uid;
+      _retryTimer?.cancel();
+      _retryAt = null;
+      _dailyLimit = false;
+      _error = null;
+    }
+  }
+
+  int get _remaining => _retryAt == null
+      ? 0
+      : ((_retryAt!.difference(DateTime.now()).inMilliseconds / 1000).ceil())
+            .clamp(0, 86400);
+
+  void _startLimit(Map<String, dynamic> detail) {
+    final seconds = (detail['retryAfterSeconds'] as num?)?.toInt() ?? 5;
+    _retryAt = DateTime.now().add(Duration(seconds: seconds.clamp(1, 86400)));
+    _dailyLimit = detail['reason'] == 'daily';
+    _retryTimer?.cancel();
+    _retryTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() {
+        if (_remaining == 0) {
+          _retryAt = null;
+          _dailyLimit = false;
+          timer.cancel();
+        }
+      });
+    });
+  }
 
   final List<ChatMessage> _messages = [];
 
@@ -98,7 +167,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _send() async {
     final text = _controller.text.trim();
-    if (text.isEmpty || _isSending) return;
+    if (text.isEmpty || _isSending || _remaining > 0) return;
+    if (text.runes.length > 2000) {
+      setState(() => _error = _ChatStrings.tooLong);
+      return;
+    }
 
     // 지금까지의 대화(직전 턴들)를 먼저 스냅샷 떠둔다 — 새 사용자 메시지를
     // 리스트에 추가하기 전이라야 "현재 메시지 이전까지의 이력"이 된다.
@@ -107,8 +180,8 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {
       _messages.add(ChatMessage.user(text));
       _isSending = true;
+      _error = null;
     });
-    _controller.clear();
     _scrollToBottom();
 
     try {
@@ -119,23 +192,32 @@ class _ChatScreenState extends State<ChatScreen> {
         language: language,
         history: history,
       );
+      if (!mounted) return;
+      _controller.clear();
       setState(() => _messages.add(ChatMessage.bot(response)));
     } catch (e) {
       // ApiConfig.baseUrl(디버그 콘솔에 출력)이 의도한 배포 주소가 맞는지부터 확인할 것 —
       // dart-define 없이 실행하면 로컬 기본값(localhost:8080)으로 떨어져 항상 여기로 온다.
       debugPrint('POST /api/chat 실패 (baseUrl=${ApiConfig.baseUrl}): $e');
       if (!mounted) return;
-      final lang = UserProfileScope.of(context).language;
-      setState(
-        () => _messages.add(
-          ChatMessage.bot(
-            AiResponse(riskNotice: _ChatStrings.serverError.of(lang)),
-          ),
-        ),
-      );
+      setState(() {
+        _messages.removeLast();
+        _error = _ChatStrings.serverError;
+        if (e is ApiException && e.statusCode == 429) {
+          try {
+            final detail = jsonDecode(e.body)['detail'] as Map<String, dynamic>;
+            _startLimit(detail);
+            _error = null;
+          } catch (_) {
+            /* Keep the generic error for malformed responses. */
+          }
+        }
+      });
     } finally {
-      setState(() => _isSending = false);
-      _scrollToBottom();
+      if (mounted) {
+        setState(() => _isSending = false);
+        _scrollToBottom();
+      }
     }
   }
 
@@ -153,6 +235,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    _retryTimer?.cancel();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -205,10 +288,24 @@ class _ChatScreenState extends State<ChatScreen> {
                     },
                   ),
           ),
+          if (_error != null || _remaining > 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                _error?.of(lang) ??
+                    (_dailyLimit
+                        ? _ChatStrings.daily.of(lang)
+                        : _ChatStrings.wait
+                              .of(lang)
+                              .replaceAll('{seconds}', '$_remaining')),
+                style: const TextStyle(color: AppColors.textMuted),
+              ),
+            ),
           _ChatInputBar(
             controller: _controller,
             onSend: _send,
             isSending: _isSending,
+            isLimited: _remaining > 0,
             language: lang,
           ),
         ],
@@ -370,11 +467,13 @@ class _ChatInputBar extends StatelessWidget {
     required this.controller,
     required this.onSend,
     required this.isSending,
+    required this.isLimited,
     required this.language,
   });
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool isSending;
+  final bool isLimited;
   final AppLanguage language;
 
   @override
@@ -394,6 +493,7 @@ class _ChatInputBar extends StatelessWidget {
                 child: TextField(
                   controller: controller,
                   enabled: !isSending,
+                  maxLength: 2000,
                   decoration: InputDecoration(
                     hintText: _ChatStrings.inputHint.of(language),
                   ),
@@ -402,7 +502,7 @@ class _ChatInputBar extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               IconButton.filled(
-                onPressed: isSending ? null : onSend,
+                onPressed: isSending || isLimited ? null : onSend,
                 style: IconButton.styleFrom(backgroundColor: AppColors.primary),
                 icon: isSending
                     ? const SizedBox(

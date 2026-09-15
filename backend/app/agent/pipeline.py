@@ -7,6 +7,8 @@
 실패하면 예외를 그대로 던져 호출부가 정적 안내 문구로 폴백하게 한다.
 """
 
+import asyncio
+import functools
 import logging
 import re
 import uuid
@@ -14,11 +16,21 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from google.adk.agents import Agent
+from google.adk.agents.run_config import RunConfig
 from google.adk.events import Event
 from google.adk.models import Gemini
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
+
+
+def _nonblocking_tool(function):
+    # ADK invokes synchronous tools on the event loop. Run blocking database /
+    # document-search calls in a worker so the request deadline stays effective.
+    @functools.wraps(function)
+    async def invoke(*args, **kwargs):
+        return await asyncio.to_thread(function, *args, **kwargs)
+    return invoke
 
 from ..core.genai_client import get_model_name, resolve_client_kwargs
 from ..core.time_utils import now_kst, weekday_kst_ko
@@ -152,13 +164,17 @@ async def run_agent(
         # 키 모드)으로 클라이언트를 만들어버린다 — get_genai_client()와 동일한
         # 규칙(resolve_client_kwargs)을 명시적으로 넘겨 환경변수 설정 누락에
         # 안전하게 만든다.
-        model=Gemini(model=get_model_name(), client_kwargs=resolve_client_kwargs()),
+        model=Gemini(model=get_model_name(), client_kwargs={
+            **(resolve_client_kwargs() or {}),
+            "http_options": types.HttpOptions(timeout=45000,
+                retry_options=types.HttpRetryOptions(attempts=1)),
+        }),
         instruction=_SYSTEM_INSTRUCTION,
-        tools=build_tools(
+        tools=[_nonblocking_tool(tool) for tool in build_tools(
             uid=uid,
             latitude=latitude,
             longitude=longitude,
-        ),
+        )],
         # thinking_budget=0으로 지연을 줄이려던 시도가 답변을 지나치게 짧고
         # 부실하게 만드는 부작용을 일으켜 되돌린다 — 이 모델은 도구 호출 판단과
         # 답변 구성에 thinking 예산이 필요하다. 지연보다 답변 품질을 우선한다.
@@ -171,66 +187,73 @@ async def run_agent(
         app_name=_APP_NAME, user_id=effective_uid, session_id=session_id
     )
 
-    now = now_kst()
-    # 에이전트는 실제 시계가 없어 "오늘"을 모른다 — 매 요청마다 한국 시간 기준
-    # 날짜·요일·시각을 넣어줘야 "내일", "지금 문 열었나요" 같은 상대적 시점
-    # 질문과 기관 이용시간 판단이 가능하다(서버가 UTC로 도는 Cloud Run이라
-    # KST로 명시 변환한다 — core.time_utils 참고).
-    context_lines = [
-        f"오늘 날짜: {now.strftime('%Y-%m-%d')} ({weekday_kst_ko(now.date())}요일) "
-        f"{now.strftime('%H:%M')} 기준(한국시간)"
-    ]
-    if visa_group:
-        context_lines.append(f"체류자격: {visa_group}")
-    if lifecycle_stage:
-        context_lines.append(f"생애주기 단계: {lifecycle_stage}")
-    # 메시지 자체가 어떤 언어로 쓰였든(예: 한국어로 짧게 물어봐도), 프론트엔드
-    # 앱 언어 설정을 따라 답변 언어를 강제한다 — 메시지 언어만 보고 자동
-    # 판단하게 두면 설정과 다른 언어로 답하는 경우가 있었다.
-    language_name = _LANGUAGE_NAMES.get(language or "ko", _LANGUAGE_NAMES["ko"])
-    context_lines.append(f"답변 언어(앱 설정): {language_name} — 메시지의 언어와 달라도 반드시 이 언어로만 답변")
-    context_prefix = f"[{' / '.join(context_lines)}]\n"
+    try:
+        now = now_kst()
+        # 에이전트는 실제 시계가 없어 "오늘"을 모른다 — 매 요청마다 한국 시간 기준
+        # 날짜·요일·시각을 넣어줘야 "내일", "지금 문 열었나요" 같은 상대적 시점
+        # 질문과 기관 이용시간 판단이 가능하다(서버가 UTC로 도는 Cloud Run이라
+        # KST로 명시 변환한다 — core.time_utils 참고).
+        context_lines = [
+            f"오늘 날짜: {now.strftime('%Y-%m-%d')} ({weekday_kst_ko(now.date())}요일) "
+            f"{now.strftime('%H:%M')} 기준(한국시간)"
+        ]
+        if visa_group:
+            context_lines.append(f"체류자격: {visa_group}")
+        if lifecycle_stage:
+            context_lines.append(f"생애주기 단계: {lifecycle_stage}")
+        # 메시지 자체가 어떤 언어로 쓰였든(예: 한국어로 짧게 물어봐도), 프론트엔드
+        # 앱 언어 설정을 따라 답변 언어를 강제한다 — 메시지 언어만 보고 자동
+        # 판단하게 두면 설정과 다른 언어로 답하는 경우가 있었다.
+        language_name = _LANGUAGE_NAMES.get(language or "ko", _LANGUAGE_NAMES["ko"])
+        context_lines.append(f"답변 언어(앱 설정): {language_name} — 메시지의 언어와 달라도 반드시 이 언어로만 답변")
+        context_prefix = f"[{' / '.join(context_lines)}]\n"
 
-    # 매 요청마다 새 세션을 만들어 돌리므로(아래 create_session) 에이전트에게는
-    # ADK 세션 자체의 기억이 없다 — chat_service가 프론트엔드로부터 받은 직전
-    # 대화를 여기서 텍스트로 그대로 넣어줘야 "그럼 저는 어떻게 해야 하나요?"
-    # 같은 맥락 의존 후속 질문에 제대로 답할 수 있다.
-    history_block = "\n".join(
-        f"{'사용자' if turn.role == 'user' else '상담사'}: {turn.text}"
-        for turn in (history or [])[-6:]
-    )
-    history_prefix = f"[이전 대화]\n{history_block}\n\n" if history_block else ""
+        # 매 요청마다 새 세션을 만들어 돌리므로(아래 create_session) 에이전트에게는
+        # ADK 세션 자체의 기억이 없다 — chat_service가 프론트엔드로부터 받은 직전
+        # 대화를 여기서 텍스트로 그대로 넣어줘야 "그럼 저는 어떻게 해야 하나요?"
+        # 같은 맥락 의존 후속 질문에 제대로 답할 수 있다.
+        history_block = "\n".join(
+            f"{'사용자' if turn.role == 'user' else '상담사'}: {turn.text}"
+            for turn in (history or [])[-6:]
+        )
+        history_prefix = f"[이전 대화]\n{history_block}\n\n" if history_block else ""
 
-    new_message = types.Content(
-        role="user", parts=[types.Part(text=history_prefix + context_prefix + message)]
-    )
+        new_message = types.Content(
+            role="user", parts=[types.Part(text=history_prefix + context_prefix + message)]
+        )
 
-    final_text_parts: list[str] = []
-    urgent = False
-    found_orgs: List[Org] = []
-    async for event in runner.run_async(
-        user_id=effective_uid, session_id=session_id, new_message=new_message
-    ):
-        _log_agent_event(event, message)
-        for call in event.get_function_calls():
-            if call.name == "flag_urgent_action":
-                urgent = True
-        for response in event.get_function_responses():
-            if response.name == "search_support_orgs" and isinstance(response.response, dict):
-                orgs_data = response.response.get("orgs") or []
-                found_orgs = [Org.model_validate(o) for o in orgs_data]
-        if event.is_final_response() and event.content and event.content.parts:
-            # part.thought(사고 과정)까지 같이 걸러내지 않으면 "Oh no, they're
-            # really hurting..." 같은 영어 사고 과정 텍스트가 실제 답변 앞에
-            # 그대로 붙어서 사용자에게 노출된다 — _log_agent_event()가 이미
-            # 로그로 따로 남기므로 여기서는 사고 과정이 아닌 part만 모은다.
-            final_text_parts = [
-                part.text
-                for part in event.content.parts
-                if part.text and not part.thought
-            ]
+        final_text_parts: list[str] = []
+        urgent = False
+        found_orgs: List[Org] = []
+        async for event in runner.run_async(
+            user_id=effective_uid, session_id=session_id, new_message=new_message,
+            run_config=RunConfig(max_llm_calls=4),
+        ):
+            _log_agent_event(event, message)
+            for call in event.get_function_calls():
+                if call.name == "flag_urgent_action":
+                    urgent = True
+            for response in event.get_function_responses():
+                if response.name == "search_support_orgs" and isinstance(response.response, dict):
+                    orgs_data = response.response.get("orgs") or []
+                    found_orgs = [Org.model_validate(o) for o in orgs_data]
+            if event.is_final_response() and event.content and event.content.parts:
+                # part.thought(사고 과정)까지 같이 걸러내지 않으면 "Oh no, they're
+                # really hurting..." 같은 영어 사고 과정 텍스트가 실제 답변 앞에
+                # 그대로 붙어서 사용자에게 노출된다 — _log_agent_event()가 이미
+                # 로그로 따로 남기므로 여기서는 사고 과정이 아닌 part만 모은다.
+                final_text_parts = [
+                    part.text
+                    for part in event.content.parts
+                    if part.text and not part.thought
+                ]
 
-    final_text = _strip_leaked_context("".join(final_text_parts).strip())
-    if not final_text:
-        raise RuntimeError("에이전트가 최종 응답을 생성하지 못했습니다.")
-    return AgentResult(text=final_text, urgent=urgent, orgs=found_orgs)
+        final_text = _strip_leaked_context("".join(final_text_parts).strip())
+        if not final_text:
+            raise RuntimeError("에이전트가 최종 응답을 생성하지 못했습니다.")
+        return AgentResult(text=final_text, urgent=urgent, orgs=found_orgs)
+
+    finally:
+        await _session_service.delete_session(
+            app_name=_APP_NAME, user_id=effective_uid, session_id=session_id
+        )

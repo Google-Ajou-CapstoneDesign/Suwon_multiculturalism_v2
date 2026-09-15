@@ -1,6 +1,6 @@
 from typing import List, Literal, Optional
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from .base import CamelModel
 from .org import Org
@@ -13,14 +13,14 @@ class ChatTurn(CamelModel):
     하나요?" 같은 맥락 의존 후속 질문을 이해하려면 이게 필요하다."""
 
     role: Literal["user", "assistant"]
-    text: str
+    text: str = Field(max_length=12000)
 
 
 class ChatRequest(CamelModel):
-    message: str
-    history: List[ChatTurn] = []
+    message: str = Field(min_length=1, max_length=2000)
+    history: List[ChatTurn] = Field(default_factory=list, max_length=6)
     visa_group: Optional[Literal["E-9", "H-2", "D-2"]] = None
-    lifecycle_stage: Optional[str] = None
+    lifecycle_stage: Optional[str] = Field(default=None, max_length=100)
     # 프론트엔드(AppLanguage)의 현재 언어 설정. 메시지 자체가 어떤 언어로
     # 쓰였든, 답변은 항상 이 설정을 따라야 한다 — 모델이 메시지 언어만 보고
     # 자동 판단하게 두면(예: 한국어로 짧게 쓴 질문) 설정과 다른 언어로 답하는
@@ -30,6 +30,14 @@ class ChatRequest(CamelModel):
     # 없거나 서비스가 꺼져 있으면 둘 다 생략할 수 있다.
     latitude: Optional[float] = Field(default=None, ge=-90, le=90)
     longitude: Optional[float] = Field(default=None, ge=-180, le=180)
+
+    @model_validator(mode="after")
+    def validate_input_budget(self):
+        if not self.message.strip():
+            raise ValueError("Message must not be blank")
+        if len(self.message) + sum(len(turn.text) for turn in self.history) > 12000:
+            raise ValueError("Message and history must not exceed 12000 characters")
+        return self
 
 
 class RoutingTarget(CamelModel):

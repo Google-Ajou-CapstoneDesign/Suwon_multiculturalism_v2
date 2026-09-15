@@ -34,6 +34,7 @@ void main() {
     );
     addTearDown(client.dispose);
     final chat = ChatApiService(
+      tokenProvider: () async => null,
       client: client,
       locationProvider: () async => null,
     );

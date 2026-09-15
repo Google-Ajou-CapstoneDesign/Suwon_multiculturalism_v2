@@ -3,17 +3,23 @@ import 'package:geolocator/geolocator.dart';
 
 import '../../../core/api_client.dart';
 import '../../../core/app_language.dart';
+import '../../auth/services/auth_service.dart';
 import '../models/ai_response.dart';
 import '../models/chat_message.dart';
 
 /// POST /api/chat 호출. 백엔드가 의도 분류(직전 대화 참고) 후 에이전트 또는
 /// 사전 검수된 정적 문구로 응답한다.
 class ChatApiService {
-  ChatApiService({ApiClient? client, ChatLocationProvider? locationProvider})
-    : _client = client ?? ApiClient(),
-      _locationProvider = locationProvider ?? _readCurrentLocation;
+  ChatApiService({
+    ApiClient? client,
+    ChatLocationProvider? locationProvider,
+    Future<String?> Function()? tokenProvider,
+  }) : _client = client ?? ApiClient(),
+       _tokenProvider = tokenProvider ?? (() => AuthService().currentIdToken()),
+       _locationProvider = locationProvider ?? _readCurrentLocation;
 
   final ApiClient _client;
+  final Future<String?> Function() _tokenProvider;
   final ChatLocationProvider _locationProvider;
   Future<ChatLocation?>? _locationFuture;
 
@@ -32,13 +38,26 @@ class ChatApiService {
     // 한 채팅 세션에서는 위치 권한을 한 번만 확인한다. 권한 거부나 위치 서비스
     // 비활성화는 채팅 자체를 막지 않고, 백엔드가 거리 없음(null)으로 응답한다.
     final location = await (_locationFuture ??= _loadLocation());
-    final json = await _client.postJson('/api/chat', {
-      'message': message,
-      'history': _historyToJson(history),
-      'language': language.name,
-      'latitude': ?location?.latitude,
-      'longitude': ?location?.longitude,
-    });
+    final token = await _tokenProvider();
+    final turns = _historyToJson(history);
+    while (turns.isNotEmpty &&
+        message.runes.length +
+                turns.fold<int>(
+                  0,
+                  (sum, turn) => sum + turn['text']!.runes.length,
+                ) >
+            12000) {
+      turns.removeAt(0);
+    }
+    final json = await _client
+        .postJson('/api/chat', {
+          'message': message,
+          'history': turns,
+          'language': language.name,
+          'latitude': ?location?.latitude,
+          'longitude': ?location?.longitude,
+        }, idToken: token)
+        .timeout(const Duration(seconds: 75));
     return AiResponse.fromJson(json as Map<String, dynamic>);
   }
 

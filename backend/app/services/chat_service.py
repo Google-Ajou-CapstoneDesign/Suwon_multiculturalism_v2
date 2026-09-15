@@ -223,6 +223,7 @@ def _classify_with_genai(message: str, history: List[ChatTurn]) -> Optional[Inte
             model=get_model_name(),
             contents=contents,
             config=types.GenerateContentConfig(
+                http_options=types.HttpOptions(timeout=15000, retry_options=types.HttpRetryOptions(attempts=1)),
                 system_instruction=_SYSTEM_INSTRUCTION,
                 response_mime_type="application/json",
                 response_schema=IntentClassification,
@@ -249,8 +250,10 @@ def _classify_with_keywords(message: str) -> Intent:
 
 
 async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatResponse:
+    import asyncio
+
     intent = (
-        _classify_with_genai(request.message, request.history)
+        await asyncio.to_thread(_classify_with_genai, request.message, request.history)
         or _classify_with_keywords(request.message)
     )
     content = _CONTENT[intent]
@@ -263,7 +266,7 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
     # 경우에만 채운다(urgent).
     risk_notice: Optional[str] = None
     routing_target: Optional[RoutingTarget] = None
-    orgs = _fallback_orgs(request, intent, limit=1)
+    orgs = await asyncio.to_thread(_fallback_orgs, request, intent, limit=1)
 
     if intent in _AGENT_INTENTS:
         try:
@@ -294,7 +297,7 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
             if intent != "meta":
                 risk_notice = _pick(content["risk_notice"], language)
                 routing_target = content["routing_target"]
-                orgs = _fallback_orgs(request, intent, limit=2)
+                orgs = await asyncio.to_thread(_fallback_orgs, request, intent, limit=2)
 
     response = ChatResponse(
         fact_answer=fact_answer,
@@ -304,6 +307,6 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
     )
 
     if uid:
-        history_service.save_turn(uid, request.message, fact_answer)
+        await asyncio.to_thread(history_service.save_turn, uid, request.message, fact_answer)
 
     return response
