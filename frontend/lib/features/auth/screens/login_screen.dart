@@ -19,49 +19,63 @@ class _S {
     en: 'Log in',
     zh: '登录',
     vi: 'Đăng nhập',
+    uz: "Kirish",
   );
   static const emailLabel = L10nText(
     ko: '이메일',
     en: 'Email',
     zh: '邮箱',
     vi: 'Email',
+    uz: "Elektron pochta",
   );
   static const passwordLabel = L10nText(
     ko: '비밀번호',
     en: 'Password',
     zh: '密码',
     vi: 'Mật khẩu',
+    uz: "Parol",
   );
   static const loginLabel = L10nText(
     ko: '로그인',
     en: 'Log in',
     zh: '登录',
     vi: 'Đăng nhập',
+    uz: "Kirish",
   );
   static const googleLabel = L10nText(
     ko: 'Google로 로그인',
     en: 'Log in with Google',
     zh: '使用Google登录',
     vi: 'Đăng nhập bằng Google',
+    uz: "Google orqali kirish",
   );
-  static const orDivider = L10nText(ko: '또는', en: 'or', zh: '或', vi: 'hoặc');
+  static const orDivider = L10nText(
+    ko: '또는',
+    en: 'or',
+    zh: '或',
+    vi: 'hoặc',
+    uz: "yoki",
+  );
   static const noAccountLabel = L10nText(
     ko: '아직 가입하지 않으셨나요? 회원가입하기',
     en: "Haven't signed up yet? Create an account",
     zh: '还没有注册？去注册',
     vi: 'Chưa đăng ký? Đăng ký ngay',
+    uz: "Hali roʻyxatdan oʻtmaganmisiz? Hisob yaratish",
   );
   static const errorInvalid = L10nText(
     ko: '올바르지 않은 아이디 또는 비밀번호 입니다',
     en: 'Incorrect email or password.',
     zh: '账号或密码不正确。',
     vi: 'Tài khoản hoặc mật khẩu không đúng.',
+    uz: "Notoʻgʻri elektron pochta yoki parol.",
   );
   static const googleFailed = L10nText(
     ko: 'Google 로그인에 실패했어요. 잠시 후 다시 시도해주세요.',
     en: 'Google sign-in failed. Please try again shortly.',
     zh: 'Google登录失败，请稍后重试。',
     vi: 'Đăng nhập Google thất bại. Vui lòng thử lại sau.',
+    uz: "Google orqali kirish amalga oshmadi. Iltimos, birozdan keyin qayta urinib koʻring.",
   );
 }
 

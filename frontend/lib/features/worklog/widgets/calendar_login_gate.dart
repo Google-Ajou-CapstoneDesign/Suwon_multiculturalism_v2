@@ -17,26 +17,42 @@ class _S {
     en: 'Log in to save your work log',
     zh: '登录后保存工作记录',
     vi: 'Đăng nhập để lưu nhật ký làm việc',
+    uz: "Ish jurnalingizni saqlash uchun tizimga kiring",
   );
   static const subtitle = L10nText(
     ko: '로그인하면 출퇴근·위치 인증 기록이 서버에 안전하게 저장돼요. 로그인 없이도 데모로 먼저 둘러볼 수 있어요.',
     en: "Logging in keeps your clock-in/out and location records safely on the server. You can still explore the demo without logging in.",
     zh: '登录后，上下班打卡和位置认证记录会安全保存在服务器上。不登录也可以先体验演示版。',
     vi: 'Đăng nhập giúp lưu an toàn giờ vào/ra ca và xác minh vị trí lên máy chủ. Bạn vẫn có thể dùng thử bản demo mà không cần đăng nhập.',
+    uz: "Tizimga kirish ishga kirish/chiqish va joylashuv yozuvlaringizni serverda xavfsiz saqlaydi. Tizimga kirmasdan ham demo-versiyani oʻrganishingiz mumkin.",
   );
-  static const close = L10nText(ko: '닫기', en: 'Close', zh: '关闭', vi: 'Đóng');
+  static const close = L10nText(
+    ko: '닫기',
+    en: 'Close',
+    zh: '关闭',
+    vi: 'Đóng',
+    uz: "Yopish",
+  );
   static const noAccountLabel = L10nText(
     ko: '아직 가입하지 않으셨나요? 회원가입하기',
     en: "Haven't signed up yet? Create an account",
     zh: '还没有注册？去注册',
     vi: 'Chưa đăng ký? Đăng ký ngay',
+    uz: "Hali roʻyxatdan oʻtmaganmisiz? Hisob yaratish",
   );
-  static const orDivider = L10nText(ko: '또는', en: 'or', zh: '或', vi: 'hoặc');
+  static const orDivider = L10nText(
+    ko: '또는',
+    en: 'or',
+    zh: '或',
+    vi: 'hoặc',
+    uz: "yoki",
+  );
   static const demoLabel = L10nText(
     ko: '로그인 없이 이용하기 (데모버전)',
     en: 'Continue without login (demo)',
     zh: '不登录使用（演示版）',
     vi: 'Dùng không cần đăng nhập (bản demo)',
+    uz: "Tizimga kirmasdan davom etish (demo)",
   );
 }
 

@@ -498,18 +498,21 @@ const _legendLabelAuto = L10nText(
   en: 'Auto-filled',
   zh: '自动填充',
   vi: 'Tự điền',
+  uz: "Avtomatik toʻldirilgan",
 );
 const _legendLabelRaw = L10nText(
   ko: '원문 그대로',
   en: 'As you wrote it',
   zh: '原文照录',
   vi: 'Nguyên văn',
+  uz: "Siz yozganingizdek",
 );
 const _legendLabelBlank = L10nText(
   ko: '공란 유지',
   en: 'Left blank',
   zh: '保持空白',
   vi: 'Để trống',
+  uz: "Boʻsh qoldirilgan",
 );
 
 /// auto/raw/blank 3색 범례 — 서식 편집·검토·PDF 안내 앞에 공용으로 붙는다.

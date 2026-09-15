@@ -18,43 +18,56 @@ const _stepLabel = L10nText(
   en: 'This stage',
   zh: '这个阶段',
   vi: 'Giai đoạn này',
+  uz: "Ushbu bosqich",
 );
 const _documentsLabel = L10nText(
   ko: '필요한 서류',
   en: 'Documents needed',
   zh: '所需文件',
   vi: 'Giấy tờ cần thiết',
+  uz: "Kerakli hujjatlar",
 );
 const _watchOutLabel = L10nText(
   ko: '주의할 점',
   en: 'Things to watch out for',
   zh: '注意事项',
   vi: 'Điều cần lưu ý',
+  uz: "Eʼtibor berish kerak boʻlgan narsalar",
 );
 const _homeLabel = L10nText(
   ko: '홈으로 돌아가기',
   en: 'Back to home',
   zh: '返回首页',
   vi: 'Quay về trang chủ',
+  uz: "Bosh sahifaga qaytish",
 );
-const _nextLabel = L10nText(ko: '다음', en: 'Next', zh: '下一步', vi: 'Tiếp theo');
+const _nextLabel = L10nText(
+  ko: '다음',
+  en: 'Next',
+  zh: '下一步',
+  vi: 'Tiếp theo',
+  uz: "Keyingi",
+);
 const _prevLabel = L10nText(
   ko: '이전',
   en: 'Previous',
   zh: '上一步',
   vi: 'Quay lại',
+  uz: "Oldingi",
 );
 const _markCompleteLabel = L10nText(
   ko: '✓ 이 단계 완료로 표시',
   en: '✓ Mark this stage complete',
   zh: '✓ 标记此阶段完成',
   vi: '✓ Đánh dấu hoàn thành giai đoạn này',
+  uz: "✓ Ushbu bosqichni yakunlangan deb belgilash",
 );
 const _undoCompleteLabel = L10nText(
   ko: '완료 표시를 취소합니다',
   en: 'Undo complete',
   zh: '取消完成标记',
   vi: 'Bỏ đánh dấu hoàn thành',
+  uz: "Yakunlanganlikni bekor qilish",
 );
 
 /// 임금체불/산재 내비게이터 공용 엔진. 프론트엔드_구상_확장.html의 `.sheet.down`
@@ -557,24 +570,28 @@ const _attachWorkLogLabel = L10nText(
   en: 'Work log',
   zh: '工作记录',
   vi: 'Nhật ký làm việc',
+  uz: "Ish jurnali",
 );
 const _attachPayslipLabel = L10nText(
   ko: '임금명세서',
   en: 'Payslip',
   zh: '工资单',
   vi: 'Phiếu lương',
+  uz: "Ish haqi varagʻi",
 );
 const _attachCalcLabel = L10nText(
   ko: '계산기 데이터',
   en: 'Calculator data',
   zh: '计算器数据',
   vi: 'Dữ liệu máy tính lương',
+  uz: "Kalkulyator maʼlumotlari",
 );
 const _attachProfileLabel = L10nText(
   ko: '프로필 정보',
   en: 'Profile info',
   zh: '个人资料',
   vi: 'Thông tin hồ sơ',
+  uz: "Profil maʼlumotlari",
 );
 
 L10nText _importSourceLabel(ImportSource source) => switch (source) {

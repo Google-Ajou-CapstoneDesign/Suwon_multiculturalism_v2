@@ -11,7 +11,8 @@ enum AppLanguage {
   ko('KOR', '한국어', 'Korean'),
   en('ENG', 'English', '영어'),
   zh('CHN', '中文', '중국어'),
-  vi('VIE', 'Tiếng Việt', '베트남어');
+  vi('VIE', 'Tiếng Việt', '베트남어'),
+  uz('UZB', 'Oʻzbekcha', '우즈베크어');
 
   const AppLanguage(this.code, this.nativeName, this.subLabel);
 
@@ -20,7 +21,7 @@ enum AppLanguage {
   final String subLabel;
 }
 
-/// ko/en/zh/vi 4개 언어 문자열 묶음. 앞으로 화면에 보여줄 텍스트는 하드코딩
+/// ko/en/zh/vi/uz 5개 언어 문자열 묶음. 앞으로 화면에 보여줄 텍스트는 하드코딩
 /// 대신 이 타입으로 작성한다 — UI 문구(칩)는 기능별 *_strings.dart에,
 /// 콘텐츠(법·제도 설명)는 해당 모델 파일에 둔다.
 class L10nText {
@@ -29,12 +30,14 @@ class L10nText {
     required this.en,
     required this.zh,
     required this.vi,
+    required this.uz,
   });
 
   final String ko;
   final String en;
   final String zh;
   final String vi;
+  final String uz;
 
   String of(AppLanguage lang) {
     switch (lang) {
@@ -46,6 +49,8 @@ class L10nText {
         return zh;
       case AppLanguage.vi:
         return vi;
+      case AppLanguage.uz:
+        return uz;
     }
   }
 }

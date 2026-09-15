@@ -15,6 +15,7 @@ class WageNavigatorScreen extends StatelessWidget {
         en: 'Wage Theft Complaint',
         zh: '欠薪申诉',
         vi: 'Tố cáo nợ lương',
+        uz: "Ish haqi oʻgʻirligi boʻyicha shikoyat",
       ),
       definition: wageFlowDefinition,
     );

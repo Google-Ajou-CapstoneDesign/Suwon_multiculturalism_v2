@@ -70,10 +70,10 @@ class IntentClassification(BaseModel):
     intent: Intent
 
 
-Language = Literal["ko", "en", "zh", "vi"]
+Language = Literal["ko", "en", "zh", "vi", "uz"]
 
-# 프론트엔드(AppLanguage)와 동일한 4개 언어. 에이전트 호출이 실패했을 때 나가는
-# 사전 검수 문구라 개수가 적어(7개) 여기서 직접 4개 언어를 다 채워둔다 —
+# 프론트엔드(AppLanguage)와 동일한 5개 언어. 에이전트 호출이 실패했을 때 나가는
+# 기본 안내 문구 7개를 언어별로 제공한다 —
 # 에이전트 정상 경로는 pipeline.run_agent()에 넘긴 language로 처리된다.
 _L = Dict[Language, str]
 
@@ -95,12 +95,14 @@ _META_FALLBACK_ANSWER: _L = {
     "ko": "저는 수원시 이주노동자·유학생의 노동 상담을 돕는 AI 도우미예요. 임금체불, 산업재해, 근로계약서 등 궁금한 점을 편하게 물어보세요.",
     "en": "I'm an AI assistant helping migrant workers and international students in Suwon with labor questions. Feel free to ask about unpaid wages, workplace injuries, employment contracts, and more.",
     "zh": "我是帮助水原市外籍劳动者和留学生解决劳动咨询问题的AI助手。欢迎随时咨询拖欠工资、工伤、劳动合同等问题。",
+    "uz": "Men Suvondagi mehnat muhojirlari va chet ellik talabalarga mehnat masalalarida yordam beradigan sunʼiy intellekt yordamchisiman. Toʻlanmagan ish haqi, ishlab chiqarishdagi jarohatlar va mehnat shartnomalari haqida soʻrashingiz mumkin.",
     "vi": "Tôi là trợ lý AI hỗ trợ tư vấn lao động cho người lao động nước ngoài và du học sinh tại Suwon. Hãy thoải mái hỏi về nợ lương, tai nạn lao động, hợp đồng lao động và các vấn đề khác.",
 }
 _OFF_TOPIC_ANSWER: _L = {
     "ko": "이 서비스는 수원시 이주노동자·유학생의 노동 상담(임금체불·산업재해·근로계약 등)을 돕는 곳이에요. 요청하신 내용은 제가 도와드리기 어려운 주제라 정중히 양해 부탁드려요.",
     "en": "This service helps migrant workers and international students in Suwon with labor topics (unpaid wages, workplace injuries, employment contracts, etc). I'm afraid I can't help with what you asked — thank you for understanding.",
     "zh": "本服务专门帮助水原市外籍劳动者和留学生解决劳动相关问题（拖欠工资、工伤、劳动合同等）。您咨询的内容不在我能协助的范围内，敬请谅解。",
+    "uz": "Bu xizmat Suvondagi mehnat muhojirlari va chet ellik talabalarga ish haqi, ishlab chiqarishdagi jarohatlar va mehnat shartnomalari boʻyicha yordam beradi. Afsuski, soʻrovingiz ushbu xizmat doirasiga kirmaydi. Tushunganingiz uchun rahmat.",
     "vi": "Dịch vụ này hỗ trợ tư vấn lao động (nợ lương, tai nạn lao động, hợp đồng lao động, v.v.) cho người lao động nước ngoài và du học sinh tại Suwon. Rất tiếc tôi không thể hỗ trợ nội dung bạn vừa hỏi, mong bạn thông cảm.",
 }
 
@@ -111,12 +113,14 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
             "ko": "근로기준법상 사용자는 퇴직·지급일로부터 14일 이내에 임금을 지급해야 해요. 이미 기간이 지났다면 진정 제기가 가능해요.",
             "en": "Under the Labor Standards Act, employers must pay wages within 14 days of resignation or the payment date. If that period has already passed, you can file a complaint.",
             "zh": "根据《劳动基准法》，雇主须在离职或发薪日起14天内支付工资。如果已超过该期限，您可以提出申诉。",
+            "uz": "Mehnat standartlari toʻgʻrisidagi qonunga koʻra, ish beruvchi ishdan ketish yoki toʻlov kunidan boshlab 14 kun ichida ish haqini toʻlashi kerak. Ushbu muddat oʻtgan boʻlsa, shikoyat berishingiz mumkin.",
             "vi": "Theo Luật Tiêu chuẩn Lao động, người sử dụng lao động phải trả lương trong vòng 14 ngày kể từ ngày nghỉ việc hoặc ngày trả lương. Nếu đã quá thời hạn, bạn có thể nộp đơn khiếu nại.",
         },
         "risk_notice": {
             "ko": "즉시 대응이 필요한 사안으로 보여요. 정확한 판단은 AI가 아닌 아래 네비게이터·전문가를 통해 확인해 주세요.",
             "en": "This looks like it needs immediate attention. Please confirm the details with the navigator/expert below rather than relying only on AI.",
             "zh": "这似乎是需要立即处理的事项。请通过下方的导航工具或专家进行确认，而非仅依赖AI判断。",
+            "uz": "Bu masala zudlik bilan chora koʻrishni talab qilishi mumkin. Tafsilotlarni quyidagi yoʻriqnoma yoki mutaxassis yordamida aniqlashtiring.",
             "vi": "Đây có vẻ là vấn đề cần xử lý ngay. Vui lòng xác nhận với chuyên gia/công cụ điều hướng bên dưới thay vì chỉ dựa vào AI.",
         },
         "routing_target": RoutingTarget(module="module3-wage"),
@@ -127,12 +131,14 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
             "ko": "업무 중 다쳤다면 산재보험으로 치료비를 처리할 수 있어요. 사업주의 공상 처리 요구는 거절할 수 있어요.",
             "en": "If you were injured at work, medical costs can be covered by industrial accident insurance. You can refuse an employer's request to handle it as a private injury instead.",
             "zh": "如果在工作中受伤，可以通过工伤保险处理治疗费用。您可以拒绝雇主要求以私伤方式处理的要求。",
+            "uz": "Ish vaqtida jarohat olgan boʻlsangiz, davolanish xarajatlari ishlab chiqarishdagi baxtsiz hodisalar sugʻurtasi orqali qoplanishi mumkin. Ish beruvchining hodisani xususiy tartibda hal qilish talabini rad etishingiz mumkin.",
             "vi": "Nếu bị thương trong khi làm việc, chi phí điều trị có thể được xử lý qua bảo hiểm tai nạn lao động. Bạn có thể từ chối yêu cầu của người sử dụng lao động muốn xử lý như tai nạn cá nhân.",
         },
         "risk_notice": {
             "ko": "사고 사실관계 정리가 필요해 보여요. 산재 대응 네비게이터에서 증빙을 정리해 드릴게요.",
             "en": "It looks like the facts of the accident need to be organized. The workplace-injury navigator can help you put together the evidence.",
             "zh": "看起来需要整理事故的事实经过。工伤应对导航工具可以帮助您整理相关证据。",
+            "uz": "Hodisa tafsilotlarini tartibga solish kerak. Ishlab chiqarishdagi jarohatlar boʻyicha yoʻriqnoma dalillarni jamlashga yordam beradi.",
             "vi": "Có vẻ cần sắp xếp lại các tình tiết vụ tai nạn. Công cụ điều hướng ứng phó tai nạn lao động sẽ giúp bạn tổng hợp bằng chứng.",
         },
         "routing_target": RoutingTarget(module="module3-accident"),
@@ -143,6 +149,7 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
             "ko": "근로계약서에는 임금·근무시간·휴게시간 등 11개 필수 확인 항목이 있어요. 백과사전 탭의 체크리스트에서 확인할 수 있어요.",
             "en": "An employment contract has 11 required items to check, including wages, working hours, and break time. You can review them in the checklist under the Encyclopedia tab.",
             "zh": "劳动合同中有工资、工作时间、休息时间等11项必须确认的内容。您可以在百科全书标签的检查清单中查看。",
+            "uz": "Mehnat shartnomasida ish haqi, ish vaqti va tanaffus kabi tekshirilishi kerak boʻlgan 11 ta asosiy band bor. Ularni ensiklopediya boʻlimidagi tekshiruv roʻyxatidan koʻrishingiz mumkin.",
             "vi": "Hợp đồng lao động có 11 mục bắt buộc cần kiểm tra như lương, giờ làm việc, giờ nghỉ. Bạn có thể xem trong danh sách kiểm tra ở tab Bách khoa toàn thư.",
         },
         "risk_notice": None,

@@ -15,6 +15,7 @@ class AccidentNavigatorScreen extends StatelessWidget {
         en: 'Workplace Injury Claim',
         zh: '工伤处理申请',
         vi: 'Yêu cầu xử lý tai nạn lao động',
+        uz: "Ish joyidagi jarohat boʻyicha daʼvo",
       ),
       definition: injuryFlowDefinition,
     );

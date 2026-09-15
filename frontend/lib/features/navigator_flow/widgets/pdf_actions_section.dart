@@ -13,24 +13,28 @@ const _pdfBoxTitle = L10nText(
   en: 'Save as PDF',
   zh: '保存为PDF',
   vi: 'Lưu thành PDF',
+  uz: "PDF sifatida saqlash",
 );
 const _pdfKoLabel = L10nText(
   ko: '🇰🇷 한국어 PDF',
   en: '🇰🇷 Korean PDF',
   zh: '🇰🇷 韩语PDF',
   vi: '🇰🇷 PDF tiếng Hàn',
+  uz: "🇰🇷 Koreyscha PDF",
 );
 const _pdfMyLabel = L10nText(
   ko: '🌐 내 언어 PDF',
   en: '🌐 My-language PDF',
   zh: '🌐 我的语言PDF',
   vi: '🌐 PDF ngôn ngữ của tôi',
+  uz: "🌐 Oʻz tilimdagi PDF",
 );
 const _pdfPreviewLabel = L10nText(
   ko: '👁 PDF 미리보기',
   en: '👁 Preview the PDF',
   zh: '👁 预览PDF',
   vi: '👁 Xem trước PDF',
+  uz: "👁 PDFni koʻrish",
 );
 
 /// 한국어 PDF/내 언어 PDF/미리보기 버튼 묶음 — complaint_pdf_builder.dart의

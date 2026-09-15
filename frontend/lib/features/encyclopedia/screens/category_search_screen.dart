@@ -7,7 +7,7 @@ import '../models/category_item.dart';
 import '../models/encyclopedia_strings.dart';
 import 'category_detail_screen.dart';
 
-/// 백과사전 검색 화면 — 표지 검색창에서 진입한다. 카테고리명(4개 언어 전부)에
+/// 백과사전 검색 화면 — 표지 검색창에서 진입한다. 카테고리명(모든 지원 언어)에
 /// 대해 부분일치로 12개 항목을 필터링한다.
 class CategorySearchScreen extends StatefulWidget {
   const CategorySearchScreen({
@@ -38,10 +38,9 @@ class _CategorySearchScreenState extends State<CategorySearchScreen> {
     if (q.isEmpty) return const [];
     return categoryById.values.where((item) {
       final name = item.name;
-      return name.ko.toLowerCase().contains(q) ||
-          name.en.toLowerCase().contains(q) ||
-          name.zh.toLowerCase().contains(q) ||
-          name.vi.toLowerCase().contains(q);
+      return AppLanguage.values.any(
+        (lang) => name.of(lang).toLowerCase().contains(q),
+      );
     }).toList();
   }
 

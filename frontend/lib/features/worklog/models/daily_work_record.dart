@@ -65,18 +65,19 @@ class DailyWorkRecord {
   }
 
   /// 백엔드 GET/PUT /api/worklog/days 응답(worklogs 문서)을 그대로 반영한다.
-  factory DailyWorkRecord.fromJson(Map<String, dynamic> json) => DailyWorkRecord(
-    clockIn: _timeFromHm(json['clockIn'] as String?),
-    clockOut: _timeFromHm(json['clockOut'] as String?),
-    breakMinutes: json['breakMinutes'] as int? ?? 0,
-    memo: json['memo'] as String? ?? '',
-    isOvertime: json['isOvertime'] as bool? ?? false,
-    isRisk: json['isRisk'] as bool? ?? false,
-    gpsVerified: json['gpsVerified'] as bool? ?? false,
-    verifiedLatitude: (json['verifiedLatitude'] as num?)?.toDouble(),
-    verifiedLongitude: (json['verifiedLongitude'] as num?)?.toDouble(),
-    verifiedAddress: json['verifiedAddress'] as String?,
-  );
+  factory DailyWorkRecord.fromJson(Map<String, dynamic> json) =>
+      DailyWorkRecord(
+        clockIn: _timeFromHm(json['clockIn'] as String?),
+        clockOut: _timeFromHm(json['clockOut'] as String?),
+        breakMinutes: json['breakMinutes'] as int? ?? 0,
+        memo: json['memo'] as String? ?? '',
+        isOvertime: json['isOvertime'] as bool? ?? false,
+        isRisk: json['isRisk'] as bool? ?? false,
+        gpsVerified: json['gpsVerified'] as bool? ?? false,
+        verifiedLatitude: (json['verifiedLatitude'] as num?)?.toDouble(),
+        verifiedLongitude: (json['verifiedLongitude'] as num?)?.toDouble(),
+        verifiedAddress: json['verifiedAddress'] as String?,
+      );
 
   /// PUT /api/worklog/days/{date} 요청 바디 — isOvertime/isRisk는 서버가
   /// 판정하는 값이라 클라이언트가 보내지 않는다. verifiedLatitude/Longitude/

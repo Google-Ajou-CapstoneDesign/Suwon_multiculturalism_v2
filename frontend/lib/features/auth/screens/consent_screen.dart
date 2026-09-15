@@ -15,12 +15,14 @@ class _S {
     en: 'Privacy Policy Agreement',
     zh: '同意隐私政策',
     vi: 'Đồng ý chính sách bảo mật',
+    uz: "Maxfiylik siyosati kelishuvi",
   );
   static const heading = L10nText(
     ko: 'Local Bridge가 수집하는 정보',
     en: 'Information Local Bridge collects',
     zh: 'Local Bridge收集的信息',
     vi: 'Thông tin Local Bridge thu thập',
+    uz: "Local Bridge toʻplaydigan maʼlumotlar",
   );
   // 수집 항목·보관 기간 안내. docs/firestore_스키마.md의 users 컬렉션 필드와
   // 일치시켰다 — 실제로 저장하지 않는 항목(비밀번호 등)을 여기 적으면 안 된다.
@@ -48,30 +50,36 @@ class _S {
         'Mật khẩu được Firebase Authentication mã hóa và lưu trữ an toàn riêng — không bao giờ được lưu trên máy chủ Local Bridge.\n\n'
         'Thông tin thu thập được chỉ dùng để cung cấp dịch vụ (tư vấn lao động cá nhân hóa, tự động điền biểu mẫu, v.v.) và được lưu giữ '
         'cho đến khi bạn hủy tài khoản hoặc yêu cầu xóa, sau đó sẽ bị hủy ngay lập tức. Bạn có thể từ chối đồng ý, nhưng khi đó sẽ không thể đăng ký.',
+    uz: "Roʻyxatdan oʻtganingizda, biz ismingizni, elektron pochtangizni, viza holatingizni, millatingizni va afzal koʻrgan tilingizni yigʻamiz. Parolingiz faqat Firebase Authentication tomonidan shifrlanadi va xavfsiz saqlanadi — u hech qachon Local Bridge serverlarida saqlanmaydi.\n\nYigʻilgan maʼlumotlar faqat xizmat koʻrsatish (shaxsiylashtirilgan mehnat boʻyicha yoʻl-yoʻriq, avtomatik toʻldirilgan shakllar va h.k.) uchun ishlatiladi va siz hisobingizni bekor qilmaguningizcha yoki oʻchirishni soʻramaguningizcha saqlanadi, shundan soʻng u kechiktirmasdan yoʻq qilinadi. Siz rozilikni rad etishingiz mumkin, ammo usiz roʻyxatdan oʻtish mumkin boʻlmaydi.",
   );
   static const agreeLabel = L10nText(
     ko: '위 내용을 확인했으며 개인정보 수집·이용에 동의합니다 (필수)',
     en: 'I have read the above and agree to the collection and use of my personal information (required)',
     zh: '我已阅读以上内容并同意收集和使用我的个人信息（必填）',
     vi: 'Tôi đã đọc nội dung trên và đồng ý việc thu thập, sử dụng thông tin cá nhân (bắt buộc)',
+    uz: "Yuqoridagilarni oʻqidim va shaxsiy maʼlumotlarimni yigʻish va ulardan foydalanishga rozilik beraman (majburiy)",
   );
   static const submitLabel = L10nText(
     ko: '가입 완료',
     en: 'Complete sign-up',
     zh: '完成注册',
     vi: 'Hoàn tất đăng ký',
+    uz: "Roʻyxatdan oʻtishni yakunlash",
   );
   static const errorConsentRequired = L10nText(
     ko: '동의해야 가입을 완료할 수 있어요',
     en: 'You must agree to continue',
     zh: '需要同意才能完成注册',
     vi: 'Bạn cần đồng ý để hoàn tất đăng ký',
+    uz: "Davom etish uchun rozi boʻlishingiz kerak",
   );
   static String errorFor(FirebaseAuthException e, AppLanguage lang) {
     switch (e.code) {
       case 'email-already-in-use':
         return switch (lang) {
           AppLanguage.ko => '이미 가입된 이메일이에요. 로그인해 주세요.',
+          AppLanguage.uz =>
+            "Bu elektron pochta allaqachon roʻyxatdan oʻtgan. Iltimos, buning oʻrniga tizimga kiring.",
           AppLanguage.en =>
             'This email is already registered. Please log in instead.',
           AppLanguage.zh => '该邮箱已注册，请登录。',
@@ -80,6 +88,7 @@ class _S {
       case 'invalid-email':
         return switch (lang) {
           AppLanguage.ko => '이메일 형식이 올바르지 않아요.',
+          AppLanguage.uz => "Elektron pochta formati notoʻgʻri.",
           AppLanguage.en => 'The email format is invalid.',
           AppLanguage.zh => '邮箱格式不正确。',
           AppLanguage.vi => 'Định dạng email không hợp lệ.',
@@ -87,6 +96,7 @@ class _S {
       case 'weak-password':
         return switch (lang) {
           AppLanguage.ko => '비밀번호가 너무 간단해요.',
+          AppLanguage.uz => "Parol juda zaif.",
           AppLanguage.en => 'The password is too weak.',
           AppLanguage.zh => '密码强度太弱。',
           AppLanguage.vi => 'Mật khẩu quá yếu.',
@@ -94,6 +104,8 @@ class _S {
       default:
         return switch (lang) {
           AppLanguage.ko => '가입 중 문제가 생겼어요. 잠시 후 다시 시도해주세요.',
+          AppLanguage.uz =>
+            "Roʻyxatdan oʻtishda nimadir notoʻgʻri ketdi. Iltimos, birozdan keyin qayta urinib koʻring.",
           AppLanguage.en =>
             'Something went wrong while signing up. Please try again shortly.',
           AppLanguage.zh => '注册过程中出现问题，请稍后重试。',
@@ -185,6 +197,8 @@ class _ConsentScreenState extends State<ConsentScreen> {
         SnackBar(
           content: Text(switch (lang) {
             AppLanguage.ko => '가입 중 문제가 생겼어요. 잠시 후 다시 시도해주세요.',
+            AppLanguage.uz =>
+              "Roʻyxatdan oʻtishda nimadir notoʻgʻri ketdi. Iltimos, birozdan keyin qayta urinib koʻring.",
             AppLanguage.en =>
               'Something went wrong while signing up. Please try again shortly.',
             AppLanguage.zh => '注册过程中出现问题，请稍后重试。',

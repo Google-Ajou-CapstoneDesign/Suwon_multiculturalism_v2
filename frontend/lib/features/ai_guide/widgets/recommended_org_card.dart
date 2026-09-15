@@ -19,12 +19,14 @@ class RecommendedOrgCard extends StatelessWidget {
     en: '◎ Recommended nearby offices',
     zh: '◎ 基于您位置推荐的机构',
     vi: '◎ Cơ quan gợi ý theo vị trí của bạn',
+    uz: "◎ Tavsiya etilgan yaqin ofislar",
   );
   static const _distanceUnavailable = L10nText(
     ko: '거리 정보 없음',
     en: 'Distance unavailable',
     zh: '无距离信息',
     vi: 'Không có khoảng cách',
+    uz: "Masofa mavjud emas",
   );
 
   String _distanceLabel(Org org) {

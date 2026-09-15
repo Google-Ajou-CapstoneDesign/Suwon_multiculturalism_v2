@@ -5,29 +5,50 @@ const _locationSuwon = L10nText(
   en: 'Suwon',
   zh: '水原市',
   vi: 'Thành phố Suwon',
+  uz: "Suvon",
 );
 
 /// 백엔드가 내려주는 conditionCode → 4개 언어 문구. 날씨 상태 자체는 백엔드가
 /// 판단하지만(Open-Meteo WMO 코드 매핑), 번역은 이 앱의 다른 데이터와 마찬가지로
 /// 항상 프론트 쪽 책임이다.
 const _conditionLabels = <String, L10nText>{
-  'clear': L10nText(ko: '맑음', en: 'Clear', zh: '晴', vi: 'Trời quang'),
+  'clear': L10nText(
+    ko: '맑음',
+    en: 'Clear',
+    zh: '晴',
+    vi: 'Trời quang',
+    uz: "Ochiq",
+  ),
   'partlyCloudy': L10nText(
     ko: '구름 조금',
     en: 'Partly cloudy',
     zh: '少云',
     vi: 'Ít mây',
+    uz: "Qisman bulutli",
   ),
-  'cloudy': L10nText(ko: '흐림', en: 'Cloudy', zh: '多云', vi: 'Nhiều mây'),
-  'fog': L10nText(ko: '안개', en: 'Fog', zh: '雾', vi: 'Sương mù'),
-  'drizzle': L10nText(ko: '이슬비', en: 'Drizzle', zh: '毛毛雨', vi: 'Mưa phùn'),
-  'rain': L10nText(ko: '비', en: 'Rain', zh: '雨', vi: 'Mưa'),
-  'snow': L10nText(ko: '눈', en: 'Snow', zh: '雪', vi: 'Tuyết'),
+  'cloudy': L10nText(
+    ko: '흐림',
+    en: 'Cloudy',
+    zh: '多云',
+    vi: 'Nhiều mây',
+    uz: "Bulutli",
+  ),
+  'fog': L10nText(ko: '안개', en: 'Fog', zh: '雾', vi: 'Sương mù', uz: "Tuman"),
+  'drizzle': L10nText(
+    ko: '이슬비',
+    en: 'Drizzle',
+    zh: '毛毛雨',
+    vi: 'Mưa phùn',
+    uz: "Mayda yomgʻir",
+  ),
+  'rain': L10nText(ko: '비', en: 'Rain', zh: '雨', vi: 'Mưa', uz: "Yomgʻir"),
+  'snow': L10nText(ko: '눈', en: 'Snow', zh: '雪', vi: 'Tuyết', uz: "Qor"),
   'thunderstorm': L10nText(
     ko: '뇌우',
     en: 'Thunderstorm',
     zh: '雷雨',
     vi: 'Dông bão',
+    uz: "Momaqaldiroq",
   ),
 };
 
@@ -74,7 +95,13 @@ class WeatherInfo {
   static const mock = WeatherInfo(
     location: _locationSuwon,
     emoji: '☀️',
-    condition: L10nText(ko: '맑음', en: 'Clear', zh: '晴', vi: 'Trời quang'),
+    condition: L10nText(
+      ko: '맑음',
+      en: 'Clear',
+      zh: '晴',
+      vi: 'Trời quang',
+      uz: "Ochiq",
+    ),
     tempC: 31,
     lowC: 24,
     highC: 33,

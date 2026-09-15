@@ -12,6 +12,7 @@ const _previewTitle = L10nText(
   en: 'PDF preview',
   zh: 'PDF预览',
   vi: 'Xem trước PDF',
+  uz: "PDF koʻrinishi",
 );
 
 /// complaint_pdf_builder.dart의 같은 빌더를 그대로 써서 다운로드와 미리보기가

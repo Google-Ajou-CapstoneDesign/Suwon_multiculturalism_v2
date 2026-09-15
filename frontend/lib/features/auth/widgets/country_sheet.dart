@@ -8,12 +8,14 @@ const _title = L10nText(
   en: 'Choose your nationality',
   zh: '选择国籍',
   vi: 'Chọn quốc tịch',
+  uz: "Millatingizni tanlang",
 );
 const _searchHint = L10nText(
   ko: '국가 이름으로 검색',
   en: 'Search by country name',
   zh: '按国家名称搜索',
   vi: 'Tìm theo tên quốc gia',
+  uz: "Davlat nomi boʻyicha qidirish",
 );
 
 Future<void> showCountrySheet(

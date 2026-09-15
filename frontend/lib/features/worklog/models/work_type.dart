@@ -11,24 +11,28 @@ extension WorkTypeLabel on WorkType {
       en: 'Manufacturing',
       zh: '制造',
       vi: 'Sản xuất',
+      uz: "Ishlab chiqarish",
     ),
     WorkType.serving => const L10nText(
       ko: '서빙',
       en: 'Serving',
       zh: '服务员',
       vi: 'Phục vụ',
+      uz: "Xizmat koʻrsatish",
     ),
     WorkType.delivery => const L10nText(
       ko: '배달',
       en: 'Delivery',
       zh: '配送',
       vi: 'Giao hàng',
+      uz: "Yetkazib berish",
     ),
     WorkType.other => const L10nText(
       ko: '기타',
       en: 'Other',
       zh: '其他',
       vi: 'Khác',
+      uz: "Boshqa",
     ),
   };
 }
@@ -40,18 +44,21 @@ extension IncidentTypeLabel on IncidentType {
       en: 'Normal work',
       zh: '正常工作',
       vi: 'Làm việc bình thường',
+      uz: "Oddiy ish",
     ),
     IncidentType.overtime => const L10nText(
       ko: '연장근무',
       en: 'Overtime work',
       zh: '加班',
       vi: 'Làm thêm giờ',
+      uz: "Qoʻshimcha ish",
     ),
     IncidentType.accident => const L10nText(
       ko: '사고·부상',
       en: 'Accident/injury',
       zh: '事故·受伤',
       vi: 'Tai nạn/thương tích',
+      uz: "Baxtsiz hodisa/jarohat",
     ),
   };
 }

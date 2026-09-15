@@ -10,12 +10,14 @@ const _title = L10nText(
   en: 'Choose a language',
   zh: '选择语言',
   vi: 'Chọn ngôn ngữ',
+  uz: "Tilni tanlang",
 );
 const _subtitle = L10nText(
   ko: '어떤 언어를 골라도 한국어 표기는 함께 보여드립니다.',
   en: 'Whichever language you pick, the Korean term stays below it',
   zh: '无论选择哪种语言，都会一并显示韩语原文。',
   vi: 'Dù chọn ngôn ngữ nào, tên tiếng Hàn vẫn hiển thị bên dưới',
+  uz: "Qaysi tilni tanlamang, koreyscha atama uning ostida qoladi",
 );
 
 Future<void> showLanguageSheet(
@@ -30,40 +32,42 @@ Future<void> showLanguageSheet(
       borderRadius: BorderRadius.vertical(top: Radius.circular(23)),
     ),
     builder: (context) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 26),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              _title.of(current),
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+      return SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 26),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _title.of(current),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
               ),
-            ),
-            const SizedBox(height: 3),
-            Text(
-              _subtitle.of(current),
-              style: const TextStyle(
-                fontSize: 11,
-                color: AppColors.textMuted,
-                height: 1.5,
+              const SizedBox(height: 3),
+              Text(
+                _subtitle.of(current),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textMuted,
+                  height: 1.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-            for (final lang in AppLanguage.values)
-              _LanguageOption(
-                lang: lang,
-                selected: lang == current,
-                onTap: () {
-                  onSelect(lang);
-                  Navigator.of(context).pop();
-                },
-              ),
-          ],
+              const SizedBox(height: 14),
+              for (final lang in AppLanguage.values)
+                _LanguageOption(
+                  lang: lang,
+                  selected: lang == current,
+                  onTap: () {
+                    onSelect(lang);
+                    Navigator.of(context).pop();
+                  },
+                ),
+            ],
+          ),
         ),
       );
     },

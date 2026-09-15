@@ -25,7 +25,7 @@ class ChatRequest(CamelModel):
     # 쓰였든, 답변은 항상 이 설정을 따라야 한다 — 모델이 메시지 언어만 보고
     # 자동 판단하게 두면(예: 한국어로 짧게 쓴 질문) 설정과 다른 언어로 답하는
     # 경우가 있었다.
-    language: Literal["ko", "en", "zh", "vi"] = "ko"
+    language: Literal["ko", "en", "zh", "vi", "uz"] = "ko"
     # 추천 기관까지 실제 거리를 계산하기 위한 기기 현재 위치. 위치 권한이
     # 없거나 서비스가 꺼져 있으면 둘 다 생략할 수 있다.
     latitude: Optional[float] = Field(default=None, ge=-90, le=90)

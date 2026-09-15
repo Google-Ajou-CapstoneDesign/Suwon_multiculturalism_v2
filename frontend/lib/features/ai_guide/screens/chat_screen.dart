@@ -18,31 +18,42 @@ class _ChatStrings {
     en: 'AI Guide',
     zh: 'AI引导',
     vi: 'Trợ lý AI',
+    uz: "AI Yordamchi",
   );
-  static const close = L10nText(ko: '닫기', en: 'Close', zh: '关闭', vi: 'Đóng');
+  static const close = L10nText(
+    ko: '닫기',
+    en: 'Close',
+    zh: '关闭',
+    vi: 'Đóng',
+    uz: "Yopish",
+  );
   static const emptyTitle = L10nText(
     ko: '무엇이든 물어보세요',
     en: 'Ask me anything',
     zh: '请随时提问',
     vi: 'Hỏi bất cứ điều gì',
+    uz: "Mendan istalgan narsani soʻrang",
   );
   static const emptySubtitle = L10nText(
     ko: '임금·체불, 산업재해, 근로계약서 등 노동 관련 궁금한 점을 편하게 물어보세요.',
     en: 'Feel free to ask about wages, unpaid pay, workplace injuries, employment contracts, and other labor topics.',
     zh: '关于工资、欠薪、工伤、劳动合同等劳动相关问题，请随时提问。',
     vi: 'Hãy thoải mái hỏi về lương, nợ lương, tai nạn lao động, hợp đồng lao động và các vấn đề lao động khác.',
+    uz: "Ish haqi, toʻlanmagan ish haqi, ish joyidagi jarohatlar, mehnat shartnomalari va boshqa mehnat mavzulari haqida bemalol soʻrang.",
   );
   static const inputHint = L10nText(
     ko: '메시지를 입력하세요',
     en: 'Type a message',
     zh: '请输入消息',
     vi: 'Nhập tin nhắn',
+    uz: "Xabar yozing",
   );
   static const serverError = L10nText(
     ko: '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.',
     en: 'Could not connect to the server. Please try again shortly.',
     zh: '无法连接服务器，请稍后重试。',
     vi: 'Không thể kết nối máy chủ. Vui lòng thử lại sau.',
+    uz: "Serverga ulanib boʻlmadi. Iltimos, birozdan keyin qayta urinib koʻring.",
   );
 }
 

@@ -102,7 +102,11 @@ class UserProfileController extends ChangeNotifier {
   /// 설정 화면의 프로필 편집 모달이 쓴다 — 로그인 여부와 무관하게 로컬
   /// 상태만 갱신한다(백엔드에 저장할지는 호출부 책임 — 게스트는 저장할
   /// 서버 계정이 없으니 로컬에만 남긴다).
-  void updateProfileFields({String? name, String? nationality, VisaStatus? visa}) {
+  void updateProfileFields({
+    String? name,
+    String? nationality,
+    VisaStatus? visa,
+  }) {
     if (name != null) _displayName = name;
     if (nationality != null) _nationality = nationality;
     if (visa != null) _visaStatus = visa;

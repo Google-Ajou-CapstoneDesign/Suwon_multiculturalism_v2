@@ -8,48 +8,56 @@ const _accidentToggleLabel = L10nText(
   en: '💥 View accident guidance',
   zh: '💥 查看事故性灾害指南',
   vi: '💥 Xem hướng dẫn tai nạn',
+  uz: "💥 Baxtsiz hodisa boʻyicha yoʻriqnomani koʻrish",
 );
 const _illnessToggleLabel = L10nText(
   ko: '🩺 질병성 재해 가이드 보기',
   en: '🩺 View illness guidance',
   zh: '🩺 查看疾病性灾害指南',
   vi: '🩺 Xem hướng dẫn bệnh nghề nghiệp',
+  uz: "🩺 Kasallik boʻyicha yoʻriqnomani koʻrish",
 );
 const _stageBadgeHint = L10nText(
   ko: '💡 안내를 확인하셨나요? 원하시는 산재 신청 방식을 선택하세요.',
   en: "💡 Have you read the guidance? Choose how you'd like to file.",
   zh: '💡 您看过说明了吗？请选择您想要的申请方式。',
   vi: '💡 Bạn đã đọc hướng dẫn chưa? Hãy chọn cách bạn muốn nộp đơn.',
+  uz: "💡 Yoʻriqnomani oʻqidingizmi? Qanday ariza topshirishni tanlang.",
 );
 const _delegateTitle = L10nText(
   ko: '🏥 병원 원무과 대행 제출로 끝내기 (안내 종료)',
   en: '🏥 Let the hospital file for you (done)',
   zh: '🏥 委托医院窗口代为提交（结束）',
   vi: '🏥 Nhờ bệnh viện nộp thay (hoàn tất)',
+  uz: "🏥 Shifoxona siz uchun ariza topshirsin (bajarildi)",
 );
 const _delegateSubtitle = L10nText(
   ko: '원무과에 서류를 내고 진행 트래커(Step 6)에서 진행 상황을 기록합니다',
   en: 'File at the front desk, then track progress in Step 6',
   zh: '在窗口提交材料，并在进度追踪器（第6步）中记录进展',
   vi: 'Nộp hồ sơ tại quầy, sau đó theo dõi tiến độ ở Bước 6',
+  uz: "Qabulxonada ariza topshiring, soʻng 6-qadamda jarayonni kuzatib boring",
 );
 const _selfFileTitle = L10nText(
   ko: '📄 근로자 직접 신청 / 서식 작성하기',
   en: '📄 File it myself / fill in the form',
   zh: '📄 劳动者本人申请／填写表格',
   vi: '📄 Tự nộp đơn / điền biểu mẫu',
+  uz: "📄 Oʻzim ariza topshiraman / shaklni toʻldiraman",
 );
 const _selfFileSubtitle = L10nText(
   ko: 'Step 3(요양급여신청서 작성)으로 이동합니다',
   en: 'Move on to Step 3, filling in the claim form',
   zh: '前往第3步（填写疗养给付申请书）',
   vi: 'Chuyển sang Bước 3, điền đơn xin trợ cấp',
+  uz: "3-qadamga oʻting, daʼvo arizasi shaklini toʻldiring",
 );
 const _delegateToast = L10nText(
   ko: '진행 트래커로 이동합니다',
   en: 'Moving to the progress tracker',
   zh: '正在前往进度追踪器',
   vi: 'Đang chuyển đến trình theo dõi tiến độ',
+  uz: "Jarayon kuzatuvchisiga oʻtish",
 );
 
 /// 산재 2단계 — 사고/질병 토글 + 근거조항 카드 3개 + "병원 위임"(트래커로 점프)

@@ -56,7 +56,9 @@ class LocationVerifyService {
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        return const LocationVerifyOutcome(LocationVerifyStatus.serviceDisabled);
+        return const LocationVerifyOutcome(
+          LocationVerifyStatus.serviceDisabled,
+        );
       }
 
       var permission = await Geolocator.checkPermission();
@@ -65,7 +67,9 @@ class LocationVerifyService {
       }
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        return const LocationVerifyOutcome(LocationVerifyStatus.permissionDenied);
+        return const LocationVerifyOutcome(
+          LocationVerifyStatus.permissionDenied,
+        );
       }
 
       final position = await Geolocator.getCurrentPosition(

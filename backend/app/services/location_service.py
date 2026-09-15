@@ -28,6 +28,7 @@ _NOMINATIM_LANGUAGE = {
     "en": "en",
     "zh": "zh-CN",
     "vi": "vi",
+    "uz": "uz",
 }
 
 

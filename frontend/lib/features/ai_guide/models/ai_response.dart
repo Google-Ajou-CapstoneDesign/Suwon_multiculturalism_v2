@@ -35,6 +35,7 @@ class RoutingTarget {
           en: 'Go to related info',
           zh: '前往相关信息页面',
           vi: 'Đi đến trang thông tin liên quan',
+          uz: "Tegishli maʼlumotga oʻtish",
         ).of(lang);
       case RoutingModule.module3Wage:
         return const L10nText(
@@ -42,6 +43,7 @@ class RoutingTarget {
           en: 'Go to the unpaid wage navigator',
           zh: '前往拖欠工资应对导航',
           vi: 'Đi đến hướng dẫn xử lý nợ lương',
+          uz: "Toʻlanmagan ish haqi navigatoriga oʻtish",
         ).of(lang);
       case RoutingModule.module3Accident:
         return const L10nText(
@@ -49,6 +51,7 @@ class RoutingTarget {
           en: 'Go to the workplace injury navigator',
           zh: '前往工伤应对导航',
           vi: 'Đi đến hướng dẫn xử lý tai nạn lao động',
+          uz: "Ish joyidagi jarohat navigatoriga oʻtish",
         ).of(lang);
     }
   }

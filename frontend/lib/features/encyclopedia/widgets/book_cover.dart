@@ -220,10 +220,7 @@ class BookCover extends StatelessWidget {
             onTap: onSearchTap,
             borderRadius: BorderRadius.circular(10),
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 13,
-                vertical: 11,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.94),
                 borderRadius: BorderRadius.circular(10),

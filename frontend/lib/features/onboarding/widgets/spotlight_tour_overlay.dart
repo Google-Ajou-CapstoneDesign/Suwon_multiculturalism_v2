@@ -57,14 +57,28 @@ class _S {
     en: 'Skip guide',
     zh: '结束引导',
     vi: 'Bỏ qua hướng dẫn',
+    uz: "Qoʻllanmani oʻtkazib yuborish",
   );
-  static const next = L10nText(ko: '다음', en: 'Next', zh: '下一步', vi: 'Tiếp');
-  static const prev = L10nText(ko: '이전', en: 'Back', zh: '上一步', vi: 'Trước');
+  static const next = L10nText(
+    ko: '다음',
+    en: 'Next',
+    zh: '下一步',
+    vi: 'Tiếp',
+    uz: "Keyingi",
+  );
+  static const prev = L10nText(
+    ko: '이전',
+    en: 'Back',
+    zh: '上一步',
+    vi: 'Trước',
+    uz: "Orqaga",
+  );
   static const done = L10nText(
     ko: '시작하기',
     en: 'Got it',
     zh: '开始使用',
     vi: 'Bắt đầu',
+    uz: "Tushundim",
   );
 }
 
@@ -121,9 +135,8 @@ class _SpotlightTourOverlayState extends State<SpotlightTourOverlay> {
   void _measure() {
     if (!mounted || !widget.controller.active) return;
     final overlayObject = context.findRenderObject();
-    final targetObject =
-        widget.controller.currentStep.targetKey.currentContext
-            ?.findRenderObject();
+    final targetObject = widget.controller.currentStep.targetKey.currentContext
+        ?.findRenderObject();
     if (overlayObject is! RenderBox ||
         targetObject is! RenderBox ||
         !overlayObject.attached ||
@@ -149,7 +162,8 @@ class _SpotlightTourOverlayState extends State<SpotlightTourOverlay> {
     final rect = _targetRect;
     // 대상이 화면 위쪽 절반에 있으면 카드는 아래쪽에, 아래쪽 절반(하단
     // 탭바·AI 버블 등)에 있으면 카드는 위쪽에 배치해 서로 가리지 않게 한다.
-    final dockCardBelow = rect == null || rect.center.dy < screenSize.height / 2;
+    final dockCardBelow =
+        rect == null || rect.center.dy < screenSize.height / 2;
 
     // 호출부(MainShell)가 Positioned.fill로 감싸 쓰는 다른 오버레이들
     // (WorkLogSheet 등)과 같은 관례를 따른다 — 여기서 직접 Positioned를
@@ -182,7 +196,11 @@ class _SpotlightTourOverlayState extends State<SpotlightTourOverlay> {
                 ? (rect != null ? rect.bottom + 16 : null)
                 : null,
             bottom: dockCardBelow ? null : screenSize.height - rect.top + 16,
-            child: _CoachmarkCard(controller: controller, step: step, lang: lang),
+            child: _CoachmarkCard(
+              controller: controller,
+              step: step,
+              lang: lang,
+            ),
           ),
         ],
       ),
@@ -427,9 +445,7 @@ class _PillButton extends StatelessWidget {
         // 잘려 보이지 않는다.
         minimumSize: const Size(double.infinity, 44),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: FittedBox(
         fit: BoxFit.scaleDown,

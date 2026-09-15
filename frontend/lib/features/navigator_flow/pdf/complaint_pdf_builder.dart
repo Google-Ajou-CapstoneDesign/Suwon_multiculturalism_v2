@@ -10,11 +10,13 @@ import '../models/form_field_spec.dart';
 
 /// 언어별 폰트 파일 — 기본 PDF 내장 폰트엔 한글/중국어/베트남어 성조 글리프가 없어
 /// 반드시 번들 폰트를 로드해야 한다. ko→Noto Sans KR, zh→Noto Sans SC,
-/// en/vi→Noto Sans(라틴 확장 포함, 베트남어 성조 지원).
+/// en/vi/uz→Noto Sans(라틴 확장 및 우즈베크어 문자 지원).
 String _fontAssetFor(AppLanguage lang) => switch (lang) {
   AppLanguage.ko => 'assets/fonts/NotoSansKR.ttf',
   AppLanguage.zh => 'assets/fonts/NotoSansSC.ttf',
-  AppLanguage.en || AppLanguage.vi => 'assets/fonts/NotoSans.ttf',
+  AppLanguage.en ||
+  AppLanguage.vi ||
+  AppLanguage.uz => 'assets/fonts/NotoSans.ttf',
 };
 
 final Map<String, pw.Font> _fontCache = {};
@@ -157,6 +159,8 @@ pw.Widget _buildFieldRow(
 String _disclaimer(AppLanguage lang) => switch (lang) {
   AppLanguage.ko =>
     '본 문서는 입력하신 사실관계를 양식에 옮긴 것이며, 법적 주장이나 판단을 포함하지 않습니다. 작성 내용에 대한 법적 책임은 이용자 본인에게 있습니다.',
+  AppLanguage.uz =>
+    "Ushbu hujjat siz kiritgan maʼlumotlarni shaklga oʻtkazadi va hech qanday huquqiy dalil yoki hukm oʻz ichiga olmaydi. Kiritgan maʼlumotlaringiz uchun siz javobgarsiz.",
   AppLanguage.en =>
     'This document transfers the facts you entered into the form and contains no legal argument or judgement. You are responsible for the content you enter.',
   AppLanguage.zh => '本文件仅将您填写的事实转录至表格，不含法律主张或判断。填写内容的法律责任由使用者本人承担。',
