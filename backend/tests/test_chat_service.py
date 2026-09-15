@@ -1,7 +1,41 @@
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
+
+import pytest
 
 from app.schemas.chat import ChatRequest
 from app.services import chat_service
+
+
+@pytest.mark.parametrize("intent", ["life_info", "org_search"])
+async def test_new_intents_reach_agent_and_have_localized_fallback(monkeypatch, intent):
+    parsed = chat_service.IntentClassification(intent=intent)
+    client = SimpleNamespace(models=SimpleNamespace(
+        generate_content=lambda **kwargs: SimpleNamespace(parsed=parsed)))
+    monkeypatch.setattr(chat_service, "get_genai_client", lambda: client)
+    agent = AsyncMock(return_value=SimpleNamespace(text="안내 결과", urgent=False, orgs=[]))
+    monkeypatch.setattr(chat_service, "run_agent", agent)
+    response = await chat_service.answer(ChatRequest(message="준비물은 무엇인가요?"))
+    assert response.fact_answer == "안내 결과"
+    agent.assert_awaited_once()
+    agent.side_effect = RuntimeError("unavailable")
+    for language in ("ko", "en", "zh", "vi", "uz"):
+        response = await chat_service.answer(ChatRequest(message="안내 요청", language=language))
+        assert response.fact_answer == chat_service._CONTENT[intent]["fact_answer"][language]
+        assert response.risk_notice is None
+        assert response.routing_target is None
+
+
+@pytest.mark.parametrize("message,intent", [
+    ("한국에서 은행 계좌를 만들려면?", "life_info"),
+    ("가까운 외국인 지원센터 찾아줘", "org_search"),
+    ("임금체불 상담 기관 찾아줘", "org_search"),
+    ("Find a SUPPORT CENTER", "org_search"),
+    ("임금을 못 받았어요", "wage"),
+    ("소설 써줘", "off_topic"),
+])
+def test_expanded_keyword_fallback(message, intent):
+    assert chat_service._classify_with_keywords(message) == intent
 
 
 async def test_keyword_fallback_used_when_genai_client_unavailable(monkeypatch):

@@ -4,7 +4,7 @@
    "답변이 판단할 수 있는 소재인가?"에 해당한다. 분류는 직전 대화([이전 대화])도
    같이 보고 판단한다 — 그렇지 않으면 "그럼 저는 어떻게 해야 하나요?" 같은
    맥락 의존 후속 질문이 매번 off_topic으로 새서 답이 안 나가는 문제가 있었다.
-   wage/accident/contract/meta는 에이전트를 부르고, off_topic만 에이전트 없이
+   노동 상담·생활 정보·기관 찾기·meta는 에이전트를 부르고, off_topic만 에이전트 없이
    정중한 거절 문구로 바로 응답한다.
 2) 소재가 있다고 판단되면 app.agent.pipeline.run_agent()로 Tools(사용자 이력
    조회·임금 계산·기관 조회)를 갖춘 Gemini 에이전트 루프를 돌려 최종 답변을
@@ -31,11 +31,11 @@ from . import history_service, org_service
 
 logger = logging.getLogger(__name__)
 
-Intent = Literal["wage", "accident", "contract", "meta", "off_topic"]
+Intent = Literal["wage", "accident", "contract", "life_info", "org_search", "meta", "off_topic"]
 
 # 에이전트를 실제로 호출하는 의도 — 나머지(off_topic)는 정중히 거절만 하고
 # Gemini를 부르지 않는다(비용·오남용 방지).
-_AGENT_INTENTS: frozenset = frozenset({"wage", "accident", "contract", "meta"})
+_AGENT_INTENTS: frozenset = frozenset({"wage", "accident", "contract", "life_info", "org_search", "meta"})
 
 _ORG_CATEGORY_BY_INTENT = {
     "wage": "임금",
@@ -73,7 +73,7 @@ class IntentClassification(BaseModel):
 Language = Literal["ko", "en", "zh", "vi", "uz"]
 
 # 프론트엔드(AppLanguage)와 동일한 5개 언어. 에이전트 호출이 실패했을 때 나가는
-# 기본 안내 문구 7개를 언어별로 제공한다 —
+# 기본 안내 문구를 언어별로 제공한다 —
 # 에이전트 정상 경로는 pipeline.run_agent()에 넘긴 language로 처리된다.
 _L = Dict[Language, str]
 
@@ -92,21 +92,34 @@ def _pick(text: Optional[_L], language: Language) -> Optional[str]:
 
 
 _META_FALLBACK_ANSWER: _L = {
-    "ko": "저는 수원시 이주노동자·유학생의 노동 상담을 돕는 AI 도우미예요. 임금체불, 산업재해, 근로계약서 등 궁금한 점을 편하게 물어보세요.",
-    "en": "I'm an AI assistant helping migrant workers and international students in Suwon with labor questions. Feel free to ask about unpaid wages, workplace injuries, employment contracts, and more.",
-    "zh": "我是帮助水原市外籍劳动者和留学生解决劳动咨询问题的AI助手。欢迎随时咨询拖欠工资、工伤、劳动合同等问题。",
-    "uz": "Men Suvondagi mehnat muhojirlari va chet ellik talabalarga mehnat masalalarida yordam beradigan sunʼiy intellekt yordamchisiman. Toʻlanmagan ish haqi, ishlab chiqarishdagi jarohatlar va mehnat shartnomalari haqida soʻrashingiz mumkin.",
-    "vi": "Tôi là trợ lý AI hỗ trợ tư vấn lao động cho người lao động nước ngoài và du học sinh tại Suwon. Hãy thoải mái hỏi về nợ lương, tai nạn lao động, hợp đồng lao động và các vấn đề khác.",
+    "ko": "저는 외국인·이주노동자·유학생을 위한 AI 도우미예요. 노동 상담, 한국 생활 정보, 도움받을 기관 찾기 등 궁금한 점을 편하게 물어보세요.",
+    "en": "I'm an AI assistant for foreign residents, migrant workers, and international students. Ask me about labor issues, life in Korea, or finding support organizations.",
+    "zh": "我是为外籍居民、外籍劳动者和留学生提供帮助的AI助手。欢迎咨询劳动问题、韩国生活信息或查找相关机构。",
+    "uz": "Men chet elliklar, mehnat muhojirlari va chet ellik talabalar uchun AI yordamchisiman. Mehnat masalalari, Koreyadagi hayot yoki yordam tashkilotlarini topish haqida soʻrang.",
+    "vi": "Tôi là trợ lý AI dành cho người nước ngoài, lao động nhập cư và du học sinh. Bạn có thể hỏi về lao động, cuộc sống ở Hàn Quốc hoặc tìm cơ quan hỗ trợ.",
 }
 _OFF_TOPIC_ANSWER: _L = {
-    "ko": "이 서비스는 수원시 이주노동자·유학생의 노동 상담(임금체불·산업재해·근로계약 등)을 돕는 곳이에요. 요청하신 내용은 제가 도와드리기 어려운 주제라 정중히 양해 부탁드려요.",
-    "en": "This service helps migrant workers and international students in Suwon with labor topics (unpaid wages, workplace injuries, employment contracts, etc). I'm afraid I can't help with what you asked — thank you for understanding.",
-    "zh": "本服务专门帮助水原市外籍劳动者和留学生解决劳动相关问题（拖欠工资、工伤、劳动合同等）。您咨询的内容不在我能协助的范围内，敬请谅解。",
-    "uz": "Bu xizmat Suvondagi mehnat muhojirlari va chet ellik talabalarga ish haqi, ishlab chiqarishdagi jarohatlar va mehnat shartnomalari boʻyicha yordam beradi. Afsuski, soʻrovingiz ushbu xizmat doirasiga kirmaydi. Tushunganingiz uchun rahmat.",
-    "vi": "Dịch vụ này hỗ trợ tư vấn lao động (nợ lương, tai nạn lao động, hợp đồng lao động, v.v.) cho người lao động nước ngoài và du học sinh tại Suwon. Rất tiếc tôi không thể hỗ trợ nội dung bạn vừa hỏi, mong bạn thông cảm.",
+    "ko": "이 서비스는 외국인의 노동 상담, 한국 생활 정보, 관련 기관 찾기를 도와드려요. 요청하신 내용은 안내 범위를 벗어나 도움드리기 어려워요.",
+    "en": "This service helps foreign residents with labor issues, life in Korea, and finding relevant organizations. Your request is outside the scope I can help with.",
+    "zh": "本服务帮助外籍居民咨询劳动问题、了解韩国生活信息及查找相关机构。您的请求超出了我能提供帮助的范围。",
+    "uz": "Bu xizmat chet elliklarga mehnat masalalari, Koreyadagi hayot va tegishli tashkilotlarni topishda yordam beradi. Soʻrovingiz yordam bera oladigan doiramdan tashqarida.",
+    "vi": "Dịch vụ này hỗ trợ người nước ngoài về lao động, cuộc sống ở Hàn Quốc và tìm cơ quan phù hợp. Yêu cầu của bạn nằm ngoài phạm vi tôi có thể hỗ trợ.",
 }
 
 _CONTENT: Dict[Intent, _ContentEntry] = {
+    "org_search": {
+        "keywords": ["기관", "센터", "문의처", "상담소", "출입국사무소",
+                     "support center", "support centre", "咨询中心", "trung tâm hỗ trợ", "yordam markazi"],
+        "fact_answer": {
+            "ko": "지금은 기관 정보를 확인하기 어려워요. 잠시 후 필요한 도움과 지역을 함께 알려주시면 관련 기관을 찾아드릴게요.",
+            "en": "I can't check organization details right now. Please try again shortly with the help you need and your area so I can look for a suitable organization.",
+            "zh": "暂时无法确认机构信息。请稍后告知您需要的帮助和所在地区，我会帮您查找相关机构。",
+            "vi": "Hiện tôi chưa thể kiểm tra thông tin cơ quan. Vui lòng thử lại sau và cho biết bạn cần hỗ trợ gì, ở khu vực nào để tôi tìm cơ quan phù hợp.",
+            "uz": "Hozir tashkilot maʼlumotlarini tekshira olmayapman. Birozdan keyin qanday yordam kerakligini va hududingizni ayting, mos tashkilotni topishga yordam beraman.",
+        },
+        "risk_notice": None,
+        "routing_target": None,
+    },
     "wage": {
         "keywords": ["임금", "체불", "월급", "급여"],
         "fact_answer": {
@@ -155,6 +168,20 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
         "risk_notice": None,
         "routing_target": RoutingTarget(module="module1", category_id="contract_check"),
     },
+    "life_info": {
+        "keywords": ["한국 생활", "생활 정보", "외국인등록", "체류", "비자", "건강보험",
+                     "교통카드", "쓰레기", "한국어 교육", "은행 계좌",
+                     "life in korea", "visa", "韩国生活", "cuộc sống ở hàn quốc", "koreyada yashash"],
+        "fact_answer": {
+            "ko": "한국 생활 정보를 안내해 드릴 수 있어요. 지금은 자세한 정보를 확인하기 어려우니 잠시 후 궁금한 주제와 상황을 알려주세요.",
+            "en": "I can help with information about life in Korea. I can't verify the details right now; please try again shortly with your topic and situation.",
+            "zh": "我可以提供韩国生活信息。目前暂时无法核实详细信息，请稍后告知您关心的主题和具体情况。",
+            "vi": "Tôi có thể cung cấp thông tin về cuộc sống ở Hàn Quốc. Hiện chưa thể xác minh chi tiết; vui lòng thử lại sau và cho biết chủ đề, hoàn cảnh của bạn.",
+            "uz": "Koreyadagi hayot haqida maʼlumot berishga yordam bera olaman. Hozir tafsilotlarni tekshira olmayapman; birozdan keyin mavzu va vaziyatingizni ayting.",
+        },
+        "risk_notice": None,
+        "routing_target": None,
+    },
     "meta": {
         # 노동 상담 소재는 아니지만 서비스가 직접 답해도 되는 것("너는 누구니?" 등).
         # genai 미설정 시엔 키워드로만 대충 잡는다 — 정교함보다는 완전히 놓치지
@@ -175,23 +202,42 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
 }
 
 _SYSTEM_INSTRUCTION = (
-    """당신은 수원시 이주노동자·유학생 노동 상담 서비스의 질문 분류기입니다.
+    """당신은 외국인·이주노동자·유학생을 위한 Local Bridge 서비스의 질문 분류기입니다.
+    노동 상담뿐 아니라 한국에서의 생활 정보 제공과 관련 기관 찾기도 서비스 범위입니다.
     [이전 대화]가 주어지면 맥락으로 참고하고, [분류할 메시지](없으면 입력 전체)를
-    아래 다섯 가지 중 하나로 분류하세요.
+    사용 언어와 관계없이 아래 일곱 가지 중 하나로 분류하세요.
 
     - wage: 임금·급여 미지급, 체불 관련
-    - accident: 산업재해·사고·부상 관련
+    - accident: 업무 중 발생한 산업재해·사고·부상 관련
     - contract: 근로계약서 관련
+    - life_info: 외국인의 한국 생활·정착에 필요한 정보나 절차 문의.
+      체류·비자·외국인등록, 의료·건강보험, 주거·임대차, 교통, 은행·통신,
+      교육·한국어 학습, 공공서비스, 문화·생활 규칙 등을 포함합니다.
+      예: "한국에서 은행 계좌를 어떻게 만들어요?", "쓰레기는 어떻게 버려요?",
+      "외국인도 건강보험에 가입할 수 있나요?", "한국 생활 정보를 알려줘".
+    - org_search: 도움받을 기관·센터·상담소·관공서·의료기관 등을 찾아달라는 요청,
+      기관의 위치·연락처·이용시간·지원 서비스·방문 방법 문의.
+      노동 문제와 직접 관련이 없어도 포함합니다.
+      예: "가까운 외국인 지원센터 찾아줘", "한국어를 배울 수 있는 기관이 어디야?",
+      "임금체불 상담받을 곳 알려줘", "그 센터 전화번호가 뭐야?".
     - meta: 이 서비스/AI 자체에 대한 질문이나 인사(예: "너는 누구니?",
       "뭘 도와줄 수 있어?", "안녕", "사용법 알려줘") — 노동 상담 소재는 아니지만
       서비스가 직접 답해도 되는 것
-    - off_topic: 노동 상담과 무관한 요청(예: "돈 버는 어플리케이션 설계해줘",
-      "오늘 날씨 어때", 일반 잡담·코딩·창작 요청 등) — 정중히 거절해야 하는 것
+    - off_topic: 노동 상담·한국 생활 정보·기관 안내·서비스 이용과 무관한 요청
+      (예: "돈 버는 어플리케이션 설계해줘", "판타지 소설 써줘" 등).
+      노동 관련 단어가 없다는 이유만으로 한국 생활 정보나 기관 문의를 제외하지 마세요.
 
-    [이전 대화]의 흐름상 지금 메시지가 wage/accident/contract 상담의 자연스러운
+    여러 항목에 걸치면 지금 사용자가 원하는 행동을 기준으로 하나를 고르세요.
+    기관을 찾아달라거나 연락처·위치를 묻는 것이 핵심이면 org_search를 우선합니다.
+    임금·산재·근로계약 자체의 권리·대응 절차 문의는 각각 wage/accident/contract이며,
+    그 밖의 한국 생활 정보·절차 문의는 life_info입니다.
+
+    [이전 대화]의 흐름상 지금 메시지가 노동 상담·한국 생활 정보·기관 안내의 자연스러운
     후속 질문(예: "그럼 저는 어떻게 해야 하나요?", "얼마나 받을 수 있어요?")이면
     그 맥락에 맞는 카테고리로 분류하세요 — 메시지 자체에 키워드가 없다고 무조건
     off_topic으로 분류하지 마세요.
+    생활 절차 안내 뒤 "준비물은?"은 life_info, 기관 추천 뒤
+    "거기는 토요일에도 열어?"는 org_search로 분류하세요.
 
     분류값 외에 설명·조언·새로운 문장을 절대 만들지 마세요.
     """
@@ -244,7 +290,7 @@ def _classify_with_keywords(message: str) -> Intent:
     for intent, content in _CONTENT.items():
         if intent == "off_topic":
             continue
-        if any(keyword in message for keyword in content["keywords"]):
+        if any(keyword.casefold() in message.casefold() for keyword in content["keywords"]):
             return intent
     return "off_topic"
 
@@ -293,8 +339,8 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
             # 에이전트가 아예 실패하면 "지금 안내가 필요한 상황인지" 판단을
             # 대신해줄 수 없으니, wage/accident/contract는 예전처럼 intent 기반
             # 고정 안내로 안전하게 폴백한다(과소 안내보다는 과다 안내가 낫다).
-            # meta는 애초에 경고·라우팅이 없는 카테고리라 그대로 둔다.
-            if intent != "meta":
+            # 생활 정보·기관 찾기·meta에는 노동 문제용 경고·라우팅을 붙이지 않는다.
+            if intent in {"wage", "accident", "contract"}:
                 risk_notice = _pick(content["risk_notice"], language)
                 routing_target = content["routing_target"]
                 orgs = await asyncio.to_thread(_fallback_orgs, request, intent, limit=2)
