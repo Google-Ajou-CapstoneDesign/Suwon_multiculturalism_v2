@@ -124,11 +124,12 @@ gcloud iam service-accounts add-iam-policy-binding \
 
 **배포 방식 A(`cloudbuild.yaml`)를 쓰면 아래 표의 `GOOGLE_GENAI_USE_VERTEXAI`/
 `GOOGLE_CLOUD_PROJECT`/`GOOGLE_CLOUD_LOCATION`/`GENAI_MODEL`/`DISCOVERY_ENGINE_ID`/
-`DISCOVERY_ENGINE_LOCATION`은 배포 스텝의 `--set-env-vars`가 매번 자동으로
-채운다 — 사람이 콘솔에서 수동으로 넣을 필요가 없다.** `FIREBASE_CREDENTIALS_JSON`/
-`FIREBASE_STORAGE_BUCKET`은 시크릿이거나 프로젝트마다 실제 값 확인이 필요해서
-`cloudbuild.yaml`에 없다 — 아래처럼 최초 1회 콘솔이나 `gcloud run services update`로
-직접 설정해야 한다. 배포 방식 B(GitHub Actions)를 쓴다면 전부 수동으로 채워야 한다.
+`DISCOVERY_ENGINE_LOCATION`은 배포 스텝의 `--update-env-vars`가 매번 자동으로
+채운다 — 사람이 콘솔에서 수동으로 넣을 필요가 없다.** `FIREBASE_CREDENTIALS_JSON`은
+`--set-secrets`로 Secret Manager에 연결한다. `FIREBASE_STORAGE_BUCKET`은 실제 버킷을
+확인한 뒤 최초 1회 콘솔이나 `gcloud run services update`로 설정한다.
+`--update-env-vars`는 이 수동 설정을 다음 배포에도 보존한다.
+배포 방식 B(GitHub Actions)를 쓴다면 전부 수동으로 채워야 한다.
 
 | 변수 | 값 |
 |---|---|
@@ -137,11 +138,32 @@ gcloud iam service-accounts add-iam-policy-binding \
 | `GOOGLE_CLOUD_LOCATION` | 예: `us-central1` |
 | `GENAI_MODEL` | 예: `gemini-3.5-flash` (에이전트와 주제 판별이 같은 값을 쓴다) |
 | `FIREBASE_CREDENTIALS_JSON` | Secret Manager 연동 권장(서비스 계정 JSON) — Firestore 상담 이력 저장/조회에도 쓰인다 |
-| `FIREBASE_STORAGE_BUCKET` | `<project-id>.appspot.com` |
+| `FIREBASE_STORAGE_BUCKET` | Firebase 콘솔 → Storage에서 확인한 실제 버킷 이름 (`gs://` 제외). 프로젝트 ID로 추측하지 않는다. |
 | `DISCOVERY_ENGINE_ID` | Vertex AI Search 검색 앱(엔진) ID — 콘솔에서 데이터스토어와 검색 앱을 만든 뒤 채운다. 미설정 시 `search_reference_documents` 도구가 비활성화(빈 결과)된다 |
 | `DISCOVERY_ENGINE_LOCATION` | 데이터스토어 리전. 기본값 `global` |
 
 `AUTH_DEV_BYPASS`는 Cloud Run에 절대 설정하지 않는다(미설정 시 기본값 `false`).
+
+증빙 업로드에서 `Storage bucket name not specified` 오류가 발생하면
+`FIREBASE_STORAGE_BUCKET` 누락을 확인한다. Firestore와 Storage는 별도이므로
+Firestore가 동작해도 Storage 버킷은 아직 생성되지 않았을 수 있다.
+Firebase 콘솔의 Storage에서 버킷 존재를 확인한 뒤 이름을 서버 환경변수에 설정한다.
+버킷이 없으면 먼저 Storage 설정이 필요하다. 환경변수만 추가한다고 버킷이 생성되지는 않는다.
+
+운영 업로드 복구 순서:
+
+1. 프로젝트 관리자 계정으로 Firebase 콘솔의 Storage 설정을 완료하고 실제 버킷 이름을 확인한다.
+2. 백엔드가 사용하는 Firebase 서비스 계정에 해당 버킷의 파일 생성 권한
+   (`storage.objects.create`)이 있는지 확인한다. Cloud Run 실행 계정과
+   `FIREBASE_CREDENTIALS_JSON`의 서비스 계정은 다를 수 있다.
+3. Cloud Run에 아래와 같이 설정한다. `ACTUAL_BUCKET_NAME`은 실제 버킷 이름으로 바꾼다.
+
+```powershell
+gcloud run services update local-bridge-api-for-backend-git --project gen-lang-client-0142486580 --region europe-west1 --update-env-vars="FIREBASE_STORAGE_BUCKET=ACTUAL_BUCKET_NAME"
+```
+
+4. 수정한 백엔드를 배포하고 앱에서 파일 업로드 후 목록에 나타나는지 확인한다.
+   `--update-env-vars`를 사용하므로 이후 Cloud Build 배포에서도 버킷 설정이 유지된다.
 
 ⚠️ **주의(2026-08-12에 실제로 겪은 장애)**: ADK 에이전트(`app/agent/pipeline.py`)에
 모델 이름 문자열만 주면, `app/core/genai_client.py`의 `get_genai_client()`와

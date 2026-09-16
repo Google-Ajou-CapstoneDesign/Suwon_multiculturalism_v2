@@ -3,7 +3,7 @@ import '../../../common/models/org.dart';
 import '../../../core/app_language.dart';
 import '../../../theme/app_colors.dart';
 
-/// 모든 응답 하단에 고정 노출되는 위치 기반 추천 기관 카드.
+/// 서버의 관련도 순서를 유지해 상위 두 기관을 나란히 표시한다.
 class RecommendedOrgCard extends StatelessWidget {
   const RecommendedOrgCard({
     super.key,
@@ -15,11 +15,46 @@ class RecommendedOrgCard extends StatelessWidget {
   final AppLanguage language;
 
   static const _title = L10nText(
-    ko: '◎ 내 위치 기반 추천 기관',
-    en: '◎ Recommended nearby offices',
-    zh: '◎ 基于您位置推荐的机构',
-    vi: '◎ Cơ quan gợi ý theo vị trí của bạn',
-    uz: "◎ Tavsiya etilgan yaqin ofislar",
+    ko: '추천 기관',
+    en: 'Recommended organizations',
+    zh: '推荐机构',
+    vi: 'Cơ quan được đề xuất',
+    uz: 'Tavsiya etilgan tashkilotlar',
+  );
+  static const _address = L10nText(
+    ko: '주소',
+    en: 'Address',
+    zh: '地址',
+    vi: 'Địa chỉ',
+    uz: 'Manzil',
+  );
+  static const _phone = L10nText(
+    ko: '전화번호',
+    en: 'Phone',
+    zh: '电话',
+    vi: 'Điện thoại',
+    uz: 'Telefon',
+  );
+  static const _hours = L10nText(
+    ko: '이용가능시간',
+    en: 'Opening hours',
+    zh: '开放时间',
+    vi: 'Giờ hoạt động',
+    uz: 'Ish vaqti',
+  );
+  static const _distance = L10nText(
+    ko: '거리',
+    en: 'Distance',
+    zh: '距离',
+    vi: 'Khoảng cách',
+    uz: 'Masofa',
+  );
+  static const _unknown = L10nText(
+    ko: '정보 없음',
+    en: 'Not available',
+    zh: '暂无信息',
+    vi: 'Chưa có thông tin',
+    uz: 'Maʼlumot yoʻq',
   );
   static const _distanceUnavailable = L10nText(
     ko: '거리 정보 없음',
@@ -58,35 +93,99 @@ class RecommendedOrgCard extends StatelessWidget {
               color: AppColors.primary,
             ),
           ),
-          const SizedBox(height: 6),
-          for (final org in orgs)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      org.name,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textPrimary,
+          const SizedBox(height: 10),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final selected = orgs.take(2).toList();
+              final availableWidth = constraints.maxWidth;
+              final minimumWidth =
+                  230.0 * MediaQuery.textScalerOf(context).scale(1);
+              final slotWidth = selected.length == 1
+                  ? availableWidth
+                  : (availableWidth - 12) / 2;
+              final width = slotWidth < minimumWidth ? minimumWidth : slotWidth;
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var index = 0; index < selected.length; index++) ...[
+                      if (index > 0) const SizedBox(width: 12),
+                      SizedBox(
+                        width: width,
+                        child: _orgTile(selected[index], index + 1),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _distanceLabel(org),
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
   }
+
+  Widget _orgTile(Org org, int rank) => Container(
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: AppColors.blueBorder),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$rank. ${org.name}',
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 12),
+        _detail(Icons.location_on_outlined, _address, org.address),
+        _detail(Icons.phone_outlined, _phone, org.phoneNumber),
+        _detail(Icons.schedule, _hours, org.businessHours),
+        _detail(Icons.near_me_outlined, _distance, _distanceLabel(org)),
+      ],
+    ),
+  );
+
+  Widget _detail(IconData icon, L10nText label, String? value) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: AppColors.primary),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label.of(language),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 2),
+              SelectableText(
+                value == null || value.trim().isEmpty
+                    ? _unknown.of(language)
+                    : value,
+                style: const TextStyle(
+                  fontSize: 12,
+                  height: 1.5,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }

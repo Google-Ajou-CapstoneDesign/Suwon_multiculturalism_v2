@@ -99,7 +99,7 @@ def list_orgs(
         orgs = [o for o in orgs if category in o.get("recommended_for", "")]
 
     scored = [
-        Org(name=o["name"], distance_km=_distance_km(lat, lng, o)) for o in orgs
+        Org.model_validate({**o, "distance_km": _distance_km(lat, lng, o)}) for o in orgs
     ]
     if lat is not None and lng is not None:
         scored.sort(
@@ -169,7 +169,7 @@ def _rerank_with_genai(
         if not isinstance(parsed, _RelevantOrgNames):
             return _rerank_with_keywords(situation, orgs, limit)
         by_name = {o["name"]: o for o in orgs}
-        picked = [by_name[n] for n in parsed.org_names if n in by_name]
+        picked = [by_name[n] for n in dict.fromkeys(parsed.org_names) if n in by_name]
         return picked[:limit] if picked else _rerank_with_keywords(situation, orgs, limit)
     except Exception as exc:
         log_exception_summary(logger, "기관 재순위화(LLM) 실패 — 키워드 매칭으로 폴백합니다.", exc)
@@ -181,14 +181,14 @@ def find_relevant_orgs(
     situation: str = "",
     lat: Optional[float] = None,
     lng: Optional[float] = None,
-    limit: int = 3,
+    limit: int = 2,
 ) -> List[Dict[str, Any]]:
     """agent.tools.search_support_orgs가 쓰는 핵심 함수.
 
-    situation(자연어)으로 관련 기관을 추리고, 사용자 위치가 있으면 거리
-    오름차순으로 정렬한다. 에이전트가 답변에 바로 인용할 수 있도록 기관의
+    situation(자연어)과의 관련도 순서를 유지하고 거리는 표시용으로 계산한다.
+    에이전트가 답변에 바로 인용할 수 있도록 기관의
     모든 필드(설명·전화번호·주소·이용시간 등)를 그대로 담은 dict를 반환한다
-    — Org(name/distanceKm만 있는 API 응답 스키마)로 좁히는 건 호출부 책임이다.
+    — API 응답 필드로 변환하는 것은 호출부 책임이다.
     """
     orgs = _load_all_orgs()
     picked = _rerank_with_genai(situation, orgs, limit)
@@ -199,10 +199,4 @@ def find_relevant_orgs(
         item["distance_km"] = _distance_km(lat, lng, o)
         result.append(item)
 
-    if lat is not None and lng is not None:
-        result.sort(
-            key=lambda o: o["distance_km"]
-            if o["distance_km"] is not None
-            else math.inf
-        )
     return result

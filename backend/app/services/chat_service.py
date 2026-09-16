@@ -312,7 +312,7 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
     # 경우에만 채운다(urgent).
     risk_notice: Optional[str] = None
     routing_target: Optional[RoutingTarget] = None
-    orgs = await asyncio.to_thread(_fallback_orgs, request, intent, limit=1)
+    orgs = await asyncio.to_thread(_fallback_orgs, request, intent, limit=2)
 
     if intent in _AGENT_INTENTS:
         try:
@@ -331,7 +331,7 @@ async def answer(request: ChatRequest, uid: Optional[str] = None) -> ChatRespons
                 risk_notice = _pick(content["risk_notice"], language)
                 routing_target = content["routing_target"]
             if agent_result.orgs:
-                orgs = agent_result.orgs
+                orgs = agent_result.orgs[:2]
         except Exception as exc:
             log_exception_summary(logger, "에이전트 응답 생성 실패 — 사전 검수 문구로 폴백합니다.", exc)
             logger.exception("에이전트 응답 생성 실패 전체 트레이스백")

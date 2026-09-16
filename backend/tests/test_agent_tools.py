@@ -65,10 +65,10 @@ def test_search_support_orgs_filters_by_situation_via_keyword_fallback():
 
     result = search_support_orgs(situation="임금체불 진정 제기")
 
-    assert 0 < len(result["orgs"]) <= 3
+    assert 0 < len(result["orgs"]) <= 2
 
 
-def test_search_support_orgs_sorts_by_distance_when_location_given():
+def test_search_support_orgs_adds_distance_without_reordering():
     data = json.loads(_ORGS_JSON.read_text(encoding="utf-8"))
     target = next(o for o in data if o.get("latitude") is not None)
     search_support_orgs = _tool(
@@ -80,8 +80,7 @@ def test_search_support_orgs_sorts_by_distance_when_location_given():
     result = search_support_orgs()
 
     distances = [o["distance_km"] for o in result["orgs"]]
-    known_distances = [distance for distance in distances if distance is not None]
-    assert known_distances == sorted(known_distances)
+    assert [o["name"] for o in result["orgs"]] == [o["name"] for o in data[:2]]
     assert distances[0] == 0.0
 
 
