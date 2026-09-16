@@ -429,19 +429,7 @@ const wageFlowDefinition = FlowDefinition(
         vi: 'Từ đây là thời gian chờ',
         uz: "Bu yerdan boshlab, kutish oʻyini boshlanadi",
       ),
-      blocks: [
-        TrackerBlock(now: 3),
-        EncyclopediaLinkBlock(
-          categoryId: 10,
-          label: L10nText(
-            ko: '백과사전에서 더 자세히 보기',
-            en: 'See more in the encyclopedia',
-            zh: '在百科全书中查看更多',
-            vi: 'Xem thêm trong cẩm nang',
-            uz: "Ensiklopediyada koʻproq maʼlumot oling",
-          ),
-        ),
-      ],
+      blocks: [TrackerBlock(now: 3)],
     ),
   ],
   track: [

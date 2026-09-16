@@ -608,19 +608,7 @@ const injuryFlowDefinition = FlowDefinition(
         vi: 'Từ đây trở đi là thời gian chờ',
         uz: "Bu yerdan boshlab, kutish oʻyini boshlanadi",
       ),
-      blocks: [
-        TrackerBlock(now: 2),
-        EncyclopediaLinkBlock(
-          categoryId: 11,
-          label: L10nText(
-            ko: '백과사전에서 더 자세히 보기',
-            en: 'See more in the encyclopedia',
-            zh: '在百科全书中查看更多',
-            vi: 'Xem thêm trong cẩm nang',
-            uz: "Ensiklopediyada koʻproq maʼlumot oling",
-          ),
-        ),
-      ],
+      blocks: [TrackerBlock(now: 2)],
     ),
   ],
   track: [

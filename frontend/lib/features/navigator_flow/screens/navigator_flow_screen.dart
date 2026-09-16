@@ -457,19 +457,6 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
           accentColor: _accentColor,
         ),
         LegendBlock() => LegendView(lang: lang),
-        EncyclopediaLinkBlock(:final label) => SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Text('📖'),
-            label: Text(label.of(lang)),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: _accentColor,
-              side: BorderSide(color: _accentColor),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-          ),
-        ),
         ImportButtonsBlock(:final sources, :final comingSoon) =>
           ImportButtonsRow(
             sources: sources,

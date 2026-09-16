@@ -51,6 +51,30 @@ class _ChatStrings {
     vi: 'Nhập tin nhắn',
     uz: "Xabar yozing",
   );
+
+  /// 첫 화면 추천 질문 — 카드를 누르면 이 문구가 그대로 사용자 메시지로 전송된다.
+  /// 화면에 보이는 문구와 전송되는 문구가 같아야 대화 흐름이 자연스럽다.
+  static const suggestWage = L10nText(
+    ko: '임금체불 진정과정 알려줘',
+    en: 'How do I file an unpaid wage complaint?',
+    zh: '欠薪申诉的流程是怎样的？',
+    vi: 'Quy trình khiếu nại nợ lương như thế nào?',
+    uz: "Toʻlanmagan ish haqi boʻyicha shikoyat qanday beriladi?",
+  );
+  static const suggestInjury = L10nText(
+    ko: '산재처리 신청과정 알려줘',
+    en: 'How do I file a workplace injury claim?',
+    zh: '工伤认定的申请流程是怎样的？',
+    vi: 'Quy trình yêu cầu bồi thường tai nạn lao động ra sao?',
+    uz: "Ish joyidagi jarohat boʻyicha ariza qanday topshiriladi?",
+  );
+  static const suggestOrg = L10nText(
+    ko: '근처에 상담 가능한 기관 알려줘',
+    en: 'Which support centers near me can help?',
+    zh: '附近有哪些可以咨询的机构？',
+    vi: 'Gần đây có cơ quan nào có thể tư vấn?',
+    uz: "Yaqin atrofda qaysi maslahat markazlari yordam bera oladi?",
+  );
   static const serverError = L10nText(
     ko: '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.',
     en: 'Could not connect to the server. Please try again shortly.',
@@ -165,8 +189,10 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Future<void> _send() async {
-    final text = _controller.text.trim();
+  /// [preset]은 첫 화면 추천 질문 카드가 넘기는 문구다 — 입력창에 타이핑한
+  /// 경우와 똑같이 처리한다(사용자 말풍선으로 남고 이력에도 포함된다).
+  Future<void> _send({String? preset}) async {
+    final text = (preset ?? _controller.text).trim();
     if (text.isEmpty || _isSending || _remaining > 0) return;
     if (text.runes.length > 2000) {
       setState(() => _error = _ChatStrings.tooLong);
@@ -262,7 +288,13 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: _messages.isEmpty && !_isSending
-                ? _EmptyState(language: lang)
+                ? _EmptyState(
+                    language: lang,
+                    // 전송 제한 중에는 눌러도 아무 일이 없으니 아예 비활성으로 보여준다.
+                    onQuestionTap: _remaining > 0
+                        ? null
+                        : (text) => _send(preset: text),
+                  )
                 : ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(16),
@@ -315,14 +347,21 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.language});
+  const _EmptyState({required this.language, required this.onQuestionTap});
+
   final AppLanguage language;
+
+  /// 추천 질문 카드를 눌렀을 때 그 문구를 그대로 전송한다. null이면(전송 제한 중)
+  /// 카드를 흐리게 표시하고 누를 수 없게 한다.
+  final void Function(String question)? onQuestionTap;
 
   @override
   Widget build(BuildContext context) {
+    // 카드까지 더하면 작은 화면(슬라이드업 시트)에서 넘칠 수 있어, 들어가면
+    // 가운데 정렬하고 넘치면 스크롤되게 한다.
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -355,7 +394,81 @@ class _EmptyState extends StatelessWidget {
                 height: 1.5,
               ),
             ),
+            const SizedBox(height: 18),
+            _SuggestionCard(
+              emoji: '💸',
+              label: _ChatStrings.suggestWage.of(language),
+              onTap: onQuestionTap,
+            ),
+            const SizedBox(height: 8),
+            _SuggestionCard(
+              emoji: '⛑️',
+              label: _ChatStrings.suggestInjury.of(language),
+              onTap: onQuestionTap,
+            ),
+            const SizedBox(height: 8),
+            _SuggestionCard(
+              emoji: '🏢',
+              label: _ChatStrings.suggestOrg.of(language),
+              onTap: onQuestionTap,
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 첫 화면 추천 질문 카드 — 누르면 [label] 문구가 그대로 전송된다.
+class _SuggestionCard extends StatelessWidget {
+  const _SuggestionCard({
+    required this.emoji,
+    required this.label,
+    required this.onTap,
+  });
+
+  final String emoji;
+  final String label;
+  final void Function(String question)? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = onTap != null;
+    return Opacity(
+      opacity: enabled ? 1 : 0.45,
+      child: InkWell(
+        onTap: enabled ? () => onTap!(label) : null,
+        borderRadius: BorderRadius.circular(12),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.blueBorder),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 15)),
+              const SizedBox(width: 9),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 11,
+                color: AppColors.primary,
+              ),
+            ],
+          ),
         ),
       ),
     );

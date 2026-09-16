@@ -165,13 +165,6 @@ class LegendBlock extends FlowBlock {
   const LegendBlock();
 }
 
-/// 백과사전 특정 카테고리로 이동하는 딥링크 버튼.
-class EncyclopediaLinkBlock extends FlowBlock {
-  const EncyclopediaLinkBlock({required this.categoryId, required this.label});
-  final int categoryId;
-  final L10nText label;
-}
-
 /// 근무기록장/임금명세서/계산기값 등에서 값을 불러오는 토글 버튼 묶음.
 enum ImportSource { workLog, payslip, calcResult, profile }
 

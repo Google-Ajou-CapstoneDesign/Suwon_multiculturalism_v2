@@ -114,3 +114,11 @@ Suwon_multiculturalism_v2'
 - 간편 입력 카드를 누르면 시안의 `#modal-quick`과 같은 바텀시트가 열린다 — 적용 시급(± 1,000원 스테퍼 + 직접 입력)과 오늘 일한 시간(± 0.5h 스테퍼)을 조절하면 예상 임금이 실시간으로 계산되고, "오늘 임금 기록 저장하기"로 한 번에 반영
 - 입력한 근무시간은 출퇴근 시각으로 환산해 저장한다(`WorkLogController.setTodayWorkedHours`) — 기록의 원본은 계속 출퇴근 시각이라 캘린더·일별 상세·서버 저장과 그대로 연결된다
 - "오늘 예상 임금" 카드를 누르면 오늘의 일별 상세가 열리고, 총합계 배너에는 근무 일수를 함께 표시(시안의 "9월 총합계 (근무 15일)")
+
+### 2026-09-16 — 증빙파일 업로드 503 수정 + 네비게이터 죽은 링크 제거
+- **증빙 보관함 업로드가 503으로 실패하던 문제 해결** — 원인은 `FIREBASE_STORAGE_BUCKET` 미설정이었다. Cloud Run에 이 환경변수가 없어 `storage_service.save_evidence_file()`이 파일을 저장소로 보내기도 전에 `StorageNotConfiguredError`를 던지고 있었다(앱이 직접 반환한 503이라 인프라 장애가 아니었다).
+  - 진단 근거: 이 엔드포인트가 503을 내는 경로는 `uploads.py`의 `StorageNotConfiguredError` 하나뿐이고, `evidence_service`는 모든 예외를 삼키므로 원인이 될 수 없었다. 지연시간 251ms도 GCS 호출 전 설정 검사에서 끊긴 패턴과 일치했다.
+  - 애초에 Firebase Storage 기본 버킷 자체가 없었다(`gen-lang-client-0142486580.firebasestorage.app` → 404). 프론트는 `firebase_storage` 의존성이 없어 업로드가 전부 백엔드 API를 거치므로, Firebase 관리 버킷 대신 **Cloud Run과 같은 리전(europe-west1)의 일반 GCS 버킷 `local-bridge-evidence`** 를 만들어 연결했다.
+  - `cloudbuild.yaml`의 `--update-env-vars`에 `FIREBASE_STORAGE_BUCKET=local-bridge-evidence` 추가(기존 TODO 해소) — 콘솔 수동 설정에만 의존하면 과거 `GOOGLE_GENAI_USE_VERTEXAI` 누락 사고가 반복되므로 파이프라인에 명시했다. 로컬 `.env`의 플레이스홀더(`your-project-id.appspot.com`)도 실제 값으로 교체.
+  - 저장소 접근 주체는 Cloud Run 런타임 계정이 아니라 `FIREBASE_CREDENTIALS_JSON` 키의 서비스 계정(`firebase-adminsdk-fbsvc@...`)이다 — 이 계정에 버킷 `roles/storage.objectAdmin` 부여. `firebase_admin.storage.bucket()`은 지연 참조(`client.bucket()`)만 하고 `get_bucket()`을 호출하지 않아 `storage.buckets.get` 없이 objectAdmin만으로 충분하다.
+- 임금체불·산재 네비게이터 마지막 단계의 "백과사전에서 더 자세히 보기" 버튼 제거 — 백과사전이 메인 탭에서 빠지면서 죽은 링크(누르면 그냥 뒤로가기)가 돼 있었다. 더 이상 쓰이지 않는 `EncyclopediaLinkBlock` 정의와 렌더링 분기도 함께 정리.
