@@ -97,27 +97,14 @@ class RecommendedOrgCard extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final selected = orgs.take(2).toList();
-              final availableWidth = constraints.maxWidth;
-              final minimumWidth =
-                  230.0 * MediaQuery.textScalerOf(context).scale(1);
-              final slotWidth = selected.length == 1
-                  ? availableWidth
-                  : (availableWidth - 12) / 2;
-              final width = slotWidth < minimumWidth ? minimumWidth : slotWidth;
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (var index = 0; index < selected.length; index++) ...[
-                      if (index > 0) const SizedBox(width: 12),
-                      SizedBox(
-                        width: width,
-                        child: _orgTile(selected[index], index + 1),
-                      ),
-                    ],
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var index = 0; index < selected.length; index++) ...[
+                    if (index > 0) const SizedBox(width: 12),
+                    Expanded(child: _orgTile(selected[index], index + 1)),
                   ],
-                ),
+                ],
               );
             },
           ),
@@ -127,7 +114,8 @@ class RecommendedOrgCard extends StatelessWidget {
   }
 
   Widget _orgTile(Org org, int rank) => Container(
-    padding: const EdgeInsets.all(14),
+    key: ValueKey('recommended-org-$rank'),
+    padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(10),

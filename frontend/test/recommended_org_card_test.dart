@@ -41,37 +41,48 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('narrow screen with large text scrolls without overflow', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(320, 1000);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(
-      MaterialApp(
-        home: MediaQuery(
-          data: const MediaQueryData(textScaler: TextScaler.linear(1.5)),
-          child: Scaffold(
-            body: SingleChildScrollView(
-              child: RecommendedOrgCard(
-                orgs: const [
-                  Org(name: '긴 이름의 외국인 상담 지원 기관', distanceKm: 3),
-                  Org(name: '두 번째 기관', distanceKm: 4),
-                ],
-                language: AppLanguage.ko,
+  testWidgets(
+    'narrow screen shows equal-width cards without horizontal scrolling',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(textScaler: TextScaler.linear(1.5)),
+            child: Scaffold(
+              body: SingleChildScrollView(
+                child: RecommendedOrgCard(
+                  orgs: const [
+                    Org(name: '긴 이름의 외국인 상담 지원 기관', distanceKm: 3),
+                    Org(name: '두 번째 기관', distanceKm: 4),
+                  ],
+                  language: AppLanguage.ko,
+                ),
               ),
             ),
           ),
         ),
-      ),
-    );
-    final scroller = find.byWidgetPredicate(
-      (w) => w is SingleChildScrollView && w.scrollDirection == Axis.horizontal,
-    );
-    await tester.drag(scroller, const Offset(-400, 0));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('2. 두 번째 기관').hitTestable(), findsOneWidget);
-  });
+      );
+      final scroller = find.byWidgetPredicate(
+        (w) =>
+            w is SingleChildScrollView && w.scrollDirection == Axis.horizontal,
+      );
+      expect(scroller, findsNothing);
+      final first = tester.getRect(
+        find.byKey(const ValueKey('recommended-org-1')),
+      );
+      final second = tester.getRect(
+        find.byKey(const ValueKey('recommended-org-2')),
+      );
+      expect(first.width, second.width);
+      expect(first.top, second.top);
+      expect(first.left, greaterThanOrEqualTo(0));
+      expect(second.right, lessThanOrEqualTo(320));
+      expect(tester.takeException(), isNull);
+      expect(find.text('2. 두 번째 기관').hitTestable(), findsOneWidget);
+    },
+  );
 }
