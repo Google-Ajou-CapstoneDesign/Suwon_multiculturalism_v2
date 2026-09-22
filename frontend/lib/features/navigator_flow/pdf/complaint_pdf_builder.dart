@@ -17,6 +17,7 @@ String _fontAssetFor(AppLanguage lang) => switch (lang) {
   AppLanguage.en ||
   AppLanguage.vi ||
   AppLanguage.uz => 'assets/fonts/NotoSans.ttf',
+  AppLanguage.tr => 'assets/fonts/NotoSans.ttf',
 };
 
 final Map<String, pw.Font> _fontCache = {};
@@ -163,6 +164,8 @@ String _disclaimer(AppLanguage lang) => switch (lang) {
     "Ushbu hujjat siz kiritgan maʼlumotlarni shaklga oʻtkazadi va hech qanday huquqiy dalil yoki hukm oʻz ichiga olmaydi. Kiritgan maʼlumotlaringiz uchun siz javobgarsiz.",
   AppLanguage.en =>
     'This document transfers the facts you entered into the form and contains no legal argument or judgement. You are responsible for the content you enter.',
+  AppLanguage.tr =>
+    "Bu belge, forma girdiğiniz bilgileri aktarır ve herhangi bir hukuki argüman veya yargı içermez. Girdiğiniz içerikten siz sorumlusunuz.",
   AppLanguage.zh => '本文件仅将您填写的事实转录至表格，不含法律主张或判断。填写内容的法律责任由使用者本人承担。',
   AppLanguage.vi =>
     'Tài liệu này chỉ chuyển các sự việc bạn nhập vào mẫu, không chứa lập luận hay phán đoán pháp lý. Bạn chịu trách nhiệm về nội dung đã nhập.',

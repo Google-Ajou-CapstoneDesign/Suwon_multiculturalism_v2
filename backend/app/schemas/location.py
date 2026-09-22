@@ -17,7 +17,7 @@ class LocationVerifyRequest(CamelModel):
     # weather_service의 condition_code처럼 유한한 값 집합으로 지원 언어를
     # 다 준비해둘 수 없는(장소마다 문자열이 달라지는) 데이터라, 이 한 곳만
     # 예외적으로 서버가 이미 번역된 문자열을 돌려준다.
-    language: Literal["ko", "en", "zh", "vi", "uz"] = "ko"
+    language: Literal["ko", "en", "zh", "vi", "uz", "tr"] = "ko"
 
 
 class LocationVerifyResponse(CamelModel):

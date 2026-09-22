@@ -27,6 +27,7 @@ enum VisaChoice {
       AppLanguage.ko => '기타',
       AppLanguage.uz => "Boshqa",
       AppLanguage.en => 'Other',
+      AppLanguage.tr => "Diğer",
       AppLanguage.zh => '其他',
       AppLanguage.vi => 'Khác',
     };
@@ -153,6 +154,7 @@ class WageCalcInput {
         AppLanguage.ko => '1개월 (이번 달)',
         AppLanguage.uz => "1 oy (joriy oy)",
         AppLanguage.en => '1 month (this month)',
+        AppLanguage.tr => "1 ay (bu ay)",
         AppLanguage.zh => '1个月（本月）',
         AppLanguage.vi => '1 tháng (tháng này)',
       };
@@ -162,6 +164,7 @@ class WageCalcInput {
         AppLanguage.ko => '$n개월',
         AppLanguage.uz => "$n oy",
         AppLanguage.en => '$n months',
+        AppLanguage.tr => "$n ay",
         AppLanguage.zh => '$n个月',
         AppLanguage.vi => '$n tháng',
       };
@@ -174,6 +177,7 @@ class WageCalcInput {
         AppLanguage.ko => '$range ($n개월)',
         AppLanguage.uz => "$range ($n oy)",
         AppLanguage.en => '$range ($n months)',
+        AppLanguage.tr => "$range ($n ay)",
         AppLanguage.zh => '$range（$n个月）',
         AppLanguage.vi => '$range ($n tháng)',
       };
@@ -182,6 +186,7 @@ class WageCalcInput {
       AppLanguage.ko => '$n개월',
       AppLanguage.uz => "$n oy",
       AppLanguage.en => '$n months',
+      AppLanguage.tr => "$n ay",
       AppLanguage.zh => '$n个月',
       AppLanguage.vi => '$n tháng',
     };
@@ -459,6 +464,7 @@ String taxLabelOf(TaxMethod tax, double? rate, AppLanguage lang) {
       AppLanguage.ko => '4대보험 $pct%',
       AppLanguage.uz => "4 ta asosiy sugʻurta $pct%",
       AppLanguage.en => '4 Major Insurances $pct%',
+      AppLanguage.tr => "4 Büyük Sigorta $pct%",
       AppLanguage.zh => '四大保险 $pct%',
       AppLanguage.vi => '4 loại bảo hiểm $pct%',
     };
@@ -468,6 +474,7 @@ String taxLabelOf(TaxMethod tax, double? rate, AppLanguage lang) {
       AppLanguage.ko => '사업소득세 3.3%',
       AppLanguage.uz => "Biznes daromad soligʻi 3.3%",
       AppLanguage.en => 'Business income tax 3.3%',
+      AppLanguage.tr => "İşletme gelir vergisi %3.3",
       AppLanguage.zh => '营业所得税 3.3%',
       AppLanguage.vi => 'Thuế thu nhập kinh doanh 3.3%',
     };
@@ -476,6 +483,7 @@ String taxLabelOf(TaxMethod tax, double? rate, AppLanguage lang) {
     AppLanguage.ko => '공제 없음',
     AppLanguage.uz => "Chegirma yoʻq",
     AppLanguage.en => 'No deduction',
+    AppLanguage.tr => "Kesinti yok",
     AppLanguage.zh => '无扣除',
     AppLanguage.vi => 'Không khấu trừ',
   };
@@ -502,6 +510,11 @@ String _tenureText(int days, AppLanguage lang) {
       if (yrs > 0) t += '$yrs yr ';
       if (months > 0) t += '$months mo';
       return t.trim().isEmpty ? '$days days' : t.trim();
+    case AppLanguage.tr:
+      var t = '';
+      if (yrs > 0) t += '$yrs yıl ';
+      if (months > 0) t += '$months ay';
+      return t.trim().isEmpty ? '$days gün' : t.trim();
     case AppLanguage.zh:
       var t = '';
       if (yrs > 0) t += '$yrs年';
@@ -525,6 +538,8 @@ String severanceNarrative(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         "Ishga kirgan sanangizni kiriting va biz sizning ish stajingizni hisoblab, ishdan boʻshatish nafaqasi qoʻllanilishini aytamiz.",
       AppLanguage.en =>
         'Enter your hire date and we will calculate your tenure to tell you whether severance pay applies.',
+      AppLanguage.tr =>
+        "İşe başlama tarihinizi girin, kıdem tazminatının uygulanıp uygulanmadığını size bildirmek için hizmet sürenizi hesaplayacağız.",
       AppLanguage.zh => '请输入入职日期，我们将计算在职期间并告知您是否符合退休金条件。',
       AppLanguage.vi =>
         'Hãy nhập ngày vào làm để chúng tôi tính thời gian làm việc và cho bạn biết có được nhận trợ cấp thôi việc hay không.',
@@ -543,6 +558,8 @@ String severanceNarrative(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "sizning uzluksiz xizmatingiz hali 1 yilga (365 kun) yetmagan — hozirda ${r.days} kun, taxminan $tenureTxt",
         AppLanguage.en =>
           'your continuous service has not yet reached 1 year (365 days) — currently ${r.days} days, about $tenureTxt',
+        AppLanguage.tr =>
+          "Kesintisiz hizmet süreniz henüz 1 yıla (365 gün) ulaşmadı — şu anda ${r.days} gün, yaklaşık $tenureTxt",
         AppLanguage.zh => '连续工作年限尚未满1年（365天）（目前${r.days}天，约$tenureTxt）',
         AppLanguage.vi =>
           'thời gian làm việc liên tục chưa đủ 1 năm (365 ngày) (hiện tại ${r.days} ngày, khoảng $tenureTxt)',
@@ -555,6 +572,8 @@ String severanceNarrative(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "sizning shartnoma boʻyicha haftalik ish soatlaringiz 15 soatdan kam",
         AppLanguage.en =>
           'your contracted weekly working hours are under 15 hours',
+        AppLanguage.tr =>
+          "Sözleşmeli haftalık çalışma saatleriniz 15 saatin altında.",
         AppLanguage.zh => '每周约定工作时间不足15小时',
         AppLanguage.vi => 'giờ làm việc theo hợp đồng hàng tuần dưới 15 giờ',
       });
@@ -570,6 +589,8 @@ String severanceNarrative(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
       AppLanguage.en =>
         'The Employee Retirement Benefit Security Act requires both of these to be met before severance pay applies: ① at least 1 year of continuous service, and ② an average of at least 15 hours a week over 4 weeks. '
             'Based on what you entered, $reasonsText, so the severance pay requirement is not yet met. Once you meet both conditions, this calculator will show your estimated amount right away.',
+      AppLanguage.tr =>
+        "Kıdem Tazminatı Güvence Yasası, kıdem tazminatı uygulanmadan önce bu iki koşulun da yerine getirilmesini gerektirir: ① en az 1 yıl kesintisiz hizmet ve ② 4 hafta boyunca haftada ortalama en az 15 saat. Girdiğiniz bilgilere göre, $reasonsText, bu nedenle kıdem tazminatı şartı henüz karşılanmamıştır. Her iki koşulu da karşıladığınızda, bu hesaplayıcı tahmini tutarınızı hemen gösterecektir.",
       AppLanguage.zh =>
         '《劳动者退休金保障法》规定，必须同时满足以下两个条件才能获得退休金：①连续工作年限1年以上，②近4周平均每周工作15小时以上。'
             '根据您目前输入的内容，$reasonsText，因此目前尚未满足退休金条件。一旦满足条件，本计算器会立即为您显示预估金额。',
@@ -580,9 +601,12 @@ String severanceNarrative(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
   }
 
   final periodPhrase = switch (lang) {
-    AppLanguage.uz => c.leaveDate != null ? 'oxirgi ish kunigacha' : 'bugungacha',
+    AppLanguage.uz =>
+      c.leaveDate != null ? 'oxirgi ish kunigacha' : 'bugungacha',
     AppLanguage.ko => c.leaveDate != null ? '퇴사일까지' : '오늘까지',
     AppLanguage.en => c.leaveDate != null ? 'to your last day' : 'to today',
+    AppLanguage.tr =>
+      c.leaveDate != null ? 'son çalışma gününüze kadar' : 'bugüne kadar',
     AppLanguage.zh => c.leaveDate != null ? '到离职日' : '到今天',
     AppLanguage.vi =>
       c.leaveDate != null ? 'đến ngày nghỉ việc' : 'đến hôm nay',
@@ -595,6 +619,8 @@ String severanceNarrative(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
             " Yaqinda ish haqi kamroq boʻlganligi sababli, bu oʻrtacha ish haqi oʻrniga oddiy ish haqi yordamida hisoblandi.",
           AppLanguage.en =>
             ' Because there was a period of lower pay recently, this was calculated using the ordinary wage instead of the average wage.',
+          AppLanguage.tr =>
+            "Yakın zamanda daha düşük ücretli bir dönem olduğu için, bu hesaplama ortalama ücret yerine normal ücret kullanılarak yapılmıştır.",
           AppLanguage.zh => ' 由于近期存在工资较低的时期，因此按通常工资而非平均工资计算。',
           AppLanguage.vi =>
             ' Vì có giai đoạn lương thấp gần đây nên đã tính theo lương thông thường thay vì lương bình quân.',
@@ -618,6 +644,8 @@ String severanceNarrative(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           '$usedOrdinaryNote'
           ' The formula is: average daily wage ${formatWon(r.baseDaily, lang)} × 30 days × (${r.days} days of service ÷ 365), which comes to about <b>${formatWon(r.severance, lang)}</b>. '
           'Remember: severance pay must be paid within 14 days of your last day, and your right to claim it expires 3 years after leaving.',
+    AppLanguage.tr =>
+      "İşe başlama tarihiniz $periodPhrase itibarıyla, toplam ${r.days} gün, yaklaşık $tenureTxt kesintisiz çalıştınız. Bu, Kıdem Tazminatı Güvence Yasası tarafından belirlenen her iki şartı da karşılamaktadır — ① en az 1 yıl kesintisiz hizmet ve ② 4 hafta boyunca haftada ortalama en az 15 saat. Bu nedenle, istihdam türünüz (düzenli, sözleşmeli veya yarı zamanlı) veya şirket büyüklüğünüz (5 çalışanın altında bile olsa) ne olursa olsun, kıdem tazminatı alma hakkınız vardır.$usedOrdinaryNote Formül şöyledir: ortalama günlük ücret ${formatWon(r.baseDaily, lang)} × 30 gün × (${r.days} hizmet günü ÷ 365), bu da yaklaşık <b>${formatWon(r.severance, lang)}</b> tutarındadır. Unutmayın: kıdem tazminatı son iş gününüzden itibaren 14 gün içinde ödenmeli ve talep hakkınız işten ayrıldıktan 3 yıl sonra sona erer.",
     AppLanguage.zh =>
       '从入职之日$periodPhrase，您已连续工作共${r.days}天，约$tenureTxt。'
           '这符合《劳动者退休金保障法》规定的两项条件——①连续工作年限1年以上，②近4周平均每周工作15小时以上——两项均已满足。'
@@ -648,6 +676,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         "Hisoblangan miqdor va siz haqiqatda olgan miqdor deyarli bir xil (${formatWon(gapVal.abs(), lang)} dan kam farq). Siz kiritgan maʼlumotlarga koʻra, hech narsa toʻlanmagan koʻrinmaydi.",
       AppLanguage.en =>
         'The calculated amount and what you actually received are nearly identical (a difference under ${formatWon(gapVal.abs(), lang)}). Based on what you entered, nothing looks specifically unpaid.',
+      AppLanguage.tr =>
+        "Hesaplanan tutar ile fiilen aldığınız tutar neredeyse aynıdır (${formatWon(gapVal.abs(), lang)} altında bir fark). Girdiğiniz bilgilere göre, özel olarak ödenmemiş görünen bir şey yok.",
       AppLanguage.zh =>
         '计算结果与实际收到的金额基本一致（差额不足${formatWon(gapVal.abs(), lang)}）。根据目前输入的内容，没有特别可疑的欠薪项目。',
       AppLanguage.vi =>
@@ -667,6 +697,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         AppLanguage.en =>
           'Your contracted ordinary hourly wage is <b>${formatWon(r.hourly, lang)}</b>, which is lower than the $wageCalcYear minimum wage of <b>${formatWon(minWage().$1, lang)}</b>. '
               'This part of the contract is invalid even if both sides agreed to it, and you can always claim the difference from the minimum wage.',
+        AppLanguage.tr =>
+          "Sözleşmeli normal saatlik ücretiniz <b>${formatWon(r.hourly, lang)}</b>, bu da $wageCalcYear asgari ücreti olan <b>${formatWon(minWage().$1, lang)}</b>'den düşüktür. Sözleşmenin bu kısmı, her iki taraf anlaşmış olsa bile geçersizdir ve asgari ücret farkını her zaman talep edebilirsiniz.",
         AppLanguage.zh =>
           '合同约定的通常时薪为<b>${formatWon(r.hourly, lang)}</b>，低于$wageCalcYear年最低工资<b>${formatWon(minWage().$1, lang)}</b>。'
               '即使合同这样约定，该部分也是无效的，您可以要求补足与最低工资之间的差额。',
@@ -683,6 +715,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "Haftalik haq toʻlanadigan dam olish kuni uchun <b>${formatWon(r.weeklyPayTotal, lang)}</b> ushbu hisob-kitobga kiritilgan. Agar bu haq sizga toʻlanmagan boʻlsa, uni talab qilishingiz mumkin. (Mehnat standartlari toʻgʻrisidagi qonun, 55-modda)",
         AppLanguage.en =>
           'The weekly paid-holiday allowance of <b>${formatWon(r.weeklyPayTotal, lang)}</b> is included in this calculation. If it is missing from what you actually received, you are owed this amount. (Labor Standards Act Art.55)',
+        AppLanguage.tr =>
+          "Haftalık ücretli tatil ödeneği olan <b>${formatWon(r.weeklyPayTotal, lang)}</b> bu hesaplamaya dahildir. Fiilen aldığınızda eksikse, bu miktar size borçludur. (İş Kanunu Madde 55)",
         AppLanguage.zh =>
           '计算中包含了周休津贴<b>${formatWon(r.weeklyPayTotal, lang)}</b>。如果您实际收到的钱中没有这一项，您应当多获得这笔金额。（《劳动基准法》第55条）',
         AppLanguage.vi =>
@@ -697,6 +731,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
                 "5 yoki undan ortiq xodimi boʻlgan ish joylari odatdagi soatlik ish haqining 1,5 barobarini toʻlashi kerak. (Mehnat standartlari toʻgʻrisidagi qonun, 56-modda)",
               AppLanguage.en =>
                 'Workplaces with 5 or more employees must pay 1.5 times the ordinary hourly wage. (Labor Standards Act Art.56)',
+              AppLanguage.tr =>
+                "5 veya daha fazla çalışanı olan işyerleri, normal saatlik ücretin 1.5 katını ödemelidir. (İş Kanunu Madde 56)",
               AppLanguage.zh => '5人以上企业必须按通常时薪的1.5倍支付。（《劳动基准法》第56条）',
               AppLanguage.vi =>
                 'Nơi làm việc từ 5 người trở lên phải trả 1,5 lần lương giờ thông thường. (Điều 56 Luật Tiêu chuẩn Lao động)',
@@ -707,6 +743,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
                 "5 nafardan kam xodim boʻlsa ham, ishlagan soatlaringiz uchun oddiy ish haqi (1,0×) toʻlanishi shart.",
               AppLanguage.en =>
                 'Even with under 5 employees, you must still be paid the ordinary wage (1.0×) for hours worked.',
+              AppLanguage.tr =>
+                "5 çalışanın altında bile olsa, çalışılan saatler için normal ücret (1.0×) ödenmelidir.",
               AppLanguage.zh => '即使不足5人，也必须按工作时间支付通常工资（1.0倍）。',
               AppLanguage.vi =>
                 'Dù dưới 5 người, vẫn phải trả lương thông thường (1,0 lần) cho số giờ đã làm.',
@@ -718,6 +756,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "Qoʻshimcha ish vaqti uchun ${r.otH} soatlik ustama haqi, <b>${formatWon(r.otPay, lang)}</b>, kiritilgan. $otNote",
         AppLanguage.en =>
           'The premium pay for ${r.otH} hours of overtime, <b>${formatWon(r.otPay, lang)}</b>, is included. $otNote',
+        AppLanguage.tr =>
+          "${r.otH} saatlik fazla mesai için prim ücreti, <b>${formatWon(r.otPay, lang)}</b>, dahildir. $otNote",
         AppLanguage.zh =>
           '已包含加班${r.otH}小时的加班费<b>${formatWon(r.otPay, lang)}</b>。$otNote',
         AppLanguage.vi =>
@@ -732,6 +772,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "Tungi ish (22:00–06:00) uchun ${r.ntH} soatlik ustama haqi, <b>${formatWon(r.ntPay, lang)}</b>, kiritilgan.",
         AppLanguage.en =>
           'The premium pay for ${r.ntH} hours of night work (10 PM–6 AM), <b>${formatWon(r.ntPay, lang)}</b>, is included.',
+        AppLanguage.tr =>
+          "${r.ntH} saatlik gece çalışması (22:00–06:00) için prim ücreti, <b>${formatWon(r.ntPay, lang)}</b>, dahildir.",
         AppLanguage.zh =>
           '已包含夜间工作（22:00~06:00）${r.ntH}小时的加班费<b>${formatWon(r.ntPay, lang)}</b>。',
         AppLanguage.vi =>
@@ -746,6 +788,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "Bayram kunlaridagi ish uchun ${r.holH} soatlik nafaqa, <b>${formatWon(r.holPay, lang)}</b>, kiritilgan.",
         AppLanguage.en =>
           'The allowance for ${r.holH} hours of holiday work, <b>${formatWon(r.holPay, lang)}</b>, is included.',
+        AppLanguage.tr =>
+          "${r.holH} saatlik tatil çalışması ödeneği, <b>${formatWon(r.holPay, lang)}</b>, dahildir.",
         AppLanguage.zh =>
           '已包含休息日工作${r.holH}小时的津贴<b>${formatWon(r.holPay, lang)}</b>。',
         AppLanguage.vi =>
@@ -760,6 +804,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
                 " Xususan, yotoqxona/ovqatlanish uchun chegirma olib tashlangandan soʻng, maoshingiz eng kam ish haqidan past boʻladi.",
               AppLanguage.en =>
                 ' In particular, once the room/board deduction is subtracted, your pay falls below the minimum wage.',
+              AppLanguage.tr =>
+                "Özellikle, oda/yemek kesintisi yapıldıktan sonra, ücretiniz asgari ücretin altına düşmektedir.",
               AppLanguage.zh => ' 尤其是扣除食宿费后，工资会低于最低工资标准。',
               AppLanguage.vi =>
                 ' Đặc biệt, sau khi trừ tiền ăn ở, mức lương sẽ xuống dưới lương tối thiểu.',
@@ -772,6 +818,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "Yotoqxona/ovqatlanish uchun <b>${formatWon(r.roomAmtTotal, lang)}</b> miqdorida chegirma hisobga olingan. Agar bu yozma roziliksiz chegirilgan boʻlsa yoki miqdor haddan tashqari koʻp boʻlsa, bu oʻz-oʻzidan muammo boʻlishi mumkin.$roomExtra",
         AppLanguage.en =>
           'A room/board deduction of <b>${formatWon(r.roomAmtTotal, lang)}</b> is factored in. If this was deducted without written consent, or the amount is excessive, that itself can be a problem.$roomExtra',
+        AppLanguage.tr =>
+          "<b>${formatWon(r.roomAmtTotal, lang)}</b> tutarında bir oda/yemek kesintisi hesaba katılmıştır. Bu, yazılı onay olmadan kesildiyse veya miktar aşırıysa, bu başlı başına bir sorun olabilir.$roomExtra",
         AppLanguage.zh =>
           '计算中包含了食宿费扣除<b>${formatWon(r.roomAmtTotal, lang)}</b>。如果未经书面同意扣除，或金额过高，这本身就可能是问题。$roomExtra',
         AppLanguage.vi =>
@@ -788,6 +836,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         AppLanguage.en =>
           'If 3.3% business income tax is currently being deducted, you may still legally be an employee depending on your actual working conditions (fixed hours, receiving directions, etc.). '
               'If so, regardless of how taxes are handled, you may also be missing out on other rights such as the weekly paid-holiday allowance or severance pay.',
+        AppLanguage.tr =>
+          "Şu anda %3.3 oranında ticari gelir vergisi kesiliyorsa, gerçek çalışma koşullarınıza (sabit saatler, talimat alma vb.) bağlı olarak yasal olarak hala bir çalışan olabilirsiniz. Eğer öyleyse, vergilerin nasıl ele alındığına bakılmaksızın, haftalık ücretli tatil ödeneği veya kıdem tazminatı gibi diğer haklardan da mahrum kalıyor olabilirsiniz.",
         AppLanguage.zh =>
           '如果目前按3.3%的营业所得税扣除，根据实际工作形态（有固定上下班时间、接受指示等），您仍可能被认定为劳动者。'
               '如果是这样，无论税务处理方式如何，您也可能同时错失周休津贴、退休金等其他权利。',
@@ -804,6 +854,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "Kompaniyaning aniq hajmi nomaʼlum boʻlganligi sababli, bu 5 nafardan kam xodim (ustama haqi yoʻq) deb ehtiyotkorlik bilan hisoblangan. Agar u aslida 5 yoki undan koʻp boʻlsa, sizga ushbu hisob-kitob koʻrsatganidan koʻproq pul toʻlanishi kerak.",
         AppLanguage.en =>
           'Since the exact company size is unknown, this was conservatively calculated as under 5 employees (no premium pay). If it actually has 5 or more, you are owed more than this calculation shows.',
+        AppLanguage.tr =>
+          "Şirketin tam büyüklüğü bilinmediği için, bu, muhafazakar bir yaklaşımla 5 çalışanın altında (prim ödemesi yok) olarak hesaplanmıştır. Eğer aslında 5 veya daha fazla çalışanı varsa, bu hesaplamanın gösterdiğinden daha fazlası size borçludur.",
         AppLanguage.zh =>
           '由于不确定企业规模，目前按5人以下（无加班费）保守计算。如果实际为5人以上，您应得的金额会比现在计算的更多。',
         AppLanguage.vi =>
@@ -818,6 +870,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "Bir yil yoki undan koʻproq ishlash, haftasiga oʻrtacha 15+ soat ishlash <b>${formatWon(r.severance, lang)}</b> miqdorida ishdan boʻshatish nafaqasini toʻplaydi. (Xodimlar pensiya nafaqasi xavfsizligi toʻgʻrisidagi qonun 8-modda)",
         AppLanguage.en =>
           'Working a year or more, averaging 15+ hours a week, accrues severance pay of <b>${formatWon(r.severance, lang)}</b>. (Employee Retirement Benefit Security Act Art.8)',
+        AppLanguage.tr =>
+          "Bir yıl veya daha fazla çalışmak, haftada ortalama 15+ saat, <b>${formatWon(r.severance, lang)}</b> tutarında kıdem tazminatı biriktirir. (Kıdem Tazminatı Güvence Yasası Madde 8)",
         AppLanguage.zh =>
           '工作满1年以上且周平均15小时以上，将产生退职金<b>${formatWon(r.severance, lang)}</b>。（《劳动者退职给付保障法》第8条）',
         AppLanguage.vi =>
@@ -834,6 +888,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
       AppLanguage.en =>
         'Based on what you have entered so far, it is likely that you are owed at least about <b>${formatWon(gapVal.abs(), lang)}</b> more. '
             'Please check the items below.',
+      AppLanguage.tr =>
+        "Şimdiye kadar girdiğiniz bilgilere göre, size en az yaklaşık <b>${formatWon(gapVal.abs(), lang)}</b> daha fazla borçlu olunması muhtemeldir. Lütfen aşağıdaki maddeleri kontrol edin.",
       AppLanguage.zh =>
         '根据您目前输入的内容来看，您很可能至少应多获得约<b>${formatWon(gapVal.abs(), lang)}</b>。'
             '请核对以下各项。',
@@ -847,6 +903,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         "Aniq sababni aniqlash qiyin, ammo biz ish haqi varagʻingizdagi bandlarni birma-bir tekshirishni tavsiya qilamiz.",
       AppLanguage.en =>
         'It is hard to pinpoint the specific cause, but we recommend checking your payslip items one by one.',
+      AppLanguage.tr =>
+        "Belirli nedeni tam olarak belirlemek zor, ancak maaş bordronuzdaki kalemleri tek tek kontrol etmenizi öneririz.",
       AppLanguage.zh => '虽然难以明确具体原因，但建议您逐项核对工资单内容。',
       AppLanguage.vi =>
         'Khó xác định nguyên nhân cụ thể, nhưng bạn nên đối chiếu từng mục trong phiếu lương.',
@@ -861,6 +919,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         "Ushbu tashxis sizning kiritgan maʼlumotlaringizga asoslangan taxminiy hisob-kitobdir. Tasdiqlangan toʻlanmagan miqdor mehnat inspektorining tekshiruvi bilan aniqlanadi, shuning uchun avval ish haqi varagʻingizni soʻrang va uni bandma-band solishtiring — agar bu ham tushuntira olmasa, Mehnat va bandlik vazirligiga murojaat qiling.",
       AppLanguage.en =>
         'This diagnosis is a reference estimate based on your input. The confirmed unpaid amount is determined by a labor inspector\'s investigation, so first request your payslip and compare it item by item — if that still does not explain it, consult the Ministry of Employment and Labor.',
+      AppLanguage.tr =>
+        "Bu teşhis, girdilerinize dayalı bir referans tahmindir. Onaylanmış ödenmemiş miktar, bir iş müfettişinin soruşturmasıyla belirlenir, bu nedenle öncelikle maaş bordronuzu isteyin ve kalem kalem karşılaştırın — eğer bu hala açıklamazsa, Çalışma ve Sosyal Güvenlik Bakanlığı'na danışın.",
       AppLanguage.zh =>
         '此诊断仅为根据输入值得出的参考性估算。确定的欠薪金额需经劳动监察官调查后才能确定，请先索取工资单逐项对照，若仍无法解释，请咨询劳动部。',
       AppLanguage.vi =>
@@ -874,6 +934,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         "Agar shartnomangizda kompleks (barcha xarajatlarni qamrab oluvchi) ish haqi tizimi qoʻllanilgan boʻlsa, qoʻshimcha ish va tungi ish haqi allaqachon oylik maoshingizga kiritilgan boʻlishi mumkin.",
       AppLanguage.en =>
         'If your contract uses a comprehensive (all-inclusive) wage system, overtime and night-work pay may already be built into your monthly salary.',
+      AppLanguage.tr =>
+        "Sözleşmeniz kapsamlı (her şey dahil) bir ücret sistemi kullanıyorsa, fazla mesai ve gece çalışması ücreti aylık maaşınıza zaten dahil edilmiş olabilir.",
       AppLanguage.zh => '如果是包干工资制合同，加班费和夜班津贴可能已经预先包含在月薪中。',
       AppLanguage.vi =>
         'Nếu hợp đồng theo hình thức lương trọn gói, phụ cấp làm thêm và làm đêm có thể đã được gộp sẵn vào lương tháng.',
@@ -884,6 +946,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         "Ushbu kalkulyator hisobga olmaydigan bandlar — masalan, bonuslar, ovqatlanish nafaqasi yoki transport nafaqasi — birga toʻlangan boʻlishi mumkin.",
       AppLanguage.en =>
         'Items this calculator does not account for — such as bonuses, meal allowance, or transportation allowance — may have been paid together.',
+      AppLanguage.tr =>
+        "Bu hesaplayıcının dikkate almadığı kalemler — örneğin ikramiyeler, yemek ödeneği veya ulaşım ödeneği — birlikte ödenmiş olabilir.",
       AppLanguage.zh => '奖金、伙食费、交通补贴等本计算器未纳入的项目，可能也一并发放了。',
       AppLanguage.vi =>
         'Các khoản mà máy tính này chưa tính đến — như tiền thưởng, tiền ăn, tiền đi lại — có thể đã được trả kèm theo.',
@@ -896,6 +960,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
           "Siz soliq chegirilmaydi deb tanladingiz — agar aslida qandaydir soliq ushlab qolinayotgan boʻlsa, hisob-kitob boshqa tomonga oʻzgarishi mumkin.",
         AppLanguage.en =>
           'You selected that no tax is deducted — if some tax is actually being withheld, the calculation could change the other way.',
+        AppLanguage.tr =>
+          "Vergi kesintisi yapılmadığını seçtiniz — eğer aslında bir miktar vergi kesiliyorsa, hesaplama farklı yönde değişebilir.",
         AppLanguage.zh => '您选择了不扣税，但如果实际上确实扣除了部分税款，计算结果则可能相反。',
         AppLanguage.vi =>
           'Bạn đã chọn không bị khấu trừ thuế — nhưng nếu thực tế có khấu trừ một phần, kết quả tính có thể thay đổi theo chiều ngược lại.',
@@ -909,6 +975,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         "Siz hisoblangan natijadan taxminan <b>${formatWon(gapVal.abs(), lang)}</b> koʻproq oldingiz. Bu toʻlanmagan ish haqi emas — bu asosan hisoblash usulidagi farqdir.",
       AppLanguage.en =>
         'You received about <b>${formatWon(gapVal.abs(), lang)}</b> more than the calculated result. This is not unpaid wages — it is mostly a difference in calculation method.',
+      AppLanguage.tr =>
+        "Hesaplanan sonuçtan yaklaşık <b>${formatWon(gapVal.abs(), lang)}</b> daha fazla aldınız. Bu, ödenmemiş ücret değildir — çoğunlukla hesaplama yöntemindeki bir farktır.",
       AppLanguage.zh =>
         '您实际收到的金额比计算结果多约<b>${formatWon(gapVal.abs(), lang)}</b>。这不是欠薪，多半是计算方式的差异所致。',
       AppLanguage.vi =>
@@ -921,6 +989,8 @@ String explainGap(WageCalcInput c, WageCalcResult r, AppLanguage lang) {
         "Ish haqi varagʻingizdagi tafsilotlarni tekshirish sizga qaysi qoʻshimcha bandlar kiritilganligini koʻrsatadi.",
       AppLanguage.en =>
         'Checking the breakdown on your payslip will show you which additional items are included.',
+      AppLanguage.tr =>
+        "Maaş bordronuzdaki dökümü kontrol etmek, hangi ek kalemlerin dahil olduğunu gösterecektir.",
       AppLanguage.zh => '查看工资单的项目构成，即可了解具体多包含了哪些项目。',
       AppLanguage.vi =>
         'Hãy kiểm tra cơ cấu các khoản trong phiếu lương để biết khoản nào đã được cộng thêm.',
@@ -938,6 +1008,8 @@ String _gapMethodologyNote(AppLanguage lang) => switch (lang) {
     "<b>Bu roʻyxat qanday tuziladi?</b>\nBiz faqat sizning raqamlaringizga mos keladigan oldindan koʻrib chiqilgan maqola tushuntirishlarini qatʼiy qoida boʻyicha tanlaymiz. AI yangi huquqiy dalillarni yaratmaydi.",
   AppLanguage.en =>
     '<b>How is this list made?</b>\nWe select, by fixed rule, only pre-reviewed article explanations matching your figures. The AI does not generate new legal arguments.',
+  AppLanguage.tr =>
+    "<b>Bu liste nasıl oluşturulur?</b>\nSabit bir kurala göre, yalnızca rakamlarınızla eşleşen önceden incelenmiş makale açıklamalarını seçiyoruz. Yapay zeka yeni hukuki argümanlar üretmez.",
   AppLanguage.zh =>
     '<b>此列表如何生成？</b>\n仅按固定规则挑选与您计算数值匹配的、已预先审核的法条说明，AI不会生成新的法律主张。',
   AppLanguage.vi =>
@@ -957,6 +1029,7 @@ String formatWon(num value, AppLanguage lang) {
     AppLanguage.ko => '원',
     AppLanguage.uz => " KRW",
     AppLanguage.en => ' KRW',
+    AppLanguage.tr => " KRW",
     AppLanguage.zh => '韩元',
     AppLanguage.vi => ' KRW',
   };

@@ -16,6 +16,7 @@ class OnboardingScreen extends StatelessWidget {
   static const _title = L10nText(
     ko: '어떤 언어로 볼까요?',
     en: 'Which language do you read?',
+    tr: "Hangi dili okuyorsunuz?",
     zh: '想用哪种语言查看？',
     vi: 'Bạn đọc bằng ngôn ngữ nào?',
     uz: "Qaysi tilda oʻqiysiz?",
@@ -23,6 +24,7 @@ class OnboardingScreen extends StatelessWidget {
   static const _subtitle = L10nText(
     ko: '어떤 언어를 골라도 한국어 표기는 함께 보여드립니다. 기관에서 그대로 말할 수 있도록요.',
     en: 'Whichever you pick, the Korean term stays alongside — so you can say it as-is at an office.',
+    tr: "Hangisini seçerseniz seçin, Korece terim yanında kalır — böylece bir ofiste olduğu gibi söyleyebilirsiniz.",
     zh: '无论选择哪种语言，都会同时显示韩语原文，方便您在机构窗口照原文说出来。',
     vi: 'Dù chọn ngôn ngữ nào, thuật ngữ tiếng Hàn vẫn hiện kèm để bạn nói nguyên văn tại cơ quan.',
     uz: "Qaysi birini tanlamang, koreyscha atama yonida qoladi — shuning uchun uni ofisda boricha ayta olasiz.",
@@ -30,6 +32,7 @@ class OnboardingScreen extends StatelessWidget {
   static const _startLabel = L10nText(
     ko: '시작하기',
     en: 'Get started',
+    tr: "Başlayın",
     zh: '开始使用',
     vi: 'Bắt đầu',
     uz: "Boshlash",

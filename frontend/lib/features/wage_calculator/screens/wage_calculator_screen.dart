@@ -32,14 +32,15 @@ class WageCalculatorScreen extends StatefulWidget {
 }
 
 class _S {
-  const _S(this.ko, this.en, this.zh, this.vi, this.uz);
+  const _S(this.ko, this.en, this.zh, this.vi, this.uz, this.tr);
   final String ko;
   final String en;
   final String zh;
   final String vi;
   final String uz;
+  final String tr;
 
-  L10nText get t => L10nText(ko: ko, en: en, zh: zh, vi: vi, uz: uz);
+  L10nText get t => L10nText(ko: ko, en: en, zh: zh, vi: vi, uz: uz, tr: tr);
   String of(AppLanguage lang) => t.of(lang);
 }
 
@@ -49,6 +50,7 @@ const _appBarTitle = _S(
   '工资计算器',
   'Máy tính lương',
   "Ish haqi kalkulyatori",
+  "Ücret Hesaplayıcı",
 );
 const _importWorklog = _S(
   '📁 근무기록장 불러오기',
@@ -56,6 +58,7 @@ const _importWorklog = _S(
   '📁 导入工作日志',
   '📁 Nhập nhật ký làm việc',
   "📁 Ish jurnalini import qilish",
+  "📁 Çalışma günlüğü aktar",
 );
 const _importPayslip = _S(
   '📄 임금명세서 불러오기',
@@ -63,6 +66,7 @@ const _importPayslip = _S(
   '📄 导入工资单',
   '📄 Nhập phiếu lương',
   "📄 Ish haqi varagʻini import qilish",
+  "📄 Maaş bordrosu aktar",
 );
 const _worklogSnack = _S(
   '근무기록장 연동은 준비 중이라 예시 데이터로 채워드렸어요.',
@@ -70,6 +74,7 @@ const _worklogSnack = _S(
   '工作日志联动功能正在准备中，已为您填入示例数据。',
   'Tính năng liên kết nhật ký làm việc đang được chuẩn bị nên chúng tôi đã điền dữ liệu mẫu cho bạn.',
   "Ish jurnalini integratsiya qilish tez orada ishga tushadi, shuning uchun biz siz uchun namunaviy maʼlumotlarni toʻldirdik.",
+  "Çalışma günlüğü entegrasyonu yakında geliyor, bu yüzden sizin için örnek verileri doldurduk.",
 );
 const _payslipSnack = _S(
   '임금명세서 자동 인식(OCR)은 준비 중이에요. 값을 직접 입력해 주세요.',
@@ -77,6 +82,7 @@ const _payslipSnack = _S(
   '工资单自动识别（OCR）功能正在准备中。请直接输入数值。',
   'Tính năng nhận dạng phiếu lương tự động (OCR) đang được chuẩn bị. Vui lòng nhập giá trị trực tiếp.',
   "Ish haqi varagʻini avtomatik tanib olish (OCR) tez orada ishga tushadi. Iltimos, qiymatlarni qoʻlda kiriting.",
+  "Otomatik maaş bordrosu tanıma (OCR) yakında geliyor. Lütfen değerleri manuel olarak girin.",
 );
 const _findOrgsSnack = _S(
   '관할 지방고용노동청과 외국인노동자지원센터 위치·연락처를 보여드립니다. (준비 중)',
@@ -84,19 +90,28 @@ const _findOrgsSnack = _S(
   '为您显示管辖地方劳动厅和外国劳动者支援中心的位置及联系方式。（准备中）',
   'Chúng tôi sẽ hiển thị vị trí và thông tin liên hệ của Sở Lao động địa phương và Trung tâm hỗ trợ lao động nước ngoài. (Đang chuẩn bị)',
   "Biz sizning mahalliy mehnat idorangiz va migrant ishchilarni qoʻllab-quvvatlash markazining joylashuvi va aloqa maʼlumotlarini koʻrsatamiz. (Tez orada)",
+  "Yerel çalışma ofisinizin ve göçmen işçi destek merkezinizin konumunu ve iletişim bilgilerini göstereceğiz. (Yakında)",
 );
-const _calcLabel = _S('계산하기', 'Calculate', '计算', 'Tính toán', "Hisoblash");
-const _nextLabel = _S('다음', 'Next', '下一步', 'Tiếp theo', "Keyingi");
-const _prevLabel = _S('이전', 'Back', '上一步', 'Quay lại', "Orqaga");
+const _calcLabel = _S(
+  '계산하기',
+  'Calculate',
+  '计算',
+  'Tính toán',
+  "Hisoblash",
+  "Hesapla",
+);
+const _nextLabel = _S('다음', 'Next', '下一步', 'Tiếp theo', "Keyingi", "İleri");
+const _prevLabel = _S('이전', 'Back', '上一步', 'Quay lại', "Orqaga", "Geri");
 const _editValuesLabel = _S(
   '✏️ 입력값 수정하기',
   '✏️ Edit values',
   '✏️ 修改输入值',
   '✏️ Chỉnh sửa giá trị',
   "✏️ Qiymatlarni tahrirlash",
+  "✏️ Değerleri düzenle",
 );
-const _resultBadge = _S('RESULT', 'RESULT', '结果', 'KẾT QUẢ', "NATIJA");
-const _stepWord = _S('STEP', 'STEP', '步骤', 'BƯỚC', "BOSQICH");
+const _resultBadge = _S('RESULT', 'RESULT', '结果', 'KẾT QUẢ', "NATIJA", "SONUÇ");
+const _stepWord = _S('STEP', 'STEP', '步骤', 'BƯỚC', "BOSQICH", "ADIM");
 
 const _step1Title1 = _S(
   '확인하실 기간을 먼저 골라주세요',
@@ -104,6 +119,7 @@ const _step1Title1 = _S(
   '请先选择您要确认的期间',
   'Trước tiên, hãy chọn khoảng thời gian bạn muốn kiểm tra',
   "Avval, tekshirmoqchi boʻlgan davrni tanlang",
+  "Öncelikle, kontrol etmek istediğiniz dönemi seçin",
 );
 const _step1Lead1 = _S(
   '이번 달 급여만 확인하실지, 여러 달 동안 밀린 급여를 확인하실지 고르세요.',
@@ -111,6 +127,7 @@ const _step1Lead1 = _S(
   '请选择是仅确认本月工资，还是确认多个月的拖欠工资。',
   'Hãy chọn xem bạn muốn kiểm tra lương tháng này hay lương chưa trả trong nhiều tháng.',
   "Faqat shu oydagi ish haqini yoki bir necha oydagi toʻlanmagan ish haqini tekshirishni tanlang.",
+  "Sadece bu ayın maaşını mı yoksa birkaç aylık ödenmemiş ücretleri mi kontrol etmek istediğinizi seçin.",
 );
 const _segMonthOnly = _S(
   '이번달만',
@@ -118,6 +135,7 @@ const _segMonthOnly = _S(
   '仅本月',
   'Chỉ tháng này',
   "Faqat shu oy",
+  "Sadece bu ay",
 );
 const _segMultiUnpaid = _S(
   '여러달 체불',
@@ -125,6 +143,7 @@ const _segMultiUnpaid = _S(
   '多月拖欠',
   'Nhiều tháng chưa trả',
   "Bir necha toʻlanmagan oylar",
+  "Birden fazla ödenmemiş ay",
 );
 const _segRangeCustom = _S(
   '기간 직접 지정',
@@ -132,6 +151,7 @@ const _segRangeCustom = _S(
   '自定义期间',
   'Khoảng thời gian tùy chỉnh',
   "Maxsus davr",
+  "Özel dönem",
 );
 const _unpaidMonthsLabel = _S(
   '못 받은 개월 수',
@@ -139,14 +159,16 @@ const _unpaidMonthsLabel = _S(
   '未收到工资的月数',
   'Số tháng chưa nhận lương',
   "Toʻlanmagan oylar soni",
+  "Ödenmemiş ay sayısı",
 );
-const _monthUnit = _S('개월', 'months', '个月', 'tháng', "oylar");
+const _monthUnit = _S('개월', 'months', '个月', 'tháng', "oylar", "ay");
 const _rangeTitle = _S(
   '체불 시작월 ~ 종료월',
   'Unpaid period: start ~ end month',
   '拖欠开始月 ~ 结束月',
   'Tháng bắt đầu ~ kết thúc nợ lương',
   "Toʻlanmagan davr: boshlanish ~ tugash oyi",
+  "Ödenmemiş dönem: başlangıç ~ bitiş ayı",
 );
 const _startMonthLabel = _S(
   '시작월',
@@ -154,6 +176,7 @@ const _startMonthLabel = _S(
   '开始月',
   'Tháng bắt đầu',
   "Boshlanish oyi",
+  "Başlangıç ayı",
 );
 const _endMonthLabel = _S(
   '종료월',
@@ -161,6 +184,7 @@ const _endMonthLabel = _S(
   '结束月',
   'Tháng kết thúc',
   "Tugash oyi",
+  "Bitiş ayı",
 );
 const _step1Title2 = _S(
   '임금과 사업장 조건을 알려주세요',
@@ -168,6 +192,7 @@ const _step1Title2 = _S(
   '请告诉我们工资和工作场所的情况',
   'Hãy cho chúng tôi biết về lương và điều kiện nơi làm việc',
   "Ish haqingiz va ish joyingiz sharoitlari haqida bizga xabar bering",
+  "Ücretiniz ve çalışma koşullarınız hakkında bilgi verin",
 );
 const _step1Lead2 = _S(
   '계약서에 적힌 방식 그대로 골라주세요.',
@@ -175,6 +200,7 @@ const _step1Lead2 = _S(
   '请按照合同上记载的方式选择。',
   'Vui lòng chọn đúng như trong hợp đồng.',
   "Iltimos, shartnomangizda yozilganidek tanlang.",
+  "Lütfen sözleşmenizde yazıldığı gibi seçin.",
 );
 const _visaLabel = _S(
   '체류자격 (비자)',
@@ -182,6 +208,7 @@ const _visaLabel = _S(
   '居留资格（签证）',
   'Tình trạng cư trú (visa)',
   "Yashash maqomi (viza)",
+  "İkamet durumu (vize)",
 );
 const _visaCustomLabel = _S(
   '비자 직접입력',
@@ -189,6 +216,7 @@ const _visaCustomLabel = _S(
   '手动输入签证',
   'Nhập visa thủ công',
   "Vizani qoʻlda kiriting",
+  "Vizeyi manuel girin",
 );
 const _payMethodLabel = _S(
   '임금 지급 방식',
@@ -196,18 +224,27 @@ const _payMethodLabel = _S(
   '工资支付方式',
   'Hình thức trả lương',
   "Ish haqi toʻlash usuli",
+  "Ücret ödeme yöntemi",
 );
-const _hourLabel = _S('시급', 'Hourly', '时薪', 'Theo giờ', "Soatlik");
-const _dayLabel = _S('일급', 'Daily', '日薪', 'Theo ngày', "Kunlik");
-const _weekLabel = _S('주급', 'Weekly', '周薪', 'Theo tuần', "Haftalik");
-const _monthLabel = _S('월급', 'Monthly', '月薪', 'Theo tháng', "Oylik");
-const _yearLabel = _S('연봉', 'Annual', '年薪', 'Theo năm', "Yillik");
+const _hourLabel = _S('시급', 'Hourly', '时薪', 'Theo giờ', "Soatlik", "Saatlik");
+const _dayLabel = _S('일급', 'Daily', '日薪', 'Theo ngày', "Kunlik", "Günlük");
+const _weekLabel = _S(
+  '주급',
+  'Weekly',
+  '周薪',
+  'Theo tuần',
+  "Haftalik",
+  "Haftalık",
+);
+const _monthLabel = _S('월급', 'Monthly', '月薪', 'Theo tháng', "Oylik", "Aylık");
+const _yearLabel = _S('연봉', 'Annual', '年薪', 'Theo năm', "Yillik", "Yıllık");
 const _monthPretaxLabel = _S(
   '월급 (세전)',
   'Monthly (pre-tax)',
   '月薪（税前）',
   'Theo tháng (trước thuế)',
   "Oylik (soliqdan oldin)",
+  "Aylık (vergi öncesi)",
 );
 const _yearPretaxLabel = _S(
   '연봉 (세전)',
@@ -215,30 +252,34 @@ const _yearPretaxLabel = _S(
   '年薪（税前）',
   'Theo năm (trước thuế)',
   "Yillik (soliqdan oldin)",
+  "Yıllık (vergi öncesi)",
 );
-const _wonUnit = _S('원', 'KRW', '韩元', 'KRW', "KRW");
+const _wonUnit = _S('원', 'KRW', '韩元', 'KRW', "KRW", "KRW");
 const _dailyHoursLabel = _S(
   '하루 약정 근무시간',
   'Contracted daily hours',
   '每日约定工作时间',
   'Giờ làm việc theo hợp đồng mỗi ngày',
   "Shartnomadagi kunlik ish soatlari",
+  "Sözleşmeli günlük çalışma saatleri",
 );
-const _hourUnit = _S('시간', 'hours', '小时', 'giờ', "soat");
+const _hourUnit = _S('시간', 'hours', '小时', 'giờ', "soat", "saat");
 const _totalWorkDaysLabel = _S(
   '기간 전체 근무일수',
   'Total work days in the period',
   '期间总工作天数',
   'Tổng số ngày làm việc trong kỳ',
   "Davrdagi jami ish kunlari",
+  "Dönemdeki toplam çalışma günü",
 );
-const _dayUnit = _S('일', 'days', '天', 'ngày', "kunlar");
+const _dayUnit = _S('일', 'days', '天', 'ngày', "kunlar", "gün");
 const _belowMinTitle = _S(
   '⚠ 최저임금보다 낮습니다',
   '⚠ Below minimum wage',
   '⚠ 低于最低工资',
   '⚠ Thấp hơn lương tối thiểu',
   "⚠ Minimal ish haqidan past",
+  "⚠ Asgari ücretin altında",
 );
 const _bizSizeLabel = _S(
   '사업장 규모',
@@ -246,6 +287,7 @@ const _bizSizeLabel = _S(
   '企业规模',
   'Quy mô doanh nghiệp',
   "Biznes hajmi",
+  "İşletme büyüklüğü",
 );
 const _over5Label = _S(
   '상시 5인 이상',
@@ -253,6 +295,7 @@ const _over5Label = _S(
   '常驻员工5人以上',
   'Từ 5 nhân viên thường xuyên trở lên',
   "5 yoki undan ortiq doimiy xodimlar",
+  "5 veya daha fazla düzenli çalışan",
 );
 const _under5Label = _S(
   '5인 미만',
@@ -260,6 +303,7 @@ const _under5Label = _S(
   '不足5人',
   'Dưới 5 người',
   "5 dan kam",
+  "5'ten az",
 );
 const _unknownLabel = _S(
   '잘 모르겠어요',
@@ -267,8 +311,16 @@ const _unknownLabel = _S(
   '不清楚',
   'Không chắc chắn',
   "Ishonchim komil emas",
+  "Emin değilim",
 );
-const _selectPlaceholder = _S('선택', 'Select', '选择', 'Chọn', "Tanlash");
+const _selectPlaceholder = _S(
+  '선택',
+  'Select',
+  '选择',
+  'Chọn',
+  "Tanlash",
+  "Seçiniz",
+);
 
 const _step2Title = _S(
   '근무시간을 알려주세요',
@@ -276,6 +328,7 @@ const _step2Title = _S(
   '请告诉我们您的工作时间',
   'Cho chúng tôi biết giờ làm việc của bạn',
   "Ish vaqtingizni ayting",
+  "Çalışma saatlerinizi bize bildirin",
 );
 const _step2Lead = _S(
   '약정 시간과 실제 근무 시간의 차이를 계산합니다.',
@@ -283,6 +336,7 @@ const _step2Lead = _S(
   '计算约定时间与实际工作时间的差异。',
   'Chúng tôi tính toán chênh lệch giữa giờ theo hợp đồng và giờ làm việc thực tế.',
   "Biz shartnomaviy ish soatlari va haqiqiy ish soatlari oʻrtasidagi farqni hisoblaymiz.",
+  "Sözleşmeli saatler ile fiili çalışma saatleri arasındaki farkı hesaplıyoruz.",
 );
 const _weeklyHoursLabel = _S(
   '주당 근로시간',
@@ -290,6 +344,7 @@ const _weeklyHoursLabel = _S(
   '每周工作时间',
   'Giờ làm việc hàng tuần',
   "Haftalik ish soatlari",
+  "Haftalık çalışma saatleri",
 );
 const _weeklyContractLabel = _S(
   '주당 약정 근로시간',
@@ -297,6 +352,7 @@ const _weeklyContractLabel = _S(
   '每周约定工作时间',
   'Giờ làm việc theo hợp đồng hàng tuần',
   "Shartnomaviy haftalik soatlar",
+  "Sözleşmeli haftalık saatler",
 );
 const _overtimeSectionTitle = _S(
   '선택 기간 전체 초과 근무',
@@ -304,6 +360,7 @@ const _overtimeSectionTitle = _S(
   '所选期间的总加班',
   'Tổng số giờ làm thêm trong kỳ đã chọn',
   "Tanlangan davrdagi jami qoʻshimcha ish vaqti",
+  "Seçilen dönemdeki toplam fazla mesai",
 );
 const _otLabel = _S(
   '연장근로',
@@ -311,6 +368,7 @@ const _otLabel = _S(
   '延长劳动',
   'Làm thêm giờ',
   "Qoʻshimcha ish",
+  "Fazla mesai",
 );
 const _nightLabel = _S(
   '야간근로 (22시~06시)',
@@ -318,6 +376,7 @@ const _nightLabel = _S(
   '夜间劳动（22点~6点）',
   'Làm việc ban đêm (22h~6h)',
   "Tungi ish (22:00–06:00)",
+  "Gece çalışması (22:00–06:00)",
 );
 const _holLabel = _S(
   '휴일근로',
@@ -325,6 +384,7 @@ const _holLabel = _S(
   '假日劳动',
   'Làm việc ngày lễ',
   "Bayramdagi ish",
+  "Tatil çalışması",
 );
 
 const _step3Title = _S(
@@ -333,6 +393,7 @@ const _step3Title = _S(
   '请告诉我们您的在职期间',
   'Cho chúng tôi biết thời gian làm việc của bạn',
   "Ishga joylashish davringizni ayting",
+  "Bize istihdam sürenizi söyleyin",
 );
 const _step3Lead = _S(
   '입사일과 퇴사일을 입력해 주세요.',
@@ -340,6 +401,7 @@ const _step3Lead = _S(
   '请输入入职日期和离职日期。',
   'Vui lòng nhập ngày vào làm và ngày nghỉ việc.',
   "Iltimos, ishga kirgan sanangizni va ishdan boʻshagan sanangizni kiriting.",
+  "Lütfen işe başlama ve işten ayrılma tarihinizi girin.",
 );
 const _tenureLabel = _S(
   '근속 기간',
@@ -347,6 +409,7 @@ const _tenureLabel = _S(
   '在职期间',
   'Thời gian làm việc',
   "Ish staji davri",
+  "Çalışma süresi",
 );
 const _hireDateLabel = _S(
   '입사일',
@@ -354,6 +417,7 @@ const _hireDateLabel = _S(
   '入职日期',
   'Ngày vào làm',
   "Ishga qabul qilingan sana",
+  "İşe alım tarihi",
 );
 const _leaveDateLabel = _S(
   '퇴사일 (해당 시)',
@@ -361,6 +425,7 @@ const _leaveDateLabel = _S(
   '离职日期（如适用）',
   'Ngày nghỉ việc (nếu có)',
   "Ishdan boʻshash sanasi (agar mavjud boʻlsa)",
+  "İşten ayrılma tarihi (varsa)",
 );
 const _absenceLabel = _S(
   '결근 여부',
@@ -368,6 +433,7 @@ const _absenceLabel = _S(
   '缺勤情况',
   'Tình trạng vắng mặt',
   "Yoʻqlik holati",
+  "Devamsızlık durumu",
 );
 const _absenceToggle = _S(
   '확인 기간 중 결근이 있습니다',
@@ -375,6 +441,7 @@ const _absenceToggle = _S(
   '确认期间内有缺勤',
   'Có vắng mặt trong kỳ xác nhận',
   "Davr mobaynida yoʻqlik boʻlgan",
+  "Dönem içinde devamsızlık vardı",
 );
 const _whySeparateTitle = _S(
   '왜 체불 기간과 재직 기간을 분리하나요?',
@@ -382,6 +449,7 @@ const _whySeparateTitle = _S(
   '为什么要将拖欠期间与在职期间分开？',
   'Tại sao lại tách riêng kỳ nợ lương và thời gian làm việc?',
   "Nima uchun haq toʻlanmagan davrni ishga joylashish davridan ajratish kerak?",
+  "Ücretsiz dönemi neden istihdam süresinden ayırıyoruz?",
 );
 const _whySeparateBody = _S(
   '2년을 일했지만 최근 3개월치 급여만 밀린 경우처럼 "다닌 기간"과 "못 받은 기간"이 다를 수 있습니다. 여기서 입력하는 재직 기간은 퇴직금 요건 산정에만 사용됩니다.',
@@ -389,6 +457,7 @@ const _whySeparateBody = _S(
   '"在职期间"和"未收到工资的期间"可能不同，例如工作了2年但只有最近3个月的工资被拖欠。此处输入的在职期间仅用于计算退休金资格。',
   '"Thời gian làm việc" và "thời gian chưa nhận lương" có thể khác nhau, ví dụ làm việc 2 năm nhưng chỉ 3 tháng gần nhất chưa được trả lương. Thời gian làm việc nhập ở đây chỉ dùng để tính điều kiện trợ cấp thôi việc.',
   "“Ishga joylashish davri” va “haq toʻlanmagan davr” farq qilishi mumkin — masalan, 2 yil ishlagan, ammo faqat oxirgi 3 oylik ish haqi toʻlanmagan. Bu yerda kiritilgan ishga joylashish davri faqat ishdan boʻshatish nafaqasiga boʻlgan huquqni hisoblash uchun ishlatiladi.",
+  "\"İstihdam süresi\" ve \"ücretsiz dönem\" farklılık gösterebilir — örneğin, 2 yıl çalışıp sadece son 3 ayın ücretinin ödenmemesi gibi. Buraya girilen istihdam süresi yalnızca kıdem tazminatı uygunluğunu hesaplamak için kullanılır.",
 );
 const _severanceExtraTitle = _S(
   '퇴직금 정밀 산정용 추가 입력 (선택)',
@@ -396,6 +465,7 @@ const _severanceExtraTitle = _S(
   '用于精确计算退休金的附加输入（可选）',
   'Nhập thêm để tính chính xác trợ cấp thôi việc (không bắt buộc)',
   "Aniq ishdan boʻshatish nafaqasini hisoblash uchun qoʻshimcha maʼlumot (ixtiyoriy)",
+  "Hassas kıdem tazminatı hesaplaması için ek giriş (isteğe bağlı)",
 );
 const _bonus1yLabel = _S(
   '최근 1년 정기상여금 총액',
@@ -403,6 +473,7 @@ const _bonus1yLabel = _S(
   '最近1年定期奖金总额',
   'Tổng tiền thưởng định kỳ trong 1 năm gần nhất',
   "Oʻtgan yildagi jami muntazam bonus",
+  "Son bir yıldaki toplam düzenli ikramiye",
 );
 const _vacation1yLabel = _S(
   '최근 1년 미사용 연차수당',
@@ -410,6 +481,7 @@ const _vacation1yLabel = _S(
   '最近1年未使用年假补贴',
   'Tiền phép năm chưa sử dụng trong 1 năm gần nhất',
   "Oʻtgan yildagi foydalanilmagan yillik taʼtil haqi",
+  "Son bir yıldaki kullanılmayan yıllık izin ücreti",
 );
 
 const _step4Title = _S(
@@ -418,6 +490,7 @@ const _step4Title = _S(
   '扣除方式是怎样的？',
   'Các khoản khấu trừ như thế nào?',
   "Chegirmalar qanday amalga oshirilmoqda?",
+  "Kesintiler nasıl yapılıyor?",
 );
 const _step4Lead = _S(
   '임금명세서의 공제 항목을 참고하세요.',
@@ -425,6 +498,7 @@ const _step4Lead = _S(
   '请参考工资单上的扣除项目。',
   'Hãy tham khảo các mục khấu trừ trên phiếu lương của bạn.',
   "Ish haqi varagʻingizdagi chegirma bandlariga qarang.",
+  "Maaş bordronuzdaki kesinti kalemlerine bakın.",
 );
 const _taxMethodLabel = _S(
   '세금 공제 방식',
@@ -432,6 +506,7 @@ const _taxMethodLabel = _S(
   '税款扣除方式',
   'Hình thức khấu trừ thuế',
   "Soliqni ushlab qolish usuli",
+  "Vergi kesintisi yöntemi",
 );
 const _fourInsuranceLabel = _S(
   '4대보험 가입',
@@ -439,6 +514,7 @@ const _fourInsuranceLabel = _S(
   '加入四大保险',
   'Tham gia 4 loại bảo hiểm',
   "4 ta asosiy sugʻurtaga aʼzo boʻlgan",
+  "4 ana sigortaya kayıtlı",
 );
 const _bizTaxLabel = _S(
   '사업소득 3.3% 공제',
@@ -446,6 +522,7 @@ const _bizTaxLabel = _S(
   '扣除事业所得税3.3%',
   'Khấu trừ 3.3% thu nhập kinh doanh',
   "Biznes daromadidan 3,3% ushlab qolish",
+  "İş geliri %3,3 stopaj",
 );
 const _noTaxLabel = _S(
   '세금 미공제 (그대로 수령)',
@@ -453,6 +530,7 @@ const _noTaxLabel = _S(
   '未扣税（原样领取）',
   'Không khấu trừ thuế (nhận nguyên)',
   "Soliq ushlab qolinmagan (oʻz holicha olingan)",
+  "Vergi kesintisi yok (olduğu gibi alındı)",
 );
 const _roomDeductLabel = _S(
   '숙식비 공제',
@@ -460,6 +538,7 @@ const _roomDeductLabel = _S(
   '食宿费扣除',
   'Khấu trừ tiền ăn ở',
   "Yotoqxona va ovqatlanish uchun chegirma",
+  "Oda ve yemek kesintisi",
 );
 const _roomToggle = _S(
   '숙식비를 공제하고 있습니다',
@@ -467,6 +546,7 @@ const _roomToggle = _S(
   '正在扣除食宿费',
   'Đang khấu trừ tiền ăn ở',
   "Yotoqxona va ovqatlanish uchun chegirma qilinmoqda",
+  "Konaklama ve yemek ücreti kesiliyor",
 );
 const _roomDeductTotalLabel = _S(
   '숙식비 공제 총액',
@@ -474,6 +554,7 @@ const _roomDeductTotalLabel = _S(
   '食宿费扣除总额',
   'Tổng tiền khấu trừ ăn ở',
   "Yotoqxona va ovqatlanish uchun jami chegirma",
+  "Toplam konaklama ve yemek kesintisi",
 );
 const _roomTypeLabel = _S(
   '숙식 제공 형태',
@@ -481,22 +562,39 @@ const _roomTypeLabel = _S(
   '食宿提供形式',
   'Hình thức cung cấp ăn ở',
   "Taʼminlangan yotoqxona va ovqatlanish turi",
+  "Sağlanan konaklama ve yemek türü",
 );
-const _dormLabel = _S('기숙사', 'Dormitory', '宿舍', 'Ký túc xá', "Yotoqxona");
+const _dormLabel = _S(
+  '기숙사',
+  'Dormitory',
+  '宿舍',
+  'Ký túc xá',
+  "Yotoqxona",
+  "Yurt",
+);
 const _studioLabel = _S(
   '원룸·주택',
   'Studio/House',
   '单间房·住宅',
   'Phòng trọ/Nhà ở',
   "Studiya/Uy",
+  "Stüdyo/Ev",
 );
-const _mealLabel = _S('식사만', 'Meals only', '仅供餐', 'Chỉ ăn', "Faqat ovqat");
+const _mealLabel = _S(
+  '식사만',
+  'Meals only',
+  '仅供餐',
+  'Chỉ ăn',
+  "Faqat ovqat",
+  "Sadece yemek",
+);
 const _roomBelowMinTitle = _S(
   '⚠ 숙식비를 빼면 최저임금 아래로 내려갑니다',
   '⚠ Falls below minimum wage after room & board deduction',
   '⚠ 扣除食宿费后低于最低工资',
   '⚠ Sau khi khấu trừ tiền ăn ở sẽ thấp hơn lương tối thiểu',
   "⚠ Turar joy va ovqatlanish uchun ushlab qolinganidan keyin eng kam ish haqidan past",
+  "⚠ Konaklama ve yemek kesintisinden sonra asgari ücretin altına düşüyor",
 );
 
 const _step5Title = _S(
@@ -505,6 +603,7 @@ const _step5Title = _S(
   '请填写您实际收到的金额',
   'Vui lòng nhập số tiền bạn đã thực nhận',
   "Iltimos, haqiqatda olgan miqdorni kiriting",
+  "Lütfen fiilen aldığınız tutarı girin",
 );
 const _step5Lead = _S(
   '계산 결과와 실제 통장 입금액을 대조합니다.',
@@ -512,6 +611,7 @@ const _step5Lead = _S(
   '将计算结果与实际银行存款金额进行对照。',
   'Chúng tôi đối chiếu kết quả tính toán với số tiền thực nhận vào tài khoản.',
   "Biz hisoblangan natijani bankka haqiqatda qoʻyilgan summa bilan solishtiramiz.",
+  "Hesaplanan sonucu, bankaya fiilen yatırılan tutarla karşılaştırıyoruz.",
 );
 const _periodNoticeTitle = _S(
   '기간 대조 안내 (필독)',
@@ -519,6 +619,7 @@ const _periodNoticeTitle = _S(
   '期间对照说明（必读）',
   'Lưu ý đối chiếu kỳ (vui lòng đọc)',
   "Davrni solishtirish haqida bildirishnoma (iltimos, oʻqing)",
+  "Dönem karşılaştırma bildirimi (lütfen okuyun)",
 );
 const _totalReceivedLabel = _S(
   '실제 받은 돈 총액',
@@ -526,6 +627,7 @@ const _totalReceivedLabel = _S(
   '实际收到金额总计',
   'Tổng số tiền thực nhận',
   "Haqiqatda olingan umumiy summa",
+  "Fiilen alınan toplam tutar",
 );
 const _zeroButtonLabel = _S(
   '0원 (전액 미지급)',
@@ -533,6 +635,7 @@ const _zeroButtonLabel = _S(
   '0韩元（全部未支付）',
   '0 KRW (chưa trả toàn bộ)',
   "0 KRW (toʻliq toʻlanmagan)",
+  "0 KRW (tamamen ödenmemiş)",
 );
 
 class _WageCalculatorScreenState extends State<WageCalculatorScreen> {
@@ -972,6 +1075,7 @@ class _WageCalculatorScreenState extends State<WageCalculatorScreen> {
     AppLanguage.ko => '년 최저임금 넣기',
     AppLanguage.uz => "eng kam ish haqi",
     AppLanguage.en => 'minimum wage',
+    AppLanguage.tr => "asgari ücret",
     AppLanguage.zh => '年最低工资',
     AppLanguage.vi => 'lương tối thiểu năm',
   };
@@ -986,6 +1090,8 @@ class _WageCalculatorScreenState extends State<WageCalculatorScreen> {
         "Sizning shartnoma boʻyicha soatlik ish haqingiz $pay, eng kam ish haqi $mw boʻlgan $wageCalcYear dan past. Kamchilik haqiqiy emas va siz farqni talab qilishingiz mumkin.",
       AppLanguage.en =>
         'Your contracted hourly wage of $pay is lower than the $wageCalcYear minimum wage of $mw. The shortfall is invalid and you can claim the difference.',
+      AppLanguage.tr =>
+        "Sözleşmeli saatlik ücretiniz olan $pay, $wageCalcYear asgari ücreti olan $mw'den düşüktür. Bu eksiklik geçersizdir ve farkı talep edebilirsiniz.",
       AppLanguage.zh =>
         '合同约定的时薪 $pay 低于 $wageCalcYear 年最低工资 $mw。不足部分无效，您可以要求补足差额。',
       AppLanguage.vi =>
@@ -1208,6 +1314,8 @@ class _WageCalculatorScreenState extends State<WageCalculatorScreen> {
         "Chegirmadan keyingi soatlik ish haqi $after < eng kam ish haqi $mw. Ish beruvchingizdan chegirma asosi va miqdori haqida yozma tasdiqni soʻrang.",
       AppLanguage.en =>
         'Hourly wage after deduction $after < minimum wage $mw. Request written confirmation of the deduction basis and amount from your employer.',
+      AppLanguage.tr =>
+        "Kesinti sonrası saatlik ücret $after < asgari ücret $mw. İşvereninizden kesinti dayanağı ve miktarı hakkında yazılı onay isteyin.",
       AppLanguage.zh => '扣除后折算时薪 $after < 最低工资 $mw。请向雇主书面索取扣除依据及金额进行确认。',
       AppLanguage.vi =>
         'Lương giờ quy đổi sau khấu trừ $after < lương tối thiểu $mw. Hãy yêu cầu chủ sử dụng lao động xác nhận bằng văn bản về căn cứ và số tiền khấu trừ.',
@@ -1251,6 +1359,8 @@ class _WageCalculatorScreenState extends State<WageCalculatorScreen> {
       "Tekshiruv davrida (<b>$period</b>) ish beruvchingizdan bank oʻtkazmasi orqali haqiqatda olgan summaning <b>umumiy yigʻindisini</b> kiriting.",
     AppLanguage.en =>
       'Enter the <b>total sum</b> of the amount you actually received from your employer via bank transfer during the checking period (<b>$period</b>).',
+    AppLanguage.tr =>
+      "Kontrol dönemi (<b>$period</b>) boyunca işvereninizden banka havalesi yoluyla fiilen aldığınız miktarın <b>toplamını</b> girin.",
     AppLanguage.zh =>
       '请输入在您设置的确认期间（共 <b>$period</b>）内，实际从雇主处收到的银行转账金额的<b>总计</b>。',
     AppLanguage.vi =>
@@ -1261,6 +1371,7 @@ class _WageCalculatorScreenState extends State<WageCalculatorScreen> {
     AppLanguage.ko => '실입금액 합계 ($period)',
     AppLanguage.uz => "Olingan umumiy summa ($period)",
     AppLanguage.en => 'Total amount received ($period)',
+    AppLanguage.tr => "Alınan toplam miktar ($period)",
     AppLanguage.zh => '实际入账金额总计（$period）',
     AppLanguage.vi => 'Tổng số tiền thực nhận ($period)',
   };

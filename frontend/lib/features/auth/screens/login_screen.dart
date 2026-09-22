@@ -17,6 +17,7 @@ class _S {
   static const title = L10nText(
     ko: '로그인',
     en: 'Log in',
+    tr: "Giriş yap",
     zh: '登录',
     vi: 'Đăng nhập',
     uz: "Kirish",
@@ -24,6 +25,7 @@ class _S {
   static const emailLabel = L10nText(
     ko: '이메일',
     en: 'Email',
+    tr: "E-posta",
     zh: '邮箱',
     vi: 'Email',
     uz: "Elektron pochta",
@@ -31,6 +33,7 @@ class _S {
   static const passwordLabel = L10nText(
     ko: '비밀번호',
     en: 'Password',
+    tr: "Şifre",
     zh: '密码',
     vi: 'Mật khẩu',
     uz: "Parol",
@@ -38,6 +41,7 @@ class _S {
   static const loginLabel = L10nText(
     ko: '로그인',
     en: 'Log in',
+    tr: "Giriş yap",
     zh: '登录',
     vi: 'Đăng nhập',
     uz: "Kirish",
@@ -45,6 +49,7 @@ class _S {
   static const googleLabel = L10nText(
     ko: 'Google로 로그인',
     en: 'Log in with Google',
+    tr: "Google ile giriş yap",
     zh: '使用Google登录',
     vi: 'Đăng nhập bằng Google',
     uz: "Google orqali kirish",
@@ -52,6 +57,7 @@ class _S {
   static const orDivider = L10nText(
     ko: '또는',
     en: 'or',
+    tr: "veya",
     zh: '或',
     vi: 'hoặc',
     uz: "yoki",
@@ -59,6 +65,7 @@ class _S {
   static const noAccountLabel = L10nText(
     ko: '아직 가입하지 않으셨나요? 회원가입하기',
     en: "Haven't signed up yet? Create an account",
+    tr: "Henüz kaydolmadınız mı? Bir hesap oluşturun",
     zh: '还没有注册？去注册',
     vi: 'Chưa đăng ký? Đăng ký ngay',
     uz: "Hali roʻyxatdan oʻtmaganmisiz? Hisob yaratish",
@@ -66,6 +73,7 @@ class _S {
   static const errorInvalid = L10nText(
     ko: '올바르지 않은 아이디 또는 비밀번호 입니다',
     en: 'Incorrect email or password.',
+    tr: "Yanlış e-posta veya şifre.",
     zh: '账号或密码不正确。',
     vi: 'Tài khoản hoặc mật khẩu không đúng.',
     uz: "Notoʻgʻri elektron pochta yoki parol.",
@@ -73,6 +81,7 @@ class _S {
   static const googleFailed = L10nText(
     ko: 'Google 로그인에 실패했어요. 잠시 후 다시 시도해주세요.',
     en: 'Google sign-in failed. Please try again shortly.',
+    tr: "Google ile giriş başarısız oldu. Lütfen kısa süre içinde tekrar deneyin.",
     zh: 'Google登录失败，请稍后重试。',
     vi: 'Đăng nhập Google thất bại. Vui lòng thử lại sau.',
     uz: "Google orqali kirish amalga oshmadi. Iltimos, birozdan keyin qayta urinib koʻring.",

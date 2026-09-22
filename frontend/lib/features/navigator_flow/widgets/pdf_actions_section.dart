@@ -11,6 +11,7 @@ import '../screens/pdf_preview_screen.dart';
 const _pdfBoxTitle = L10nText(
   ko: 'PDF로 저장',
   en: 'Save as PDF',
+  tr: "PDF olarak kaydet",
   zh: '保存为PDF',
   vi: 'Lưu thành PDF',
   uz: "PDF sifatida saqlash",
@@ -18,6 +19,7 @@ const _pdfBoxTitle = L10nText(
 const _pdfKoLabel = L10nText(
   ko: '🇰🇷 한국어 PDF',
   en: '🇰🇷 Korean PDF',
+  tr: "🇰🇷 Korece PDF",
   zh: '🇰🇷 韩语PDF',
   vi: '🇰🇷 PDF tiếng Hàn',
   uz: "🇰🇷 Koreyscha PDF",
@@ -25,6 +27,7 @@ const _pdfKoLabel = L10nText(
 const _pdfMyLabel = L10nText(
   ko: '🌐 내 언어 PDF',
   en: '🌐 My-language PDF',
+  tr: "🌐 Kendi dilimde PDF",
   zh: '🌐 我的语言PDF',
   vi: '🌐 PDF ngôn ngữ của tôi',
   uz: "🌐 Oʻz tilimdagi PDF",
@@ -32,6 +35,7 @@ const _pdfMyLabel = L10nText(
 const _pdfPreviewLabel = L10nText(
   ko: '👁 PDF 미리보기',
   en: '👁 Preview the PDF',
+  tr: "👁 PDF'i önizle",
   zh: '👁 预览PDF',
   vi: '👁 Xem trước PDF',
   uz: "👁 PDFni koʻrish",

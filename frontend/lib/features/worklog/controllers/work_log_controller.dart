@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../auth/services/auth_service.dart';
 import '../../wage_calculator/models/wage_diagnosis.dart' show minWage;
 import '../models/daily_work_record.dart';
+import '../data/demo_work_records.dart';
 import '../services/work_log_api_service.dart';
 
 /// 근무기록장(캘린더 + 일일 기록) 상태.
@@ -152,22 +153,9 @@ class WorkLogController extends ChangeNotifier {
 
   void _seedDemoData() {
     final now = today;
-    // 오늘은 실제 출근/퇴근 버튼으로 기록할 수 있도록 비워 둔다.
-    for (var i = 1; i <= 6; i++) {
-      final day = now.subtract(Duration(days: i));
-      if (day.month != now.month) continue; // 데모 데이터는 이번 달 범위로만 제한
-      final isOvertime = i == 1 || i == 3;
-      _records[day] = DailyWorkRecord(
-        clockIn: const TimeOfDay(hour: 8, minute: 0),
-        clockOut: isOvertime
-            ? const TimeOfDay(hour: 20, minute: 30)
-            : const TimeOfDay(hour: 17, minute: 0),
-        breakMinutes: 60,
-        isOvertime: isOvertime,
-        isRisk: i == 4,
-        gpsVerified: true,
-      );
-    }
+    _records.addEntries(demoWorkRecords(now).entries.where(
+      (entry) => entry.key.month == now.month && entry.key.year == now.year,
+    ));
   }
 
   /// 로그인 상태가 바뀔 때(MainShell이 UserProfileController를 지켜보다가)

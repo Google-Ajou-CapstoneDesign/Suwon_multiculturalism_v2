@@ -6,6 +6,7 @@ import '../models/country.dart';
 const _title = L10nText(
   ko: '국적 선택',
   en: 'Choose your nationality',
+  tr: "Uyruğunuzu seçin",
   zh: '选择国籍',
   vi: 'Chọn quốc tịch',
   uz: "Millatingizni tanlang",
@@ -13,6 +14,7 @@ const _title = L10nText(
 const _searchHint = L10nText(
   ko: '국가 이름으로 검색',
   en: 'Search by country name',
+  tr: "Ülke adına göre ara",
   zh: '按国家名称搜索',
   vi: 'Tìm theo tên quốc gia',
   uz: "Davlat nomi boʻyicha qidirish",

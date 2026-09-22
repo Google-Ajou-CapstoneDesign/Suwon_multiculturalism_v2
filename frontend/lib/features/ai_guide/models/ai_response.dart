@@ -33,6 +33,7 @@ class RoutingTarget {
         return const L10nText(
           ko: '관련 정보 페이지로 이동',
           en: 'Go to related info',
+          tr: "İlgili bilgilere git",
           zh: '前往相关信息页面',
           vi: 'Đi đến trang thông tin liên quan',
           uz: "Tegishli maʼlumotga oʻtish",
@@ -41,6 +42,7 @@ class RoutingTarget {
         return const L10nText(
           ko: '임금체불 대응 네비게이터로 이동',
           en: 'Go to the unpaid wage navigator',
+          tr: "Ödenmemiş ücret rehberine git",
           zh: '前往拖欠工资应对导航',
           vi: 'Đi đến hướng dẫn xử lý nợ lương',
           uz: "Toʻlanmagan ish haqi navigatoriga oʻtish",
@@ -49,6 +51,7 @@ class RoutingTarget {
         return const L10nText(
           ko: '산재 대응 네비게이터로 이동',
           en: 'Go to the workplace injury navigator',
+          tr: "İş kazası rehberine git",
           zh: '前往工伤应对导航',
           vi: 'Đi đến hướng dẫn xử lý tai nạn lao động',
           uz: "Ish joyidagi jarohat navigatoriga oʻtish",

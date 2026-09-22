@@ -7,6 +7,7 @@ class SettingsStrings {
   static const eyebrow = L10nText(
     ko: 'MY SETTINGS',
     en: 'MY SETTINGS',
+    tr: "AYARLARIM",
     zh: 'MY SETTINGS',
     vi: 'MY SETTINGS',
     uz: "MENING SOZLAMALARIM",
@@ -14,6 +15,7 @@ class SettingsStrings {
   static const tabTitle = L10nText(
     ko: '설정',
     en: 'Settings',
+    tr: "Ayarlar",
     zh: '设置',
     vi: 'Cài đặt',
     uz: "Sozlamalar",
@@ -23,6 +25,7 @@ class SettingsStrings {
   static const guestName = L10nText(
     ko: '게스트',
     en: 'Guest',
+    tr: "Misafir",
     zh: '访客',
     vi: 'Khách',
     uz: "Mehmon",
@@ -30,6 +33,7 @@ class SettingsStrings {
   static const guestSubtitle = L10nText(
     ko: '모든 기록을 안전하게 이어가세요.',
     en: 'Keep all your records safely.',
+    tr: "Tüm kayıtlarınızı güvenle saklayın.",
     zh: '安全地延续您的所有记录。',
     vi: 'Giữ an toàn mọi bản ghi của bạn.',
     uz: "Barcha yozuvlaringizni xavfsiz saqlang.",
@@ -37,6 +41,7 @@ class SettingsStrings {
   static const loginButton = L10nText(
     ko: '로그인',
     en: 'Log in',
+    tr: "Giriş yap",
     zh: '登录',
     vi: 'Đăng nhập',
     uz: "Kirish",
@@ -46,6 +51,7 @@ class SettingsStrings {
   static const languageLabel = L10nText(
     ko: '언어 설정',
     en: 'Language',
+    tr: "Dil",
     zh: '语言设置',
     vi: 'Ngôn ngữ',
     uz: "Til",
@@ -53,6 +59,7 @@ class SettingsStrings {
   static const visaLabel = L10nText(
     ko: '비자 정보',
     en: 'Visa info',
+    tr: "Vize bilgileri",
     zh: '签证信息',
     vi: 'Thông tin visa',
     uz: "Viza maʼlumotlari",
@@ -60,6 +67,7 @@ class SettingsStrings {
   static const profileLabel = L10nText(
     ko: '프로필',
     en: 'Profile',
+    tr: "Profil",
     zh: '个人资料',
     vi: 'Hồ sơ',
     uz: "Profil",
@@ -67,6 +75,7 @@ class SettingsStrings {
   static const notificationLabel = L10nText(
     ko: '알림 설정',
     en: 'Notifications',
+    tr: "Bildirimler",
     zh: '通知设置',
     vi: 'Thông báo',
     uz: "Bildirishnomalar",
@@ -74,6 +83,7 @@ class SettingsStrings {
   static const notificationOn = L10nText(
     ko: '켜짐',
     en: 'On',
+    tr: "Açık",
     zh: '已开启',
     vi: 'Bật',
     uz: "Yoqish",
@@ -81,6 +91,7 @@ class SettingsStrings {
   static const notificationOff = L10nText(
     ko: '꺼짐',
     en: 'Off',
+    tr: "Kapalı",
     zh: '已关闭',
     vi: 'Tắt',
     uz: "Oʻchirish",
@@ -88,6 +99,7 @@ class SettingsStrings {
   static const notificationToast = L10nText(
     ko: '알림 설정은 이 기기에만 저장돼요.',
     en: 'Notification settings are saved on this device only.',
+    tr: "Bildirim ayarları yalnızca bu cihaza kaydedilir.",
     zh: '通知设置仅保存在此设备上。',
     vi: 'Cài đặt thông báo chỉ được lưu trên thiết bị này.',
     uz: "Bildirishnoma sozlamalari faqat shu qurilmada saqlanadi.",
@@ -95,6 +107,7 @@ class SettingsStrings {
   static const visaNotSet = L10nText(
     ko: '미설정',
     en: 'Not set',
+    tr: "Ayarlanmadı",
     zh: '未设置',
     vi: 'Chưa đặt',
     uz: "Oʻrnatilmagan",
@@ -104,6 +117,7 @@ class SettingsStrings {
   static const vaultLabel = L10nText(
     ko: '내 증빙 보관함',
     en: 'My document vault',
+    tr: "Belge kasam",
     zh: '我的证明保管箱',
     vi: 'Kho tài liệu của tôi',
     uz: "Mening hujjatlar omborim",
@@ -111,6 +125,7 @@ class SettingsStrings {
   static const closeButton = L10nText(
     ko: '닫기',
     en: 'Close',
+    tr: "Kapat",
     zh: '关闭',
     vi: 'Đóng',
     uz: "Yopish",
@@ -118,6 +133,7 @@ class SettingsStrings {
   static const guideLabel = L10nText(
     ko: '사용 가이드',
     en: 'User guide',
+    tr: "Kullanım kılavuzu",
     zh: '使用说明',
     vi: 'Hướng dẫn sử dụng',
     uz: "Foydalanuvchi qoʻllanmasi",
@@ -125,6 +141,7 @@ class SettingsStrings {
   static const aiGuideLabel = L10nText(
     ko: 'AI 가이드',
     en: 'AI guide',
+    tr: "Yapay zeka rehberi",
     zh: 'AI向导',
     vi: 'Hướng dẫn AI',
     uz: "AI yoʻriqnomasi",
@@ -134,6 +151,7 @@ class SettingsStrings {
   static const profileEditTitle = L10nText(
     ko: '프로필',
     en: 'Profile',
+    tr: "Profil",
     zh: '个人资料',
     vi: 'Hồ sơ',
     uz: "Profil",
@@ -141,6 +159,7 @@ class SettingsStrings {
   static const nameFieldLabel = L10nText(
     ko: '이름',
     en: 'Name',
+    tr: "Ad",
     zh: '姓名',
     vi: 'Họ tên',
     uz: "Ism",
@@ -148,6 +167,7 @@ class SettingsStrings {
   static const nationalityFieldLabel = L10nText(
     ko: '국적',
     en: 'Nationality',
+    tr: "Uyruk",
     zh: '国籍',
     vi: 'Quốc tịch',
     uz: "Millat",
@@ -155,6 +175,7 @@ class SettingsStrings {
   static const nationalityPlaceholder = L10nText(
     ko: '국적을 선택해주세요',
     en: 'Select your nationality',
+    tr: "Uyruğunuzu seçin",
     zh: '请选择国籍',
     vi: 'Chọn quốc tịch của bạn',
     uz: "Millatingizni tanlang",
@@ -162,6 +183,7 @@ class SettingsStrings {
   static const saveButton = L10nText(
     ko: '저장',
     en: 'Save',
+    tr: "Kaydet",
     zh: '保存',
     vi: 'Lưu',
     uz: "Saqlash",
@@ -169,6 +191,7 @@ class SettingsStrings {
   static const profileSaved = L10nText(
     ko: '저장했어요.',
     en: 'Saved.',
+    tr: "Kaydedildi.",
     zh: '已保存。',
     vi: 'Đã lưu.',
     uz: "Saqlandi.",
@@ -176,6 +199,7 @@ class SettingsStrings {
   static const errorName = L10nText(
     ko: '이름을 입력해주세요',
     en: 'Please enter your name',
+    tr: "Lütfen adınızı girin",
     zh: '请输入姓名',
     vi: 'Vui lòng nhập họ tên',
     uz: "Iltimos, ismingizni kiriting",
@@ -183,6 +207,7 @@ class SettingsStrings {
   static const errorCustomVisa = L10nText(
     ko: '체류자격을 입력해주세요',
     en: 'Please enter your visa status',
+    tr: "Lütfen vize durumunuzu girin",
     zh: '请输入居留资格',
     vi: 'Vui lòng nhập tư cách lưu trú',
     uz: "Iltimos, viza holatingizni kiriting",
@@ -192,6 +217,7 @@ class SettingsStrings {
   static const logoutButton = L10nText(
     ko: '로그아웃',
     en: 'Log out',
+    tr: "Çıkış yap",
     zh: '登出',
     vi: 'Đăng xuất',
     uz: "Chiqish",
@@ -199,6 +225,7 @@ class SettingsStrings {
   static const bottomNote = L10nText(
     ko: 'Local Bridge\n수원시 이주민 노동·생활 정보',
     en: 'Local Bridge\nSuwon migrant worker & daily-life information',
+    tr: "Local Bridge\nSuwon göçmen işçi ve günlük yaşam bilgileri",
     zh: 'Local Bridge\n水原市移民劳动·生活信息',
     vi: 'Local Bridge\nThông tin lao động & đời sống người di cư Suwon',
     uz: "Local Bridge\nSuvonlik migrant ishchilar va kundalik hayot maʼlumotlari",

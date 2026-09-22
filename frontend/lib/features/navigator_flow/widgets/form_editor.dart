@@ -8,6 +8,7 @@ import '../models/form_field_spec.dart';
 const _tagAutoLabel = L10nText(
   ko: '자동채움',
   en: 'Auto-filled',
+  tr: "Otomatik dolduruldu",
   zh: '自动填充',
   vi: 'Tự điền',
   uz: "Avtomatik toʻldirilgan",
@@ -15,6 +16,7 @@ const _tagAutoLabel = L10nText(
 const _tagRawLabel = L10nText(
   ko: '원문 그대로',
   en: 'As you wrote it',
+  tr: "Yazdığınız gibi",
   zh: '原文照录',
   vi: 'Nguyên văn',
   uz: "Siz yozganingizdek",
@@ -22,6 +24,7 @@ const _tagRawLabel = L10nText(
 const _tagBlankLabel = L10nText(
   ko: '공란 유지',
   en: 'Left blank',
+  tr: "Boş bırakıldı",
   zh: '保持空白',
   vi: 'Để trống',
   uz: "Boʻsh qoldirilgan",
@@ -475,6 +478,7 @@ class FormReviewView extends StatelessWidget {
 const _importWorkLogLabel = L10nText(
   ko: '근무기록장 불러오기',
   en: 'Load work log',
+  tr: "Çalışma günlüğünü yükle",
   zh: '导入工作记录',
   vi: 'Tải nhật ký làm việc',
   uz: "Ish jurnalini yuklash",
@@ -482,6 +486,7 @@ const _importWorkLogLabel = L10nText(
 const _importPayslipLabel = L10nText(
   ko: '임금명세서 불러오기',
   en: 'Load payslip',
+  tr: "Maaş bordrosunu yükle",
   zh: '导入工资单',
   vi: 'Tải phiếu lương',
   uz: "Ish haqi varaqasini yuklash",
@@ -489,6 +494,7 @@ const _importPayslipLabel = L10nText(
 const _importCalcLabel = L10nText(
   ko: '계산기 결과 불러오기',
   en: 'Load calculator result',
+  tr: "Hesaplayıcı sonucunu yükle",
   zh: '导入计算器结果',
   vi: 'Tải kết quả máy tính lương',
   uz: "Kalkulyator natijasini yuklash",
@@ -496,6 +502,7 @@ const _importCalcLabel = L10nText(
 const _importProfileLabel = L10nText(
   ko: '프로필 정보 불러오기',
   en: 'Load profile info',
+  tr: "Profil bilgilerini yükle",
   zh: '导入个人资料',
   vi: 'Tải thông tin hồ sơ',
   uz: "Profil maʼlumotlarini yuklash",
@@ -503,6 +510,7 @@ const _importProfileLabel = L10nText(
 const _comingSoonMessage = L10nText(
   ko: '아직 준비 중인 기능입니다. 곧 연동될 예정이에요.',
   en: "This feature isn't ready yet. It's coming soon.",
+  tr: "Bu özellik henüz hazır değil. Yakında geliyor.",
   zh: '该功能尚在准备中，即将上线。',
   vi: 'Tính năng này đang được chuẩn bị và sẽ sớm ra mắt.',
   uz: "Bu funksiya hali tayyor emas. Tez orada ishga tushadi.",

@@ -148,6 +148,7 @@ _LANGUAGE_NAMES = {
     "zh": "中文(简体)",
     "vi": "Tiếng Việt",
     "uz": "Oʻzbekcha (Uzbek, Latin alphabet)",
+    "tr": "Türkçe (Turkish)",
 }
 
 

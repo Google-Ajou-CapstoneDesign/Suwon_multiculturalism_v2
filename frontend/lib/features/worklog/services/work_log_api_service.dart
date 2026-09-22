@@ -10,6 +10,39 @@ class WorkLogApiService {
 
   final ApiClient _client;
 
+  void dispose() => _client.dispose();
+
+  /// 월/연도를 넘는 최근 30일도 기존 월별 API로 조회한다. 부분 실패 시
+  /// 일부 달만 반환하지 않고 전체 요청을 실패시켜 불완전한 증빙 출력을 막는다.
+  Future<Map<DateTime, DailyWorkRecord>> fetchRecent30Days({
+    required String idToken,
+    required DateTime today,
+  }) async {
+    final end = DateTime(today.year, today.month, today.day);
+    final start = DateTime(end.year, end.month, end.day - 29);
+    final months = <DateTime>[
+      for (
+        var m = DateTime(start.year, start.month);
+        !m.isAfter(end);
+        m = DateTime(m.year, m.month + 1)
+      )
+        m,
+    ];
+    final responses = await Future.wait(
+      months.map(
+        (month) =>
+            fetchMonth(idToken: idToken, year: month.year, month: month.month),
+      ),
+    ).timeout(const Duration(seconds: 30));
+    final entries =
+        responses
+            .expand((records) => records.entries)
+            .where((e) => !e.key.isBefore(start) && !e.key.isAfter(end))
+            .toList()
+          ..sort((a, b) => a.key.compareTo(b.key));
+    return Map.fromEntries(entries);
+  }
+
   Future<Map<DateTime, DailyWorkRecord>> fetchMonth({
     required String idToken,
     required int year,

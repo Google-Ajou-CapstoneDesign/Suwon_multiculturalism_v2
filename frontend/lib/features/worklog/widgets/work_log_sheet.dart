@@ -18,6 +18,7 @@ class _WorkLogStrings {
   static const title = L10nText(
     ko: '근무기록장',
     en: 'Work Log',
+    tr: "Çalışma Günlüğü",
     zh: '工作记录本',
     vi: 'Nhật ký làm việc',
     uz: "Ish jurnali",
@@ -25,6 +26,7 @@ class _WorkLogStrings {
   static const subtitle = L10nText(
     ko: '매일의 기록이 가장 확실한 증거가 됩니다',
     en: 'Daily records are your strongest evidence',
+    tr: "Günlük kayıtlar en güçlü kanıtınızdır",
     zh: '每天的记录就是最确凿的证据',
     vi: 'Ghi chép hằng ngày là bằng chứng chắc chắn nhất',
     uz: "Kundalik yozuvlar sizning eng kuchli dalilingizdir",
@@ -32,6 +34,7 @@ class _WorkLogStrings {
   static const close = L10nText(
     ko: '닫기',
     en: 'Close',
+    tr: "Kapat",
     zh: '关闭',
     vi: 'Đóng',
     uz: "Yopish",
@@ -39,6 +42,7 @@ class _WorkLogStrings {
   static const legendLogged = L10nText(
     ko: '기록 완료',
     en: 'Recorded',
+    tr: "Kaydedildi",
     zh: '已记录',
     vi: 'Đã ghi nhận',
     uz: "Yozilgan",
@@ -46,6 +50,7 @@ class _WorkLogStrings {
   static const legendOvertime = L10nText(
     ko: '연장·야간',
     en: 'Overtime/night',
+    tr: "Fazla mesai/gece",
     zh: '加班·夜班',
     vi: 'Tăng ca/làm đêm',
     uz: "Ishdan tashqari/tun",
@@ -53,6 +58,7 @@ class _WorkLogStrings {
   static const legendRisk = L10nText(
     ko: '급여 미지급 의심',
     en: 'Possible unpaid wages',
+    tr: "Olası ödenmemiş ücretler",
     zh: '疑似欠薪',
     vi: 'Nghi ngờ chưa trả lương',
     uz: "Toʻlanmagan ish haqi boʻlishi mumkin",
@@ -61,6 +67,7 @@ class _WorkLogStrings {
   static const breakTimeTitle = L10nText(
     ko: '휴게시간',
     en: 'Break time',
+    tr: "Mola süresi",
     zh: '休息时间',
     vi: 'Thời gian nghỉ',
     uz: "Tanaffus vaqti",
@@ -68,6 +75,7 @@ class _WorkLogStrings {
   static const cancel = L10nText(
     ko: '취소',
     en: 'Cancel',
+    tr: "İptal",
     zh: '取消',
     vi: 'Hủy',
     uz: "Bekor qilish",
@@ -75,6 +83,7 @@ class _WorkLogStrings {
   static const confirm = L10nText(
     ko: '확인',
     en: 'Confirm',
+    tr: "Onayla",
     zh: '确认',
     vi: 'Xác nhận',
     uz: "Tasdiqlash",
@@ -83,6 +92,7 @@ class _WorkLogStrings {
   static const gpsVerified = L10nText(
     ko: '📍 위치 인증 완료',
     en: '📍 Location verified',
+    tr: "📍 Konum doğrulandı",
     zh: '📍 位置认证完成',
     vi: '📍 Đã xác minh vị trí',
     uz: "📍 Manzil tasdiqlandi",
@@ -90,6 +100,7 @@ class _WorkLogStrings {
   static const gpsUnverified = L10nText(
     ko: '📍 사업장 외부 기록',
     en: '📍 Recorded outside workplace',
+    tr: "📍 İş yeri dışında kaydedildi",
     zh: '📍 工作场所外记录',
     vi: '📍 Ghi nhận ngoài nơi làm việc',
     uz: "📍 Ish joyidan tashqarida qayd etilgan",
@@ -97,6 +108,7 @@ class _WorkLogStrings {
   static const gpsVerifyButton = L10nText(
     ko: '📍 위치 인증하기',
     en: '📍 Verify location',
+    tr: "📍 Konumu doğrula",
     zh: '📍 认证位置',
     vi: '📍 Xác minh vị trí',
     uz: "📍 Manzilni tasdiqlash",
@@ -104,6 +116,7 @@ class _WorkLogStrings {
   static const gpsServiceDisabled = L10nText(
     ko: '기기의 위치 서비스가 꺼져 있어요. 설정에서 켜주세요.',
     en: 'Your device\'s location service is off. Please turn it on in settings.',
+    tr: "Cihazınızın konum hizmeti kapalı. Lütfen ayarlardan açın.",
     zh: '设备的位置服务已关闭，请在设置中打开。',
     vi: 'Dịch vụ vị trí của thiết bị đang tắt. Vui lòng bật trong cài đặt.',
     uz: "Qurilmangizning joylashuv xizmati oʻchirilgan. Iltimos, sozlamalarda yoqing.",
@@ -111,6 +124,7 @@ class _WorkLogStrings {
   static const gpsPermissionDenied = L10nText(
     ko: '위치 권한이 필요해요. 브라우저나 기기 설정에서 위치 접근을 허용해주세요.',
     en: 'Location permission is needed. Please allow location access in your browser or device settings.',
+    tr: "Konum izni gerekiyor. Lütfen tarayıcınızda veya cihaz ayarlarınızda konum erişimine izin verin.",
     zh: '需要位置权限，请在浏览器或设备设置中允许访问位置信息。',
     vi: 'Cần quyền truy cập vị trí. Vui lòng cho phép truy cập vị trí trong cài đặt trình duyệt hoặc thiết bị.',
     uz: "Manzilga ruxsat kerak. Iltimos, brauzeringiz yoki qurilma sozlamalarida joylashuvga kirishga ruxsat bering.",
@@ -118,6 +132,7 @@ class _WorkLogStrings {
   static const gpsVerifyFailed = L10nText(
     ko: '위치 정보를 받았지만 인증에 실패했어요. 다시 시도해주세요.',
     en: 'We received your location but verification failed. Please try again.',
+    tr: "Konumunuzu aldık ancak doğrulama başarısız oldu. Lütfen tekrar deneyin.",
     zh: '已收到位置信息，但认证失败，请重试。',
     vi: 'Đã nhận vị trí nhưng xác minh thất bại. Vui lòng thử lại.',
     uz: "Biz sizning manzilingizni oldik, ammo tasdiqlash muvaffaqiyatsiz tugadi. Iltimos, qayta urinib koʻring.",
@@ -125,6 +140,7 @@ class _WorkLogStrings {
   static const gpsVerifyError = L10nText(
     ko: '위치 인증 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.',
     en: 'Something went wrong while verifying your location. Please try again shortly.',
+    tr: "Konumunuz doğrulanırken bir sorun oluştu. Lütfen kısa süre sonra tekrar deneyin.",
     zh: '认证位置时发生错误，请稍后重试。',
     vi: 'Đã xảy ra lỗi khi xác minh vị trí. Vui lòng thử lại sau.',
     uz: "Manzilingizni tasdiqlashda nimadir notoʻgʻri ketdi. Iltimos, birozdan keyin qayta urinib koʻring.",
@@ -133,6 +149,7 @@ class _WorkLogStrings {
   static const clockIn = L10nText(
     ko: '출근',
     en: 'Clock in',
+    tr: "Giriş yap",
     zh: '上班',
     vi: 'Vào ca',
     uz: "Ishga kirish",
@@ -140,6 +157,7 @@ class _WorkLogStrings {
   static const clockOut = L10nText(
     ko: '퇴근',
     en: 'Clock out',
+    tr: "Çıkış yap",
     zh: '下班',
     vi: 'Tan ca',
     uz: "Ishdan chiqish",
@@ -147,6 +165,7 @@ class _WorkLogStrings {
   static const breakLabel = L10nText(
     ko: '휴게',
     en: 'Break',
+    tr: "Mola",
     zh: '休息',
     vi: 'Nghỉ',
     uz: "Tanaffus",
@@ -155,6 +174,7 @@ class _WorkLogStrings {
   static const actualWorkedTime = L10nText(
     ko: '실근무시간',
     en: 'Actual hours worked',
+    tr: "Gerçek çalışma saatleri",
     zh: '实际工作时长',
     vi: 'Thời gian làm việc thực tế',
     uz: "Ishlagan haqiqiy soatlar",
@@ -162,6 +182,7 @@ class _WorkLogStrings {
   static const estimatedWage = L10nText(
     ko: '예상 임금(세전)',
     en: 'Estimated wage (pre-tax)',
+    tr: "Tahmini ücret (vergi öncesi)",
     zh: '预计工资（税前）',
     vi: 'Lương dự kiến (trước thuế)',
     uz: "Taxminiy ish haqi (soliqdan oldin)",
@@ -173,6 +194,7 @@ class _WorkLogStrings {
         AppLanguage.ko => '이번 달 총 임금 (근무 $days일)',
         AppLanguage.uz => "Bu oydagi jami ($days kun ishlangan)",
         AppLanguage.en => "This month's total ($days days worked)",
+        AppLanguage.tr => "Bu ayın toplamı ($days gün çalışıldı)",
         AppLanguage.zh => '本月总工资（工作 $days 天）',
         AppLanguage.vi => 'Tổng lương tháng này ($days ngày làm)',
       };
@@ -181,6 +203,7 @@ class _WorkLogStrings {
   static const quickInputTitle = L10nText(
     ko: '⚡ 간편 입력',
     en: '⚡ Quick entry',
+    tr: "⚡ Hızlı giriş",
     zh: '⚡ 快速录入',
     vi: '⚡ Nhập nhanh',
     uz: "⚡ Tez kiritish",
@@ -188,6 +211,7 @@ class _WorkLogStrings {
   static const quickInputSub = L10nText(
     ko: '시급 × 시간 등록',
     en: 'Set wage × hours',
+    tr: "Belirlenen ücret × saat",
     zh: '登记时薪 × 时长',
     vi: 'Đăng ký lương × giờ',
     uz: "Ish haqi × soatlarni belgilash",
@@ -195,6 +219,7 @@ class _WorkLogStrings {
   static const quickSheetTitle = L10nText(
     ko: '⚡ 간편 근무 입력',
     en: '⚡ Quick work entry',
+    tr: "⚡ Hızlı iş girişi",
     zh: '⚡ 快速工作录入',
     vi: '⚡ Nhập công việc nhanh',
     uz: "⚡ Tez ish kiritish",
@@ -202,6 +227,7 @@ class _WorkLogStrings {
   static const todayWage = L10nText(
     ko: '오늘 예상 임금',
     en: "Today's estimated wage",
+    tr: "Bugünün tahmini ücreti",
     zh: '今日预计工资',
     vi: 'Lương dự kiến hôm nay',
     uz: "Bugungi taxminiy ish haqi",
@@ -209,6 +235,7 @@ class _WorkLogStrings {
   static const todayWageWithTax = L10nText(
     ko: '오늘 예상 임금 (세전)',
     en: "Today's estimated wage (pre-tax)",
+    tr: "Bugünün tahmini ücreti (vergi öncesi)",
     zh: '今日预计工资（税前）',
     vi: 'Lương dự kiến hôm nay (trước thuế)',
     uz: "Bugungi taxminiy ish haqi (soliqdan oldin)",
@@ -219,6 +246,7 @@ class _WorkLogStrings {
     AppLanguage.ko => '시급 $wage (세전)',
     AppLanguage.uz => "$wage/soat (soliqdan oldin)",
     AppLanguage.en => '$wage/hour (pre-tax)',
+    AppLanguage.tr => "$wage/saat (vergi öncesi)",
     AppLanguage.zh => '时薪 $wage（税前）',
     AppLanguage.vi => '$wage/giờ (trước thuế)',
   };
@@ -226,6 +254,7 @@ class _WorkLogStrings {
   static const hourlyWageDialogTitle = L10nText(
     ko: '적용 시급',
     en: 'Hourly wage',
+    tr: "Saatlik ücret",
     zh: '适用时薪',
     vi: 'Lương theo giờ',
     uz: "Soatlik ish haqi",
@@ -233,6 +262,7 @@ class _WorkLogStrings {
   static const hourlyWageInputHint = L10nText(
     ko: '숫자를 눌러 직접 입력할 수 있어요',
     en: 'Tap the number to type it directly',
+    tr: "Doğrudan yazmak için sayıya dokunun",
     zh: '点击数字可直接输入',
     vi: 'Chạm vào số để nhập trực tiếp',
     uz: "Raqamni toʻgʻridan-toʻgʻri kiritish uchun bosing",
@@ -240,6 +270,7 @@ class _WorkLogStrings {
   static const workedHoursLabel = L10nText(
     ko: '오늘 일한 시간',
     en: 'Hours worked today',
+    tr: "Bugün çalışılan saat",
     zh: '今天工作时长',
     vi: 'Số giờ làm hôm nay',
     uz: "Bugun ishlagan soatlar",
@@ -247,6 +278,7 @@ class _WorkLogStrings {
   static const workedHoursHint = L10nText(
     ko: '휴게시간 제외 실근무',
     en: 'Actual hours, excluding breaks',
+    tr: "Molalar hariç gerçek saatler",
     zh: '不含休息的实际工时',
     vi: 'Giờ làm thực tế, không tính nghỉ',
     uz: "Haqiqiy soatlar, tanaffuslarsiz",
@@ -254,6 +286,7 @@ class _WorkLogStrings {
   static const quickSaveButton = L10nText(
     ko: '오늘 임금 기록 저장하기',
     en: "Save today's wage record",
+    tr: "Bugünün ücret kaydını kaydet",
     zh: '保存今天的工资记录',
     vi: 'Lưu ghi chép lương hôm nay',
     uz: "Bugungi ish haqi yozuvini saqlash",
@@ -261,6 +294,7 @@ class _WorkLogStrings {
   static const quickSavedToast = L10nText(
     ko: '근무 기록이 업데이트되었어요.',
     en: 'Your work record has been updated.',
+    tr: "Çalışma kaydınız güncellendi.",
     zh: '工作记录已更新。',
     vi: 'Ghi chép làm việc đã được cập nhật.',
     uz: "Ish yozuvingiz yangilandi.",
@@ -268,6 +302,7 @@ class _WorkLogStrings {
   static const hourlyWageDialogSubtitle = L10nText(
     ko: '실근무시간 × 시급으로 대략적인 임금을 계산해요. 정확한 계산은 임금계산기 탭을 이용하세요.',
     en: 'We estimate wages as hours worked × hourly wage. For an exact calculation, use the Wage Calculator tab.',
+    tr: "Ücretleri çalışılan saat × saatlik ücret olarak tahmin ediyoruz. Kesin bir hesaplama için Ücret Hesaplayıcı sekmesini kullanın.",
     zh: '按"实际工作时长 × 时薪"估算工资。精确计算请使用工资计算器标签页。',
     vi: 'Lương được ước tính bằng giờ làm thực tế × lương theo giờ. Để tính chính xác, hãy dùng tab Máy tính lương.',
     uz: "Ish haqini ishlagan soatlar × soatlik ish haqi deb hisoblaymiz. Aniq hisoblash uchun Ish haqi kalkulyatori yorligʻidan foydalaning.",
@@ -276,6 +311,7 @@ class _WorkLogStrings {
   static const photoAttach = L10nText(
     ko: '📷 사진 첨부',
     en: '📷 Attach photo',
+    tr: "📷 Fotoğraf ekle",
     zh: '📷 添加照片',
     vi: '📷 Thêm ảnh',
     uz: "📷 Surat biriktirish",
@@ -283,6 +319,7 @@ class _WorkLogStrings {
   static const transitCardAttach = L10nText(
     ko: '🚌 교통카드 기록',
     en: '🚌 Transit card record',
+    tr: "🚌 Ulaşım kartı kaydı",
     zh: '🚌 交通卡记录',
     vi: '🚌 Lịch sử thẻ giao thông',
     uz: "🚌 Transport karta yozuvi",
@@ -290,6 +327,7 @@ class _WorkLogStrings {
   static const audioRecord = L10nText(
     ko: '🎙️ 녹음 첨부',
     en: '🎙️ Attach audio',
+    tr: "🎙️ Ses kaydı ekle",
     zh: '🎙️ 添加录音',
     vi: '🎙️ Thêm bản ghi âm',
     uz: "🎙️ Audio biriktirish",
@@ -298,6 +336,7 @@ class _WorkLogStrings {
   static const memoHint = L10nText(
     ko: '오늘 있었던 일을 적어두세요 (예: 사장님이 30분 더 일하라고 함)',
     en: 'Write down what happened today (e.g. "Boss asked me to work 30 minutes extra")',
+    tr: "Bugün ne olduğunu yazın (örn. \"Patron benden 30 dakika fazla çalışmamı istedi\")",
     zh: '记下今天发生的事（例如：老板让我多干30分钟）',
     vi: 'Ghi lại những gì đã xảy ra hôm nay (VD: chủ bảo làm thêm 30 phút)',
     uz: "Bugun nima boʻlganini yozing (masalan, \"Boshliq mendan 30 daqiqa qoʻshimcha ishlashni soʻradi\")",
@@ -306,6 +345,7 @@ class _WorkLogStrings {
   static const nextStepsLabel = L10nText(
     ko: '기록이 쌓였다면',
     en: 'Once you have records',
+    tr: "Kayıtlarınız olduğunda",
     zh: '记录积累之后',
     vi: 'Khi đã có đủ ghi chép',
     uz: "Yozuvlaringiz boʻlgach",
@@ -314,6 +354,7 @@ class _WorkLogStrings {
   static const wageEntryTitle = L10nText(
     ko: '임금체불 진정 내비게이터',
     en: 'Unpaid Wage Navigator',
+    tr: "Ödenmemiş Ücret Rehberi",
     zh: '拖欠工资申诉导航',
     vi: 'Hướng dẫn khiếu nại nợ lương',
     uz: "Toʻlanmagan ish haqi navigatori",
@@ -321,6 +362,7 @@ class _WorkLogStrings {
   static const wageEntrySubtitle = L10nText(
     ko: '단계별로 진정서까지 안내',
     en: 'Step by step, all the way to the report',
+    tr: "Adım adım, raporlamaya kadar",
     zh: '逐步引导直到提交申诉书',
     vi: 'Hướng dẫn từng bước đến khi nộp đơn',
     uz: "Bosqichma-bosqich, hisobotgacha",
@@ -328,6 +370,7 @@ class _WorkLogStrings {
   static const injuryEntryTitle = L10nText(
     ko: '산재처리 신청 내비게이터',
     en: 'Workplace Injury Navigator',
+    tr: "İş Kazası Rehberi",
     zh: '工伤申报导航',
     vi: 'Hướng dẫn yêu cầu bồi thường tai nạn lao động',
     uz: "Ish joyidagi jarohat navigatori",
@@ -335,6 +378,7 @@ class _WorkLogStrings {
   static const injuryEntrySubtitle = L10nText(
     ko: '단계별로 요양급여 신청까지',
     en: 'Step by step, all the way to the benefit claim',
+    tr: "Adım adım, tazminat talebine kadar",
     zh: '逐步引导直到申请疗养补偿',
     vi: 'Hướng dẫn từng bước đến khi yêu cầu trợ cấp',
     uz: "Bosqichma-bosqich, nafaqa talabigacha",
@@ -364,6 +408,8 @@ class _WorkLogStrings {
         return "${_monthNamesEn[month.month - 1]} ${month.year}";
       case AppLanguage.en:
         return '${_monthNamesEn[month.month - 1]} ${month.year}';
+      case AppLanguage.tr:
+        return "${_monthNamesTr[month.month - 1]} ${month.year}";
       case AppLanguage.zh:
         return '${month.year}年${month.month}月';
       case AppLanguage.vi:
@@ -383,7 +429,38 @@ class _WorkLogStrings {
   ];
   static const _weekdayLabelsZh = ['日', '一', '二', '三', '四', '五', '六'];
   static const _weekdayLabelsVi = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
-  static const _weekdayLabelsUz = ['Yak', 'Du', 'Se', 'Chor', 'Pay', 'Ju', 'Shan'];
+  static const _weekdayLabelsUz = [
+    'Yak',
+    'Du',
+    'Se',
+    'Chor',
+    'Pay',
+    'Ju',
+    'Shan',
+  ];
+  static const _weekdayLabelsTr = [
+    'Paz',
+    'Pzt',
+    'Sal',
+    'Çar',
+    'Per',
+    'Cum',
+    'Cmt',
+  ];
+  static const _monthNamesTr = [
+    'Ocak',
+    'Şubat',
+    'Mart',
+    'Nisan',
+    'Mayıs',
+    'Haziran',
+    'Temmuz',
+    'Ağustos',
+    'Eylül',
+    'Ekim',
+    'Kasım',
+    'Aralık',
+  ];
 
   static List<String> weekdayLabels(AppLanguage lang) {
     switch (lang) {
@@ -397,6 +474,8 @@ class _WorkLogStrings {
         return _weekdayLabelsVi;
       case AppLanguage.uz:
         return _weekdayLabelsUz;
+      case AppLanguage.tr:
+        return _weekdayLabelsTr;
     }
   }
 }

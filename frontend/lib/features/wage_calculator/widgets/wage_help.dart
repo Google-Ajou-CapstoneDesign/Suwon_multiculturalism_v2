@@ -7,6 +7,7 @@ import '../models/wage_diagnosis.dart';
 const _okLabel = L10nText(
   ko: '확인',
   en: 'OK',
+  tr: "Tamam",
   zh: '确定',
   vi: 'Xác nhận',
   uz: "OK",
@@ -67,6 +68,7 @@ const _taxTableHeader = [
   L10nText(
     ko: '4대보험',
     en: '4 Major Insurances',
+    tr: "4 Büyük Sigorta",
     zh: '四大保险',
     vi: '4 loại bảo hiểm',
     uz: "4 ta asosiy sugʻurta",
@@ -74,6 +76,7 @@ const _taxTableHeader = [
   L10nText(
     ko: '근로자(급여공제)',
     en: 'Employee (payroll deduction)',
+    tr: "Çalışan (maaş kesintisi)",
     zh: '劳动者（工资扣除）',
     vi: 'Người lao động (khấu trừ lương)',
     uz: "Xodim (ish haqidan ushlab qolish)",
@@ -81,6 +84,7 @@ const _taxTableHeader = [
   L10nText(
     ko: '사업주',
     en: 'Employer',
+    tr: "İşveren",
     zh: '雇主',
     vi: 'Người sử dụng lao động',
     uz: "Ish beruvchi",
@@ -89,6 +93,7 @@ const _taxTableHeader = [
 const _pensionLabel = L10nText(
   ko: '국민연금 (9%)',
   en: 'National Pension (9%)',
+  tr: "Ulusal Emeklilik (%9)",
   zh: '国民年金 (9%)',
   vi: 'Bảo hiểm hưu trí quốc dân (9%)',
   uz: "Milliy pensiya (9%)",
@@ -96,6 +101,7 @@ const _pensionLabel = L10nText(
 const _healthLabel = L10nText(
   ko: '건강보험료 (6.99%)',
   en: 'Health Insurance (6.99%)',
+  tr: "Sağlık Sigortası (%6.99)",
   zh: '健康保险 (6.99%)',
   vi: 'Bảo hiểm y tế (6.99%)',
   uz: "Tibbiy sugʻurta (6.99%)",
@@ -103,6 +109,7 @@ const _healthLabel = L10nText(
 const _ltcLabel = L10nText(
   ko: '장기요양보험 (건강보험료의 12.27%)',
   en: 'Long-term Care Insurance (12.27% of health insurance)',
+  tr: "Uzun Süreli Bakım Sigortası (sağlık sigortasının %12.27'si)",
   zh: '长期护理保险（健康保险费的12.27%）',
   vi: 'Bảo hiểm chăm sóc dài hạn (12,27% phí bảo hiểm y tế)',
   uz: "Uzoq muddatli parvarish sugʻurtasi (tibbiy sugʻurtaning 12.27%)",
@@ -110,6 +117,7 @@ const _ltcLabel = L10nText(
 const _healthTimesLtc = L10nText(
   ko: '건강보험료 × 12.27%',
   en: 'Health insurance × 12.27%',
+  tr: "Sağlık sigortası × %12.27",
   zh: '健康保险费 × 12.27%',
   vi: 'Phí BHYT × 12,27%',
   uz: "Tibbiy sugʻurta × 12.27%",
@@ -117,6 +125,7 @@ const _healthTimesLtc = L10nText(
 const _employmentLabel = L10nText(
   ko: '고용보험',
   en: 'Employment Insurance',
+  tr: "İşsizlik Sigortası",
   zh: '雇佣保险',
   vi: 'Bảo hiểm việc làm',
   uz: "Ish bilan taʼminlash sugʻurtasi",
@@ -124,6 +133,7 @@ const _employmentLabel = L10nText(
 const _variesByCompany = L10nText(
   ko: '기업규모별 상이',
   en: 'Varies by company size',
+  tr: "Şirket büyüklüğüne göre değişir",
   zh: '因企业规模而异',
   vi: 'Khác nhau theo quy mô doanh nghiệp',
   uz: "Kompaniya hajmiga qarab farq qiladi",
@@ -131,6 +141,7 @@ const _variesByCompany = L10nText(
 const _accidentLabel = L10nText(
   ko: '산재보험',
   en: 'Industrial Accident Insurance',
+  tr: "İş Kazası Sigortası",
   zh: '工伤保险',
   vi: 'Bảo hiểm tai nạn lao động',
   uz: "Ishlab chiqarishdagi baxtsiz hodisalardan sugʻurta",
@@ -138,6 +149,7 @@ const _accidentLabel = L10nText(
 const _noneLabel = L10nText(
   ko: '없음',
   en: 'None',
+  tr: "Yok",
   zh: '无',
   vi: 'Không có',
   uz: "Hech qanday",
@@ -145,6 +157,7 @@ const _noneLabel = L10nText(
 const _variesByIndustry = L10nText(
   ko: '업종별 상이',
   en: 'Varies by industry',
+  tr: "Sektöre göre değişir",
   zh: '因行业而异',
   vi: 'Khác nhau theo ngành nghề',
   uz: "Sohaga qarab farq qiladi",
@@ -179,6 +192,8 @@ Widget _taxInfoBody(BuildContext context, AppLanguage lang) {
             "1) 4 ta asosiy sugʻurta ushlab qolinganida, xodimning umumiy badal stavkasi taxminan ${(insuranceRate() * 100).toStringAsFixed(2)}% ni tashkil qiladi. Oyiga 60 soatdan kam ishlaydigan ishchilar roʻyxatdan oʻtishlari shart emas, shuning uchun hech qanday chegirma yoʻq.",
           AppLanguage.en =>
             "1) When the 4 Major Insurances are deducted, the employee's total contribution rate is about ${(insuranceRate() * 100).toStringAsFixed(2)}%. Workers under 60 hours/month are not required to enroll, so there is no deduction.",
+          AppLanguage.tr =>
+            "1) 4 Büyük Sigorta kesildiğinde, çalışanın toplam katkı oranı yaklaşık ${(insuranceRate() * 100).toStringAsFixed(2)}%'dir. Ayda 60 saatin altında çalışanların kaydolması gerekmez, bu nedenle kesinti yapılmaz.",
           AppLanguage.zh =>
             '1) 扣除四大保险时，劳动者的负担率合计约为${(insuranceRate() * 100).toStringAsFixed(2)}%。每月工作不满60小时的劳动者不属于参保对象，故无税金扣除。',
           AppLanguage.vi =>
@@ -198,6 +213,8 @@ Widget _taxInfoBody(BuildContext context, AppLanguage lang) {
             "2) 3,3% daromad soligʻi chegirmasi = 3% daromad soligʻi + mahalliy daromad soligʻi (daromad soligʻi miqdorining 10%)",
           AppLanguage.en =>
             '2) The 3.3% income tax deduction = 3% income tax + local income tax (10% of the income tax amount)',
+          AppLanguage.tr =>
+            "2) %3,3 gelir vergisi kesintisi = %3 gelir vergisi + yerel gelir vergisi (gelir vergisi miktarının %10'u)",
           AppLanguage.zh => '2) 所得税3.3%扣除 = 所得税3% + 地方所得税（所得税额的10%）',
           AppLanguage.vi =>
             '2) Khấu trừ thuế thu nhập 3,3% = thuế thu nhập 3% + thuế thu nhập địa phương (10% số thuế thu nhập)',
@@ -223,6 +240,7 @@ const _entries = {
     L10nText(
       ko: '이번달만 확인',
       en: 'Check this month only',
+      tr: "Sadece bu ayı kontrol et",
       zh: '仅确认本月',
       vi: 'Chỉ kiểm tra tháng này',
       uz: "Faqat shu oyni tekshirish",
@@ -230,6 +248,7 @@ const _entries = {
     L10nText(
       ko: '이번 달 1개월치 급여 및 체불 내역만 정산합니다.',
       en: "Settles only this month's pay and any unpaid amount.",
+      tr: "Yalnızca bu ayın maaşını ve ödenmemiş tutarı hesaplar.",
       zh: '仅结算本月一个月的工资和欠薪情况。',
       vi: 'Chỉ tính lương và tình trạng nợ lương của 1 tháng này.',
       uz: "Faqat shu oyning ish haqi va toʻlanmagan summani hisoblaydi.",
@@ -239,6 +258,7 @@ const _entries = {
     L10nText(
       ko: '여러달 체불 확인',
       en: 'Check unpaid wages over several months',
+      tr: "Birkaç aylık ödenmemiş ücretleri kontrol edin",
       zh: '确认多个月的欠薪',
       vi: 'Kiểm tra nợ lương nhiều tháng',
       uz: "Bir necha oylik toʻlanmagan ish haqini tekshirish",
@@ -246,6 +266,7 @@ const _entries = {
     L10nText(
       ko: '최근 몇 개월 동안 급여가 밀렸는지 선택합니다. 입력하는 근무시간과 입금액은 해당 개월 수 전체의 합계입니다.',
       en: 'Choose how many recent months your pay has been delayed. The work hours and amounts you enter should be the total across all those months.',
+      tr: "Maaşınızın kaç aydır geciktiğini seçin. Girdiğiniz çalışma saatleri ve tutarlar, tüm bu ayların toplamı olmalıdır.",
       zh: '选择最近几个月工资被拖欠的情况。您输入的工作时间和到账金额应为这些月份的总计。',
       vi: 'Chọn số tháng gần đây bị chậm lương. Giờ làm và số tiền bạn nhập là tổng cộng của toàn bộ số tháng đó.',
       uz: "Ish haqingiz necha oydan beri kechikayotganini tanlang. Siz kiritgan ish soatlari va miqdorlari barcha oylar boʻyicha umumiy boʻlishi kerak.",
@@ -255,6 +276,7 @@ const _entries = {
     L10nText(
       ko: '기간 직접 지정',
       en: 'Set a custom period',
+      tr: "Özel bir dönem belirleyin",
       zh: '自定义期间',
       vi: 'Tự chọn khoảng thời gian',
       uz: "Maxsus davrni belgilash",
@@ -262,6 +284,7 @@ const _entries = {
     L10nText(
       ko: '체불이 시작된 월부터 종료된 월까지 설정합니다. 임금채권 소멸시효는 3년입니다.',
       en: 'Set the month the unpaid wages started and the month they ended. Wage claims expire after 3 years.',
+      tr: "Ödenmemiş ücretlerin başladığı ayı ve bittiği ayı belirleyin. Ücret alacakları 3 yıl sonra zaman aşımına uğrar.",
       zh: '设置欠薪开始月份和结束月份。工资债权的诉讼时效为3年。',
       vi: 'Đặt tháng bắt đầu và tháng kết thúc nợ lương. Thời hiệu yêu cầu tiền lương là 3 năm.',
       uz: "Toʻlanmagan ish haqi boshlangan va tugagan oyni belgilang. Ish haqi daʼvolari 3 yildan keyin tugaydi.",
@@ -271,6 +294,7 @@ const _entries = {
     L10nText(
       ko: '사업장 규모 기준',
       en: 'Business size criteria',
+      tr: "İşletme büyüklüğü kriterleri",
       zh: '企业规模标准',
       vi: 'Tiêu chí quy mô doanh nghiệp',
       uz: "Korxona hajmi mezonlari",
@@ -284,6 +308,7 @@ const _entries = {
           '<b>• 5+ employees:</b> overtime/night/holiday premium pay (1.5x–2x) applies.<br>'
           '<b>• Fewer than 5:</b> no premium pay (paid 1.0x for hours worked).<br>'
           "<b>• Not sure:</b> calculated conservatively as under-5 so it doesn't disadvantage you. You can check the exact headcount via your payslip or 4-major-insurance enrollment count.",
+      tr: "<b>• 5+ çalışan:</b> fazla mesai/gece/tatil primi (1.5x–2x) uygulanır.<br><b>• 5'ten az:</b> prim ödemesi yok (çalışılan saatler için 1.0x ödenir).<br><b>• Emin değilim:</b> aleyhinize olmaması için 5'ten az olarak muhafazakar bir şekilde hesaplanır. Tam çalışan sayısını maaş bordronuzdan veya 4 ana sigorta kayıt sayısından kontrol edebilirsiniz.",
       zh:
           '<b>• 5人以上：</b>适用加班·夜间·休息日加班津贴（1.5倍~2倍）。<br>'
           '<b>• 5人以下：</b>不适用加成津贴（按工作时间1.0倍支付）。<br>'
@@ -299,6 +324,7 @@ const _entries = {
     L10nText(
       ko: '주당 약정 근로시간',
       en: 'Contracted weekly hours',
+      tr: "Sözleşmeli haftalık saatler",
       zh: '每周约定工作时间',
       vi: 'Giờ làm theo tuần đã thỏa thuận',
       uz: "Shartnomaviy haftalik soatlar",
@@ -306,6 +332,7 @@ const _entries = {
     L10nText(
       ko: '근로계약서상 일하기로 약정한 주당 시간입니다. (월급제 기본값 40시간 = 월 209시간)',
       en: 'The weekly hours agreed in your employment contract. (Default for monthly pay: 40 hrs/week = 209 hrs/month)',
+      tr: "İş sözleşmenizde anlaşılan haftalık çalışma saatleri. (Aylık maaş için varsayılan: 40 saat/hafta = 209 saat/ay)",
       zh: '劳动合同中约定的每周工作时间。（月薪制默认值：每周40小时 = 每月209小时）',
       vi: 'Số giờ mỗi tuần đã thỏa thuận trong hợp đồng lao động. (Mặc định cho lương tháng: 40 giờ/tuần = 209 giờ/tháng)',
       uz: "Mehnat shartnomangizda kelishilgan haftalik ish soatlari. (Oylik ish haqi uchun standart: haftasiga 40 soat = oyiga 209 soat)",
@@ -315,6 +342,7 @@ const _entries = {
     L10nText(
       ko: '연장근로 수당',
       en: 'Overtime pay',
+      tr: "Fazla mesai ücreti",
       zh: '加班津贴',
       vi: 'Phụ cấp làm thêm giờ',
       uz: "Ishdan tashqari ish haqi",
@@ -330,6 +358,7 @@ const _entries = {
           '<b>Formula: (overtime hours × contracted hourly wage) × 1.5</b><br>'
           '• 5+ employee workplaces: pay an extra 50% of ordinary wage<br>'
           '• Fewer than 5 employees: pay ordinary wage only',
+      tr: "Fazla mesai, sözleşmenizde belirlenen normal çalışma saatlerinin ötesinde çalışmak demektir.<br><b>Formül: (fazla mesai saatleri × sözleşmeli saatlik ücret) × 1.5</b><br>• 5+ çalışanı olan işyerleri: normal ücretin %50'si kadar ek ödeme yapar<br>• 5'ten az çalışanı olan işyerleri: sadece normal ücret öder",
       zh:
           '加班是指超出合同规定正常工作时间之外的劳动。<br>'
           '<b>计算公式：（加班时间 × 合同时薪）× 1.5</b><br>'
@@ -347,6 +376,7 @@ const _entries = {
     L10nText(
       ko: '야간근로 수당',
       en: 'Night work pay',
+      tr: "Gece çalışması ücreti",
       zh: '夜班津贴',
       vi: 'Phụ cấp làm đêm',
       uz: "Tungi ish haqi",
@@ -362,6 +392,7 @@ const _entries = {
           '<b>Formula: (night hours × contracted hourly wage) × 0.5 (premium portion)</b><br>'
           '• 5+ employee workplaces: an additional 50% premium is paid on top, specifically for night work<br>'
           '• Fewer than 5 employees: no premium; paid the same ordinary wage as daytime work',
+      tr: "Gece çalışması, akşam 10 ile ertesi sabah 6 arasında çalışmak demektir.<br><b>Formül: (gece saatleri × sözleşmeli saatlik ücret) × 0.5 (prim kısmı)</b><br>• 5+ çalışanı olan işyerleri: gece çalışması için ayrıca %50 ek prim ödenir<br>• 5'ten az çalışanı olan işyerleri: prim yok; gündüz çalışmasıyla aynı normal ücret ödenir",
       zh:
           '夜班是指晚上10点到次日早上6点之间的劳动。<br>'
           '<b>计算公式：（夜班时间 × 合同时薪）× 0.5（加成部分）</b><br>'
@@ -379,6 +410,7 @@ const _entries = {
     L10nText(
       ko: '휴일근로 수당',
       en: 'Holiday work pay',
+      tr: "Tatil çalışması ücreti",
       zh: '休息日加班津贴',
       vi: 'Phụ cấp làm ngày nghỉ',
       uz: "Bayram kunlari ishlaganlik uchun haq",
@@ -394,6 +426,7 @@ const _entries = {
           '<b>Formula: (holiday hours × contracted hourly wage) × 1.5 (2.0 for hours beyond 8)</b><br>'
           '• 5+ employee workplaces: 50% premium up to 8 hours, 100% premium beyond 8 hours<br>'
           '• Fewer than 5 employees: no premium; paid ordinary wage only for actual hours worked',
+      tr: "Tatil çalışması, sözleşmeniz veya yasa tarafından tatil olarak belirlenen bir günde çalışmak demektir.<br><b>Formül: (tatil saatleri × sözleşmeli saatlik ücret) × 1.5 (8 saatin üzerindeki saatler için 2.0)</b><br>• 5+ çalışanı olan işyerleri: 8 saate kadar %50 prim, 8 saatin üzerinde %100 prim<br>• 5'ten az çalışanı olan işyerleri: prim yok; sadece fiilen çalışılan saatler için normal ücret ödenir",
       zh:
           '休息日加班是指在合同或法定制度指定的休息日出勤劳动。<br>'
           '<b>计算公式：（休息日工作时间 × 合同时薪）× 1.5（超过8小时部分为2.0）</b><br>'
@@ -411,6 +444,7 @@ const _entries = {
     L10nText(
       ko: '재직 기간 안내',
       en: 'About your tenure period',
+      tr: "Kıdem süreniz hakkında",
       zh: '在职期间说明',
       vi: 'Hướng dẫn về thời gian làm việc',
       uz: "Ish stajingiz haqida",
@@ -422,6 +456,7 @@ const _entries = {
       en:
           'The tenure period you enter here (hire date to resignation date) is used only to check the severance-pay eligibility conditions — ① 1+ year of continuous service, ② 15+ hours/week on average. '
           'It is separate from the check period (unpaid-wage period) you chose earlier.',
+      tr: "Buraya girdiğiniz kıdem süresi (işe giriş tarihinden istifa tarihine kadar), yalnızca kıdem tazminatı uygunluk koşullarını kontrol etmek için kullanılır — ① 1+ yıl kesintisiz hizmet, ② haftada ortalama 15+ saat. Bu süre, daha önce seçtiğiniz kontrol süresinden (ödenmemiş ücret dönemi) ayrıdır.",
       zh:
           '此处输入的在职期间（入职日期~离职日期）仅用于判断退休金发放条件——①连续工作1年以上，②周平均工作15小时以上。'
           '这与您之前选择的确认期间（欠薪期间）是分开的。',
@@ -435,6 +470,7 @@ const _entries = {
     L10nText(
       ko: '퇴직금 정밀 산정 추가 입력',
       en: 'Additional input for precise severance calculation',
+      tr: "Hassas kıdem tazminatı hesaplaması için ek giriş",
       zh: '退休金精确计算的附加输入',
       vi: 'Nhập thêm để tính chính xác trợ cấp thôi việc',
       uz: "Aniqlik uchun qoʻshimcha maʼlumotlar",
@@ -442,6 +478,7 @@ const _entries = {
     L10nText(
       ko: '정기 상여금과 미사용 연차수당은 평균임금 계산 시 각 연간 총액의 3/12(25%)만큼 3개월 임금총액에 합산됩니다. 모르면 0으로 두어도 기본 계산은 진행됩니다.',
       en: "Regular bonuses and unused annual-leave pay are each added to the 3-month wage total at 3/12 (25%) of their annual amount when calculating average wage. If you don't know, leaving it at 0 still lets the basic calculation proceed.",
+      tr: "Ortalama ücret hesaplanırken, düzenli ikramiyeler ve kullanılmayan yıllık izin ücretleri, yıllık tutarlarının 3/12'si (%25) oranında 3 aylık ücret toplamına eklenir. Bilmiyorsanız, 0 olarak bırakmak temel hesaplamanın devam etmesini sağlar.",
       zh: '计算平均工资时，定期奖金和未使用年假补贴将分别按各自年度总额的3/12（25%）计入3个月工资总额。如果不清楚，留空为0也可以进行基本计算。',
       vi: 'Khi tính lương bình quân, tiền thưởng định kỳ và phụ cấp phép năm chưa dùng sẽ được cộng vào tổng lương 3 tháng theo tỷ lệ 3/12 (25%) của tổng số hàng năm. Nếu không biết, để 0 vẫn có thể tính toán cơ bản.',
       uz: "Oʻrtacha ish haqini hisoblashda muntazam bonuslar va foydalanilmagan yillik taʼtil haqi har biri yillik miqdorining 3/12 (25%) qismi sifatida 3 oylik ish haqi yigʻindisiga qoʻshiladi. Agar bilmasangiz, 0 qoldirish ham asosiy hisob-kitobni davom ettirishga imkon beradi.",
@@ -451,6 +488,7 @@ const _entries = {
     L10nText(
       ko: '예상 퇴직금이란',
       en: 'What is estimated severance pay',
+      tr: "Tahmini kıdem tazminatı nedir",
       zh: '预计退休金是什么',
       vi: 'Trợ cấp thôi việc dự kiến là gì',
       uz: "Taxminiy ishdan boʻshatish nafaqasi nima?",
@@ -458,6 +496,7 @@ const _entries = {
     L10nText(
       ko: '재직 기간이 1년 이상이고 주 평균 15시간 이상 근무했다면, 근로 형태·사업장 규모와 관계없이 발생하는 별도의 법정 금액입니다. 임금과는 별도로 계산됩니다.',
       en: 'If you worked 1+ year with a weekly average of 15+ hours, this is a separate statutory amount that applies regardless of your employment type or business size. It is calculated separately from wages.',
+      tr: "Haftalık ortalama 15+ saat ile 1+ yıl çalıştıysanız, bu, istihdam türünüz veya işletme büyüklüğünüz ne olursa olsun uygulanan ayrı bir yasal tutardır. Ücretlerden ayrı olarak hesaplanır.",
       zh: '如果在职期间1年以上且周平均工作15小时以上，无论用工形式或企业规模如何，都会产生这笔单独的法定金额。此金额与工资分开计算。',
       vi: 'Nếu làm việc từ 1 năm trở lên và trung bình từ 15 giờ/tuần trở lên, đây là khoản tiền pháp định riêng, phát sinh bất kể hình thức lao động hay quy mô doanh nghiệp. Được tính riêng, không gộp vào lương.',
       uz: "Agar siz haftasiga oʻrtacha 15+ soat bilan 1 yildan ortiq ishlagan boʻlsangiz, bu sizning ish turi yoki korxona hajmiga qaramay qoʻllaniladigan alohida qonuniy miqdordir. U ish haqidan alohida hisoblanadi.",
@@ -467,6 +506,7 @@ const _entries = {
     L10nText(
       ko: '기본급 산정 원리',
       en: 'How base pay is calculated',
+      tr: "Temel ücret nasıl hesaplanır",
       zh: '基本工资计算原理',
       vi: 'Nguyên lý tính lương cơ bản',
       uz: "Asosiy ish haqi qanday hisoblanadi?",
@@ -474,6 +514,7 @@ const _entries = {
     L10nText(
       ko: '약정 근로시간(또는 근무일수)에 통상시급(또는 일급)을 곱하여 산정한 기본 급여입니다.',
       en: 'Base pay is calculated by multiplying your contracted hours (or days worked) by your ordinary hourly (or daily) wage.',
+      tr: "Temel ücret, sözleşmeli saatlerinizin (veya çalışılan günlerin) normal saatlik (veya günlük) ücretinizle çarpılmasıyla hesaplanır.",
       zh: '基本工资是用约定工作时间（或工作天数）乘以通常时薪（或日薪）计算得出的。',
       vi: 'Lương cơ bản được tính bằng cách nhân số giờ làm việc thỏa thuận (hoặc số ngày làm việc) với lương giờ thông thường (hoặc lương ngày).',
       uz: "Asosiy ish haqi shartnomadagi soatlaringiz (yoki ishlagan kunlaringiz)ni oddiy soatlik (yoki kunlik) ish haqingizga koʻpaytirish orqali hisoblanadi.",
@@ -483,6 +524,7 @@ const _entries = {
     L10nText(
       ko: '주휴수당 산정 원리',
       en: 'How weekly holiday allowance is calculated',
+      tr: "Haftalık tatil ödeneği nasıl hesaplanır",
       zh: '周休津贴计算原理',
       vi: 'Nguyên lý tính phụ cấp nghỉ hằng tuần',
       uz: "Haftalik dam olish nafaqasi qanday hisoblanadi?",
@@ -490,6 +532,7 @@ const _entries = {
     L10nText(
       ko: '주 15시간 이상 개근 시 지급되는 유급휴일 수당입니다. (월급제·연봉제는 이미 포함되어 별도로 더하지 않습니다)',
       en: 'A paid-holiday allowance given when you work 15+ hours a week with perfect attendance. (Already included for monthly/annual pay, so it is not added separately.)',
+      tr: "Haftada 15+ saat tam katılım ile çalıştığınızda verilen ücretli tatil ödeneği. (Aylık/yıllık ücrete zaten dahildir, bu nedenle ayrıca eklenmez.)",
       zh: '每周工作15小时以上且全勤时发放的带薪假期津贴。（月薪制、年薪制已包含在内，不另行增加）',
       vi: 'Là phụ cấp ngày nghỉ có lương khi làm từ 15 giờ/tuần trở lên và đi làm đầy đủ. (Đã bao gồm trong lương tháng/lương năm nên không cộng thêm riêng)',
       uz: "Haftasiga 15+ soat toʻliq qatnashib ishlaganda beriladigan pullik dam olish nafaqasi. (Oylik/yillik ish haqiga allaqachon kiritilgan, shuning uchun alohida qoʻshilmaydi.)",
@@ -499,6 +542,7 @@ const _entries = {
     L10nText(
       ko: '세전 총액',
       en: 'Total before tax',
+      tr: "Vergi öncesi toplam",
       zh: '税前总额',
       vi: 'Tổng trước thuế',
       uz: "Soliqdan oldingi jami",
@@ -506,6 +550,7 @@ const _entries = {
     L10nText(
       ko: '기본급 + 주휴수당 + 가산수당(연장·야간·휴일)을 모두 더한 금액입니다. 여기서 세금과 숙식비를 빼면 실수령액이 됩니다.',
       en: 'This is base pay + weekly holiday allowance + premium pay (overtime/night/holiday) added together. Subtracting tax and board/lodging from this gives your take-home pay.',
+      tr: "Bu, temel ücret + haftalık tatil ödeneği + prim ücreti (fazla mesai/gece/tatil) toplamıdır. Bundan vergi ve yemek/konaklama çıkarıldığında net maaşınız elde edilir.",
       zh: '这是基本工资+周休津贴+加成津贴（加班·夜班·休息日）相加的金额。从中扣除税金和食宿费后即为实际到手金额。',
       vi: 'Đây là lương cơ bản + phụ cấp nghỉ hằng tuần + phụ cấp thêm (làm thêm giờ/đêm/ngày nghỉ) cộng lại. Trừ thuế và tiền ăn ở khỏi số này sẽ ra số tiền thực nhận.',
       uz: "Bu asosiy ish haqi + haftalik dam olish nafaqasi + qoʻshimcha haq (ishdan tashqari/tungi/bayram) yigʻindisidir. Bundan soliq va yotoqxona/ovqatlanishni ayirish sizning qoʻlingizga tegadigan ish haqini beradi.",
@@ -515,6 +560,7 @@ const _entries = {
     L10nText(
       ko: '예상 실수령액',
       en: 'Estimated take-home pay',
+      tr: "Tahmini net maaş",
       zh: '预计实际到手金额',
       vi: 'Số tiền thực nhận dự kiến',
       uz: "Taxminiy qoʻlingizga tegadigan ish haqi",
@@ -522,6 +568,7 @@ const _entries = {
     L10nText(
       ko: '세전 총액에서 선택하신 세금 공제와 숙식비 공제를 뺀 금액입니다.',
       en: 'This is the pre-tax total minus the tax deduction and board/lodging deduction you selected.',
+      tr: "Bu, seçtiğiniz vergi kesintisi ve yemek/konaklama kesintisi çıkarıldıktan sonraki vergi öncesi toplamdır.",
       zh: '这是税前总额减去您所选的税金扣除和食宿费扣除后的金额。',
       vi: 'Đây là tổng trước thuế trừ đi khoản khấu trừ thuế và tiền ăn ở mà bạn đã chọn.',
       uz: "Bu soliqdan oldingi jami miqdoridan siz tanlagan soliq chegirmasi va yotoqxona/ovqatlanish chegirmasi ayirilgan miqdor.",
@@ -546,6 +593,7 @@ Map<String, HelpEntry> buildHelpDict(AppLanguage lang) {
       AppLanguage.ko => '$wageCalcYear년 최저임금 기준',
       AppLanguage.uz => "$wageCalcYear Minimal ish haqi",
       AppLanguage.en => '$wageCalcYear Minimum Wage',
+      AppLanguage.tr => "$wageCalcYear Asgari Ücret",
       AppLanguage.zh => '$wageCalcYear年最低工资标准',
       AppLanguage.vi => 'Mức lương tối thiểu năm $wageCalcYear',
     },
@@ -562,6 +610,8 @@ Map<String, HelpEntry> buildHelpDict(AppLanguage lang) {
             '• Monthly equivalent (40 hrs/week, 209 hrs/month): <b>${formatWon(mw.$2, lang)}</b><br>'
             '• Annual equivalent (monthly × 12): approx. <b>${formatWon(mw.$2 * 12, lang)}</b><br>'
             '• A contract below minimum wage is invalid for that portion, and you can claim the difference.',
+      AppLanguage.tr =>
+        "• Saatlik ücret: <b>${formatWon(mw.$1, lang)}</b><br>• Aylık karşılığı (haftada 40 saat, ayda 209 saat): <b>${formatWon(mw.$2, lang)}</b><br>• Yıllık karşılığı (aylık × 12): yaklaşık <b>${formatWon(mw.$2 * 12, lang)}</b><br>• Asgari ücretin altında bir sözleşme, o kısım için geçersizdir ve farkı talep edebilirsiniz.",
       AppLanguage.zh =>
         '• 时薪：<b>${formatWon(mw.$1, lang)}</b><br>'
             '• 月薪换算（每周40小时·每月209小时）：<b>${formatWon(mw.$2, lang)}</b><br>'
@@ -580,6 +630,7 @@ Map<String, HelpEntry> buildHelpDict(AppLanguage lang) {
       AppLanguage.ko => '근로자의 세금 적용 방식',
       AppLanguage.uz => "Ishchilarga soliqlar qanday qoʻllaniladi?",
       AppLanguage.en => 'How taxes apply to workers',
+      AppLanguage.tr => "Vergilendirme çalışanlara nasıl uygulanır",
       AppLanguage.zh => '劳动者的税务适用方式',
       AppLanguage.vi => 'Cách áp dụng thuế cho người lao động',
     },

@@ -17,6 +17,7 @@ class RecommendedOrgCard extends StatelessWidget {
   static const _title = L10nText(
     ko: '추천 기관',
     en: 'Recommended organizations',
+    tr: "Önerilen kuruluşlar",
     zh: '推荐机构',
     vi: 'Cơ quan được đề xuất',
     uz: 'Tavsiya etilgan tashkilotlar',
@@ -24,6 +25,7 @@ class RecommendedOrgCard extends StatelessWidget {
   static const _address = L10nText(
     ko: '주소',
     en: 'Address',
+    tr: "Adres",
     zh: '地址',
     vi: 'Địa chỉ',
     uz: 'Manzil',
@@ -31,6 +33,7 @@ class RecommendedOrgCard extends StatelessWidget {
   static const _phone = L10nText(
     ko: '전화번호',
     en: 'Phone',
+    tr: "Telefon",
     zh: '电话',
     vi: 'Điện thoại',
     uz: 'Telefon',
@@ -38,6 +41,7 @@ class RecommendedOrgCard extends StatelessWidget {
   static const _hours = L10nText(
     ko: '이용가능시간',
     en: 'Opening hours',
+    tr: "Çalışma saatleri",
     zh: '开放时间',
     vi: 'Giờ hoạt động',
     uz: 'Ish vaqti',
@@ -45,6 +49,7 @@ class RecommendedOrgCard extends StatelessWidget {
   static const _distance = L10nText(
     ko: '거리',
     en: 'Distance',
+    tr: "Mesafe",
     zh: '距离',
     vi: 'Khoảng cách',
     uz: 'Masofa',
@@ -52,6 +57,7 @@ class RecommendedOrgCard extends StatelessWidget {
   static const _unknown = L10nText(
     ko: '정보 없음',
     en: 'Not available',
+    tr: "Mevcut değil",
     zh: '暂无信息',
     vi: 'Chưa có thông tin',
     uz: 'Maʼlumot yoʻq',
@@ -59,6 +65,7 @@ class RecommendedOrgCard extends StatelessWidget {
   static const _distanceUnavailable = L10nText(
     ko: '거리 정보 없음',
     en: 'Distance unavailable',
+    tr: "Mesafe mevcut değil",
     zh: '无距离信息',
     vi: 'Không có khoảng cách',
     uz: "Masofa mavjud emas",

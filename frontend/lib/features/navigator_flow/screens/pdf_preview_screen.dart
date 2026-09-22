@@ -10,6 +10,7 @@ import '../pdf/complaint_pdf_builder.dart';
 const _previewTitle = L10nText(
   ko: 'PDF 미리보기',
   en: 'PDF preview',
+  tr: "PDF önizlemesi",
   zh: 'PDF预览',
   vi: 'Xem trước PDF',
   uz: "PDF koʻrinishi",

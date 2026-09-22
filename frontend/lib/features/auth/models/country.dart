@@ -19,6 +19,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '필리핀',
       en: 'Philippines',
+      tr: "Filipinler",
       zh: '菲律宾',
       vi: 'Philippines',
       uz: "Filippin",
@@ -29,6 +30,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '몽골',
       en: 'Mongolia',
+      tr: "Moğolistan",
       zh: '蒙古',
       vi: 'Mông Cổ',
       uz: "Moʻgʻuliston",
@@ -39,6 +41,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '스리랑카',
       en: 'Sri Lanka',
+      tr: "Sri Lanka",
       zh: '斯里兰卡',
       vi: 'Sri Lanka',
       uz: "Shri-Lanka",
@@ -49,6 +52,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '베트남',
       en: 'Vietnam',
+      tr: "Vietnam",
       zh: '越南',
       vi: 'Việt Nam',
       uz: "Vyetnam",
@@ -59,6 +63,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '태국',
       en: 'Thailand',
+      tr: "Tayland",
       zh: '泰国',
       vi: 'Thái Lan',
       uz: "Tailand",
@@ -69,6 +74,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '인도네시아',
       en: 'Indonesia',
+      tr: "Endonezya",
       zh: '印度尼西亚',
       vi: 'Indonesia',
       uz: "Indoneziya",
@@ -79,6 +85,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '우즈베키스탄',
       en: 'Uzbekistan',
+      tr: "Özbekistan",
       zh: '乌兹别克斯坦',
       vi: 'Uzbekistan',
       uz: "Oʻzbekiston",
@@ -89,6 +96,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '파키스탄',
       en: 'Pakistan',
+      tr: "Pakistan",
       zh: '巴基斯坦',
       vi: 'Pakistan',
       uz: "Pokiston",
@@ -99,6 +107,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '캄보디아',
       en: 'Cambodia',
+      tr: "Kamboçya",
       zh: '柬埔寨',
       vi: 'Campuchia',
       uz: "Kambodja",
@@ -109,6 +118,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '방글라데시',
       en: 'Bangladesh',
+      tr: "Bangladeş",
       zh: '孟加拉国',
       vi: 'Bangladesh',
       uz: "Bangladesh",
@@ -116,13 +126,21 @@ const countries = <Country>[
   ),
   Country(
     code: 'NP',
-    name: L10nText(ko: '네팔', en: 'Nepal', zh: '尼泊尔', vi: 'Nepal', uz: "Nepal"),
+    name: L10nText(
+      ko: '네팔',
+      en: 'Nepal',
+      tr: "Nepal",
+      zh: '尼泊尔',
+      vi: 'Nepal',
+      uz: "Nepal",
+    ),
   ),
   Country(
     code: 'MM',
     name: L10nText(
       ko: '미얀마',
       en: 'Myanmar',
+      tr: "Myanmar",
       zh: '缅甸',
       vi: 'Myanmar',
       uz: "Myanma",
@@ -133,6 +151,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '키르기스스탄',
       en: 'Kyrgyzstan',
+      tr: "Kırgızistan",
       zh: '吉尔吉斯斯坦',
       vi: 'Kyrgyzstan',
       uz: "Qirgʻiziston",
@@ -143,6 +162,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '동티모르',
       en: 'Timor-Leste',
+      tr: "Doğu Timor",
       zh: '东帝汶',
       vi: 'Đông Timor',
       uz: "Sharqiy Timor",
@@ -150,13 +170,21 @@ const countries = <Country>[
   ),
   Country(
     code: 'LA',
-    name: L10nText(ko: '라오스', en: 'Laos', zh: '老挝', vi: 'Lào', uz: "Laos"),
+    name: L10nText(
+      ko: '라오스',
+      en: 'Laos',
+      tr: "Laos",
+      zh: '老挝',
+      vi: 'Lào',
+      uz: "Laos",
+    ),
   ),
   Country(
     code: 'PG',
     name: L10nText(
       ko: '파푸아뉴기니',
       en: 'Papua New Guinea',
+      tr: "Papua Yeni Gine",
       zh: '巴布亚新几内亚',
       vi: 'Papua New Guinea',
       uz: "Papua Yangi Gvineyasi",
@@ -168,6 +196,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '중국',
       en: 'China',
+      tr: "Çin",
       zh: '中国',
       vi: 'Trung Quốc',
       uz: "Xitoy",
@@ -178,6 +207,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '대만',
       en: 'Taiwan',
+      tr: "Tayvan",
       zh: '台湾',
       vi: 'Đài Loan',
       uz: "Tayvan",
@@ -188,6 +218,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '일본',
       en: 'Japan',
+      tr: "Japonya",
       zh: '日本',
       vi: 'Nhật Bản',
       uz: "Yaponiya",
@@ -198,6 +229,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '인도',
       en: 'India',
+      tr: "Hindistan",
       zh: '印度',
       vi: 'Ấn Độ',
       uz: "Hindiston",
@@ -208,6 +240,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '카자흐스탄',
       en: 'Kazakhstan',
+      tr: "Kazakistan",
       zh: '哈萨克斯坦',
       vi: 'Kazakhstan',
       uz: "Qozogʻiston",
@@ -218,6 +251,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '러시아',
       en: 'Russia',
+      tr: "Rusya",
       zh: '俄罗斯',
       vi: 'Nga',
       uz: "Rossiya",
@@ -228,6 +262,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '미국',
       en: 'United States',
+      tr: "Amerika Birleşik Devletleri",
       zh: '美国',
       vi: 'Hoa Kỳ',
       uz: "Amerika Qoʻshma Shtatlari",
@@ -238,6 +273,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '캐나다',
       en: 'Canada',
+      tr: "Kanada",
       zh: '加拿大',
       vi: 'Canada',
       uz: "Kanada",
@@ -248,6 +284,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '호주',
       en: 'Australia',
+      tr: "Avustralya",
       zh: '澳大利亚',
       vi: 'Úc',
       uz: "Avstraliya",
@@ -258,6 +295,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '영국',
       en: 'United Kingdom',
+      tr: "Birleşik Krallık",
       zh: '英国',
       vi: 'Anh',
       uz: "Birlashgan Qirollik",
@@ -268,6 +306,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '프랑스',
       en: 'France',
+      tr: "Fransa",
       zh: '法国',
       vi: 'Pháp',
       uz: "Fransiya",
@@ -278,6 +317,7 @@ const countries = <Country>[
     name: L10nText(
       ko: '독일',
       en: 'Germany',
+      tr: "Almanya",
       zh: '德国',
       vi: 'Đức',
       uz: "Germaniya",
@@ -286,6 +326,13 @@ const countries = <Country>[
   // --- 목록에 없을 때 ---
   Country(
     code: 'ETC',
-    name: L10nText(ko: '기타', en: 'Other', zh: '其他', vi: 'Khác', uz: "Boshqa"),
+    name: L10nText(
+      ko: '기타',
+      en: 'Other',
+      tr: "Diğer",
+      zh: '其他',
+      vi: 'Khác',
+      uz: "Boshqa",
+    ),
   ),
 ];

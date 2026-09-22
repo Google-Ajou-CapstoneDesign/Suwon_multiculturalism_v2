@@ -202,6 +202,10 @@ class PdfActionsBlock extends FlowBlock {
   final L10nText documentTitle;
 }
 
+class WorkLogExportBlock extends FlowBlock {
+  const WorkLogExportBlock();
+}
+
 /// 임금체불 2단계: 계산기 실행/불러오기 → 결과카드 → AI원인분석 → 대화/진정서 분기.
 /// 계산 상태 자체는 화면이 소유한 로컬 상태다(FlowDefinition엔 없음).
 class WageCalcBlock extends FlowBlock {

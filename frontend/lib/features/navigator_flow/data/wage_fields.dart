@@ -14,6 +14,7 @@ const wageFields = <FormSection>[
     title: L10nText(
       ko: '1. 진정인 · 근로자 본인',
       en: '1. Complainant · yourself',
+      tr: "1. Şikayetçi · kendiniz",
       zh: '1. 申诉人·劳动者本人',
       vi: '1. Người khiếu nại · bản thân',
       uz: "1. Shikoyatchi · oʻzingiz",
@@ -24,6 +25,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '성명',
           en: 'Name',
+          tr: "Ad",
           zh: '姓名',
           vi: 'Họ tên',
           uz: "Ism",
@@ -33,6 +35,7 @@ const wageFields = <FormSection>[
         placeholder: L10nText(
           ko: '외국인등록증상 성명',
           en: 'Name as on your Alien Registration Card',
+          tr: "Yabancı Kayıt Kartınızdaki adınız",
           zh: '外国人登录证上的姓名',
           vi: 'Họ tên trên Thẻ đăng ký người nước ngoài',
           uz: "Chet el fuqarosini roʻyxatga olish kartangizdagi ism",
@@ -43,6 +46,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '외국인등록번호',
           en: 'ARC number',
+          tr: "ARC numarası",
           zh: '外国人登录号',
           vi: 'Số thẻ ARC',
           uz: "ARC raqami",
@@ -55,6 +59,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '주소 · 휴대전화',
           en: 'Address · mobile',
+          tr: "Adres · cep telefonu",
           zh: '住址·手机',
           vi: 'Địa chỉ · di động',
           uz: "Manzil · mobil",
@@ -67,6 +72,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '전자우편',
           en: 'Email',
+          tr: "E-posta",
           zh: '电子邮箱',
           vi: 'Thư điện tử',
           uz: "Elektron pochta",
@@ -80,6 +86,7 @@ const wageFields = <FormSection>[
     title: L10nText(
       ko: '2. 피진정인 · 사업주',
       en: '2. Employer complained of',
+      tr: "2. Şikayet edilen işveren",
       zh: '2. 被申诉人',
       vi: '2. Bên bị khiếu nại',
       uz: "2. Shikoyat qilingan ish beruvchi",
@@ -90,6 +97,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '성명 · 연락처',
           en: 'Name · contact',
+          tr: "Ad · iletişim",
           zh: '姓名·联系方式',
           vi: 'Họ tên · liên lạc',
           uz: "Ism · aloqa",
@@ -99,6 +107,7 @@ const wageFields = <FormSection>[
         placeholder: L10nText(
           ko: '사장님 성함과 연락처',
           en: "Employer's name and contact",
+          tr: "İşverenin adı ve iletişim bilgileri",
           zh: '雇主姓名与联系方式',
           vi: 'Họ tên và liên lạc của chủ',
           uz: "Ish beruvchining ismi va aloqa maʼlumotlari",
@@ -109,6 +118,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '사업체 구분',
           en: 'Type of workplace',
+          tr: "İşyeri türü",
           zh: '单位区分',
           vi: 'Loại cơ sở',
           uz: "Ish joyi turi",
@@ -121,6 +131,7 @@ const wageFields = <FormSection>[
             label: L10nText(
               ko: '사업장',
               en: 'Workplace',
+              tr: "İşyeri",
               zh: '单位',
               vi: 'Cơ sở',
               uz: "Ish joyi",
@@ -131,6 +142,7 @@ const wageFields = <FormSection>[
             label: L10nText(
               ko: '공사현장',
               en: 'Construction site',
+              tr: "İnşaat alanı",
               zh: '工地',
               vi: 'Công trường',
               uz: "Qurilish maydonchasi",
@@ -143,6 +155,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '사업장명 · 주소',
           en: 'Workplace name · address',
+          tr: "İşyeri adı · adres",
           zh: '单位名称·地址',
           vi: 'Tên & địa chỉ cơ sở',
           uz: "Ish joyi nomi · manzili",
@@ -152,6 +165,7 @@ const wageFields = <FormSection>[
         placeholder: L10nText(
           ko: '실제로 일한 사업장명과 주소',
           en: 'Name and address of where you actually worked',
+          tr: "Gerçekten çalıştığınız yerin adı ve adresi",
           zh: '实际工作单位名称及地址',
           vi: 'Tên và địa chỉ nơi bạn thực sự làm việc',
           uz: "Haqiqatda ishlagan joyingizning nomi va manzili",
@@ -162,6 +176,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '근로자 수',
           en: 'Number of employees',
+          tr: "Çalışan sayısı",
           zh: '劳动者人数',
           vi: 'Số lao động',
           uz: "Xodimlar soni",
@@ -171,6 +186,7 @@ const wageFields = <FormSection>[
         hint: L10nText(
           ko: '임금계산기에서 고른 사업장 규모를 불러옵니다',
           en: 'Loaded from the workplace size you chose in the wage calculator',
+          tr: "Ücret hesaplayıcısında seçtiğiniz işyeri büyüklüğünden yüklendi",
           zh: '从工资计算器中选择的单位规模导入',
           vi: 'Lấy từ quy mô cơ sở bạn đã chọn trong máy tính lương',
           uz: "Ish haqi kalkulyatorida tanlagan ish joyi hajmidan yuklangan",
@@ -181,6 +197,7 @@ const wageFields = <FormSection>[
             label: L10nText(
               ko: '5인 이상',
               en: '5 or more',
+              tr: "5 veya daha fazla",
               zh: '5人以上',
               vi: 'Từ 5 người',
               uz: "5 yoki undan koʻp",
@@ -191,6 +208,7 @@ const wageFields = <FormSection>[
             label: L10nText(
               ko: '5인 미만',
               en: 'Under 5',
+              tr: "5'ten az",
               zh: '不足5人',
               vi: 'Dưới 5 người',
               uz: "5 dan kam",
@@ -201,6 +219,7 @@ const wageFields = <FormSection>[
             label: L10nText(
               ko: '잘 모름',
               en: 'Not sure',
+              tr: "Emin değilim",
               zh: '不清楚',
               vi: 'Không rõ',
               uz: "Ishonchim komil emas",
@@ -214,6 +233,7 @@ const wageFields = <FormSection>[
     title: L10nText(
       ko: '3. 진정 내용 · 체불 내역',
       en: '3. Details of the complaint',
+      tr: "3. Şikayetin detayları",
       zh: '3. 申诉内容',
       vi: '3. Nội dung khiếu nại',
       uz: "3. Shikoyat tafsilotlari",
@@ -224,6 +244,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '입사일',
           en: 'Start date',
+          tr: "Başlangıç tarihi",
           zh: '入职日',
           vi: 'Ngày vào làm',
           uz: "Boshlanish sanasi",
@@ -233,6 +254,7 @@ const wageFields = <FormSection>[
         hint: L10nText(
           ko: '임금계산기에 입력한 입사일을 불러옵니다',
           en: 'Loaded from the hire date you entered in the wage calculator',
+          tr: "Ücret hesaplayıcısına girdiğiniz işe alım tarihinden yüklendi",
           zh: '从工资计算器中输入的入职日导入',
           vi: 'Lấy từ ngày vào làm bạn đã nhập trong máy tính lương',
           uz: "Ish haqi kalkulyatoriga kiritgan ishga kirish sanasidan yuklangan",
@@ -243,6 +265,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '퇴사일(재직 중이면 비움)',
           en: 'End date (leave blank if still working)',
+          tr: "Bitiş tarihi (hala çalışıyorsanız boş bırakın)",
           zh: '离职日（在职则留空）',
           vi: 'Ngày nghỉ (bỏ trống nếu còn làm)',
           uz: "Tugash sanasi (agar hali ham ishlayotgan boʻlsangiz, boʻsh qoldiring)",
@@ -255,6 +278,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '퇴직 여부',
           en: 'Still employed?',
+          tr: "Hala çalışıyor musunuz?",
           zh: '离职与否',
           vi: 'Đã nghỉ việc chưa',
           uz: "Hali ham ishlayapsizmi?",
@@ -267,6 +291,7 @@ const wageFields = <FormSection>[
             label: L10nText(
               ko: '퇴직',
               en: 'Resigned',
+              tr: "İstifa etti",
               zh: '离职',
               vi: 'Đã nghỉ',
               uz: "Ishdan boʻshatilgan",
@@ -277,6 +302,7 @@ const wageFields = <FormSection>[
             label: L10nText(
               ko: '재직',
               en: 'Still employed',
+              tr: "Hala çalışıyor",
               zh: '在职',
               vi: 'Đang làm',
               uz: "Hali ham ishlayapti",
@@ -289,6 +315,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '업무 내용 · 임금 지급일',
           en: 'Job duties · payday',
+          tr: "İş görevleri · maaş günü",
           zh: '工作内容·发薪日',
           vi: 'Công việc · ngày trả lương',
           uz: "Ish vazifalari · ish haqi toʻlanadigan kun",
@@ -298,6 +325,7 @@ const wageFields = <FormSection>[
         placeholder: L10nText(
           ko: '예: 주방 보조 · 매월 10일',
           en: 'e.g. Kitchen assistant · 10th of each month',
+          tr: "örn. Mutfak asistanı · her ayın 10'u",
           zh: '例：厨房助理·每月10日',
           vi: 'VD: Phụ bếp · ngày 10 hằng tháng',
           uz: "Masalan, Oshxona yordamchisi · har oyning 10-kuni",
@@ -308,6 +336,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '근로계약 방법',
           en: 'Contract form',
+          tr: "Sözleşme türü",
           zh: '劳动合同方式',
           vi: 'Hình thức hợp đồng',
           uz: "Shartnoma shakli",
@@ -320,6 +349,7 @@ const wageFields = <FormSection>[
             label: L10nText(
               ko: '서면',
               en: 'Written',
+              tr: "Yazılı",
               zh: '书面',
               vi: 'Văn bản',
               uz: "Yozma",
@@ -330,6 +360,7 @@ const wageFields = <FormSection>[
             label: L10nText(
               ko: '구두',
               en: 'Verbal',
+              tr: "Sözlü",
               zh: '口头',
               vi: 'Miệng',
               uz: "Ogʻzaki",
@@ -342,6 +373,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '체불임금 총액',
           en: 'Total unpaid wages',
+          tr: "Toplam ödenmemiş ücret",
           zh: '欠薪总额',
           vi: 'Tổng tiền nợ lương',
           uz: "Toʻlanmagan ish haqi jami",
@@ -351,6 +383,7 @@ const wageFields = <FormSection>[
         placeholder: L10nText(
           ko: '직접 입력해주세요',
           en: 'Enter it yourself',
+          tr: "Kendiniz girin",
           zh: '请自行填写',
           vi: 'Vui lòng tự nhập',
           uz: "Oʻzingiz kiriting",
@@ -358,6 +391,7 @@ const wageFields = <FormSection>[
         hint: L10nText(
           ko: '계산기 결과는 참고용일 뿐 자동으로 넘어오지 않습니다 — 확정 금액은 근로감독관 조사에서 정해집니다',
           en: "The calculator result is a reference only and isn't carried over automatically — the confirmed amount is set during the labor inspector's investigation",
+          tr: "Hesap makinesi sonucu yalnızca bir referanstır ve otomatik olarak aktarılmaz — onaylanan miktar iş müfettişinin soruşturması sırasında belirlenir",
           zh: '计算器结果仅供参考，不会自动带入 — 确定金额由劳动监督官调查核定',
           vi: 'Kết quả máy tính chỉ để tham khảo, không tự động chuyển sang — số tiền chính thức do thanh tra lao động xác định',
           uz: "Kalkulyator natijasi faqat maʼlumot uchun va avtomatik ravishda oʻtkazilmaydi — tasdiqlangan summa mehnat inspektorining tekshiruvi davomida belgilanadi",
@@ -368,6 +402,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '체불 퇴직금 · 기타',
           en: 'Unpaid severance · other',
+          tr: "Ödenmemiş kıdem tazminatı · diğer",
           zh: '欠付退职金·其他',
           vi: 'Trợ cấp thôi việc · khác',
           uz: "Toʻlanmagan ishdan boʻshatish nafaqasi · boshqa",
@@ -377,6 +412,7 @@ const wageFields = <FormSection>[
         placeholder: L10nText(
           ko: '직접 입력해주세요',
           en: 'Enter it yourself',
+          tr: "Kendiniz girin",
           zh: '请自行填写',
           vi: 'Vui lòng tự nhập',
           uz: "Oʻzingiz kiriting",
@@ -387,6 +423,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '내용 (진정 취지 및 이유)',
           en: 'Statement of claim',
+          tr: "Talep beyanı",
           zh: '内容（申诉主旨及理由）',
           vi: 'Nội dung và lý do',
           uz: "Daʼvo arizasi",
@@ -396,6 +433,7 @@ const wageFields = <FormSection>[
         hint: L10nText(
           ko: '이전 단계에서 적은 경위가 그대로 들어갑니다',
           en: 'Carried over verbatim from what you wrote in the earlier step',
+          tr: "Önceki adımda yazdıklarınızdan aynen aktarılmıştır",
           zh: '将原样带入上一步所写的经过',
           vi: 'Được chuyển nguyên văn từ nội dung bạn đã viết ở bước trước',
           uz: "Avvalgi bosqichda yozganlaringizdan soʻzma-soʻz koʻchirilgan",
@@ -406,6 +444,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '파일 첨부',
           en: 'Attachments',
+          tr: "Ekler",
           zh: '文件附件',
           vi: 'Tệp đính kèm',
           uz: "Ilovlar",
@@ -415,6 +454,7 @@ const wageFields = <FormSection>[
         placeholder: L10nText(
           ko: '불러오기 버튼으로 가져온 자료가 여기 표시됩니다',
           en: 'Items imported via the buttons above will show here',
+          tr: "Yukarıdaki düğmeler aracılığıyla içe aktarılan öğeler burada gösterilecektir",
           zh: '通过导入按钮获取的资料将显示在此',
           vi: 'Các mục đã tải qua nút bên trên sẽ hiện ở đây',
           uz: "Yuqoridagi tugmalar orqali import qilingan narsalar shu yerda koʻrsatiladi",
@@ -425,6 +465,7 @@ const wageFields = <FormSection>[
         label: L10nText(
           ko: '위반 법조항',
           en: 'Articles violated',
+          tr: "İhlal edilen maddeler",
           zh: '违反法条',
           vi: 'Điều luật vi phạm',
           uz: "Buzilgan moddalar",
@@ -434,6 +475,7 @@ const wageFields = <FormSection>[
         placeholder: L10nText(
           ko: '근로감독관이 판단합니다',
           en: 'The labor inspector determines this',
+          tr: "Bunu iş müfettişi belirler",
           zh: '由劳动监督官判定',
           vi: 'Do thanh tra lao động xác định',
           uz: "Buni mehnat inspektori aniqlaydi",

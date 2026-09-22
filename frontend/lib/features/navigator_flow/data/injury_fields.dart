@@ -11,6 +11,7 @@ const injuryFields = <FormSection>[
     title: L10nText(
       ko: '1. 재해자(본인) 기본 정보',
       en: '1. Injured worker · basic details',
+      tr: "1. Yaralı işçi · temel bilgiler",
       zh: '1. 受灾者（本人）基本信息',
       vi: '1. Thông tin cơ bản người bị nạn',
       uz: "1. Jabrlangan ishchi · asosiy maʼlumotlar",
@@ -21,6 +22,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '성명(영문 대문자)',
           en: 'Name (capital letters)',
+          tr: "Ad (büyük harflerle)",
           zh: '姓名（英文大写）',
           vi: 'Họ tên (chữ hoa)',
           uz: "Ism (bosh harflar bilan)",
@@ -30,6 +32,7 @@ const injuryFields = <FormSection>[
         placeholder: L10nText(
           ko: '외국인등록증상 성명',
           en: 'Name as on your Alien Registration Card',
+          tr: "Yabancı Kayıt Kartınızdaki adınız",
           zh: '外国人登录证上的姓名',
           vi: 'Họ tên trên Thẻ đăng ký người nước ngoài',
           uz: "Chet el fuqarosini roʻyxatga olish kartangizdagi ism",
@@ -40,6 +43,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '외국인등록번호',
           en: 'ARC number',
+          tr: "ARC numarası",
           zh: '外国人登录号',
           vi: 'Số thẻ ARC',
           uz: "ARC raqami",
@@ -52,6 +56,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '한국 내 거주지 주소',
           en: 'Address in Korea',
+          tr: "Kore'deki adres",
           zh: '在韩居住地址',
           vi: 'Địa chỉ cư trú tại Hàn Quốc',
           uz: "Koreyadagi manzil",
@@ -64,6 +69,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '휴대전화 · 비상 연락처',
           en: 'Mobile · emergency contact',
+          tr: "Cep telefonu · acil durum irtibatı",
           zh: '手机·紧急联系方式',
           vi: 'Di động · liên hệ khẩn cấp',
           uz: "Mobil · favqulodda aloqa",
@@ -76,6 +82,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '채용일자',
           en: 'Hire date',
+          tr: "İşe alım tarihi",
           zh: '聘用日期',
           vi: 'Ngày tuyển dụng',
           uz: "Ishga qabul qilingan sana",
@@ -85,6 +92,7 @@ const injuryFields = <FormSection>[
         hint: L10nText(
           ko: '임금계산기에 입력한 입사일을 불러옵니다',
           en: 'Loaded from the hire date you entered in the wage calculator',
+          tr: "Ücret hesaplayıcısına girdiğiniz işe alım tarihinden yüklendi",
           zh: '从工资计算器中输入的入职日导入',
           vi: 'Lấy từ ngày vào làm bạn đã nhập trong máy tính lương',
           uz: "Ish haqi kalkulyatoriga kiritgan ishga kirish sanasidan yuklangan",
@@ -95,6 +103,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '직종',
           en: 'Job type',
+          tr: "İş türü",
           zh: '职种',
           vi: 'Loại công việc',
           uz: "Ish turi",
@@ -107,6 +116,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '건설',
               en: 'Construction',
+              tr: "İnşaat",
               zh: '建筑',
               vi: 'Xây dựng',
               uz: "Qurilish",
@@ -117,6 +127,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '제조',
               en: 'Manufacturing',
+              tr: "İmalat",
               zh: '制造',
               vi: 'Sản xuất',
               uz: "Ishlab chiqarish",
@@ -127,6 +138,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '농축산',
               en: 'Farming · livestock',
+              tr: "Tarım · hayvancılık",
               zh: '农畜产',
               vi: 'Nông nghiệp · chăn nuôi',
               uz: "Dehqonchilik · chorvachilik",
@@ -137,6 +149,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '서비스',
               en: 'Service',
+              tr: "Hizmet",
               zh: '服务',
               vi: 'Dịch vụ',
               uz: "Xizmat koʻrsatish",
@@ -147,6 +160,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '물류',
               en: 'Logistics',
+              tr: "Lojistik",
               zh: '物流',
               vi: 'Logistics',
               uz: "Logistika",
@@ -157,6 +171,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '기타',
               en: 'Other',
+              tr: "Diğer",
               zh: '其他',
               vi: 'Khác',
               uz: "Boshqa",
@@ -169,6 +184,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '근로자 유형',
           en: 'Worker type',
+          tr: "Çalışan türü",
           zh: '劳动者类型',
           vi: 'Loại người lao động',
           uz: "Ishchi turi",
@@ -181,6 +197,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '일반 근로자',
               en: 'Employee',
+              tr: "Çalışan",
               zh: '一般劳动者',
               vi: 'Lao động thông thường',
               uz: "Xodim",
@@ -191,6 +208,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '노무제공자',
               en: 'Platform · gig worker',
+              tr: "Platform · serbest çalışan",
               zh: '劳务提供者',
               vi: 'Người cung cấp lao động',
               uz: "Platforma · gig ishchi",
@@ -201,6 +219,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '현장실습생',
               en: 'On-site trainee',
+              tr: "Yerinde stajyer",
               zh: '现场实习生',
               vi: 'Thực tập sinh',
               uz: "Ish joyida stajyor",
@@ -211,6 +230,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '기타',
               en: 'Other',
+              tr: "Diğer",
               zh: '其他',
               vi: 'Khác',
               uz: "Boshqa",
@@ -224,6 +244,7 @@ const injuryFields = <FormSection>[
     title: L10nText(
       ko: '2. 사업장(회사) 정보',
       en: '2. Workplace information',
+      tr: "2. İş yeri bilgileri",
       zh: '2. 单位信息',
       vi: '2. Thông tin nơi làm việc',
       uz: "2. Ish joyi maʼlumotlari",
@@ -234,6 +255,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '사업장명(회사 이름)',
           en: 'Workplace name',
+          tr: "İş yeri adı",
           zh: '单位名称',
           vi: 'Tên nơi làm việc',
           uz: "Ish joyi nomi",
@@ -243,6 +265,7 @@ const injuryFields = <FormSection>[
         placeholder: L10nText(
           ko: '예: ○○산업',
           en: 'e.g. ○○ Industries',
+          tr: "örn. ○○ Endüstrileri",
           zh: '例：○○产业',
           vi: 'VD: Công ty ○○',
           uz: "masalan, ○○ Sanoat",
@@ -253,6 +276,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '대표자 성명',
           en: "Employer's name",
+          tr: "İşverenin adı",
           zh: '代表者姓名',
           vi: 'Tên chủ sử dụng lao động',
           uz: "Ish beruvchining ismi",
@@ -265,6 +289,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '사업자등록번호(산재보험가입번호)',
           en: 'Business registration no. (insurance no.)',
+          tr: "İşletme kayıt no. (sigorta no.)",
           zh: '营业执照登记号（工伤保险号）',
           vi: 'Số đăng ký kinh doanh (số bảo hiểm)',
           uz: "Biznes roʻyxatga olish raqami (sugʻurta raqami)",
@@ -274,6 +299,7 @@ const injuryFields = <FormSection>[
         placeholder: L10nText(
           ko: '모르면 공란 가능',
           en: 'Leave blank if unknown',
+          tr: "Bilinmiyorsa boş bırakın",
           zh: '不清楚可留空',
           vi: 'Có thể để trống nếu không rõ',
           uz: "Agar nomaʼlum boʻlsa, boʻsh qoldiring",
@@ -284,6 +310,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '사업장 주소 · 대표 전화번호',
           en: 'Workplace address · phone',
+          tr: "İş yeri adresi · telefon",
           zh: '单位地址·代表电话',
           vi: 'Địa chỉ · số điện thoại nơi làm việc',
           uz: "Ish joyi manzili · telefon",
@@ -296,6 +323,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '사업주와의 관계',
           en: 'Relationship to employer',
+          tr: "İşverenle ilişkiniz",
           zh: '与雇主的关系',
           vi: 'Quan hệ với chủ sử dụng lao động',
           uz: "Ish beruvchi bilan munosabat",
@@ -308,6 +336,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '해당 없음',
               en: 'None',
+              tr: "Yok",
               zh: '无',
               vi: 'Không có',
               uz: "Hech qanday",
@@ -318,6 +347,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '친인척(배우자·부모·자녀 등)',
               en: 'Family (spouse, parent, child, etc.)',
+              tr: "Aile (eş, ebeveyn, çocuk vb.)",
               zh: '亲属（配偶·父母·子女等）',
               vi: 'Người thân (vợ/chồng, cha mẹ, con, v.v.)',
               uz: "Oila (turmush oʻrtogʻi, ota-ona, farzand va h.k.)",
@@ -330,6 +360,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '하수급 사업주 여부',
           en: 'Is your employer a subcontractor?',
+          tr: "İşvereniniz bir taşeron mu?",
           zh: '是否为分包业主',
           vi: 'Chủ sử dụng lao động có phải nhà thầu phụ không?',
           uz: "Ish beruvchingiz subpudratchimi?",
@@ -342,6 +373,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '아니오(원청)',
               en: 'No (main contractor)',
+              tr: "Hayır (ana yüklenici)",
               zh: '否（原承包商）',
               vi: 'Không (nhà thầu chính)',
               uz: "Yoʻq (bosh pudratchi)",
@@ -352,6 +384,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '예(하도급 업체)',
               en: 'Yes (subcontractor)',
+              tr: "Evet (taşeron)",
               zh: '是（分包商）',
               vi: 'Có (nhà thầu phụ)',
               uz: "Ha (subpudratchi)",
@@ -365,6 +398,7 @@ const injuryFields = <FormSection>[
     title: L10nText(
       ko: '3. 재해 발생 경위(5W1H)',
       en: '3. How the injury happened',
+      tr: "3. Yaralanmanın nasıl meydana geldiği",
       zh: '3. 灾害发生经过',
       vi: '3. Diễn biến xảy ra tai nạn',
       uz: "3. Shikastlanish qanday sodir boʻlgan",
@@ -375,6 +409,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '재해 발생 일시(분 단위까지)',
           en: 'Date and time of injury',
+          tr: "Yaralanma tarihi ve saati",
           zh: '灾害发生日期时间',
           vi: 'Thời gian xảy ra tai nạn',
           uz: "Shikastlanish sanasi va vaqti",
@@ -384,6 +419,7 @@ const injuryFields = <FormSection>[
         placeholder: L10nText(
           ko: '예: 2026-08-10 14:30',
           en: 'e.g. 2026-08-10 14:30',
+          tr: "örn. 2026-08-10 14:30",
           zh: '例：2026-08-10 14:30',
           vi: 'VD: 2026-08-10 14:30',
           uz: "masalan, 2026-08-10 14:30",
@@ -394,6 +430,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '평소 출근 시각',
           en: 'Usual clock-in time',
+          tr: "Normal işe başlama saati",
           zh: '平时上班时间',
           vi: 'Giờ vào làm thường lệ',
           uz: "Odatdagi ishga kelish vaqti",
@@ -403,6 +440,7 @@ const injuryFields = <FormSection>[
         placeholder: L10nText(
           ko: '예: 08:00',
           en: 'e.g. 08:00',
+          tr: "örn. 08:00",
           zh: '例：08:00',
           vi: 'VD: 08:00',
           uz: "masalan, 08:00",
@@ -413,6 +451,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '평소 퇴근 시각',
           en: 'Usual clock-out time',
+          tr: "Normal işten çıkış saati",
           zh: '平时下班时间',
           vi: 'Giờ tan làm thường lệ',
           uz: "Odatdagi ishdan ketish vaqti",
@@ -422,6 +461,7 @@ const injuryFields = <FormSection>[
         placeholder: L10nText(
           ko: '예: 17:00',
           en: 'e.g. 17:00',
+          tr: "örn. 17:00",
           zh: '例：17:00',
           vi: 'VD: 17:00',
           uz: "masalan, 17:00",
@@ -432,6 +472,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '재해 발생 장소',
           en: 'Place of the injury',
+          tr: "Yaralanma yeri",
           zh: '灾害发生地点',
           vi: 'Địa điểm xảy ra tai nạn',
           uz: "Jarohat joyi",
@@ -441,6 +482,7 @@ const injuryFields = <FormSection>[
         placeholder: L10nText(
           ko: '예: ○○공장 2층 프레스 작업장',
           en: 'e.g. Press workshop, 2F, ○○ factory',
+          tr: "örn. Pres atölyesi, 2. kat, ○○ fabrika",
           zh: '例：○○工厂2楼冲压车间',
           vi: 'VD: Xưởng máy ép, tầng 2, nhà máy ○○',
           uz: "Masalan, Press sex, 2-qavat, ○○ zavodi",
@@ -451,6 +493,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '재해 원인 및 내용(원문 그대로 출력)',
           en: 'How it happened (printed exactly as written)',
+          tr: "Nasıl olduğu (tam olarak yazıldığı gibi basılacaktır)",
           zh: '灾害原因及内容（原文照录）',
           vi: 'Nguyên nhân và nội dung (in nguyên văn)',
           uz: "Qanday sodir boʻlgan (yozilganidek chop etiladi)",
@@ -460,6 +503,7 @@ const injuryFields = <FormSection>[
         placeholder: L10nText(
           ko: '예: 2026년 8월 10일 14:30경 프레스 기계 부품 교체 작업 중 오른손이 끼여 다쳤습니다. 옆에서 작업하던 동료 ○○○이 목격했습니다.',
           en: 'Example: Around 14:30 on August 10, 2026, my right hand was caught while replacing press machine parts. My coworker ○○○, who was working nearby, saw it happen.',
+          tr: "Örnek: 10 Ağustos 2026 tarihinde saat 14:30 civarında, pres makinesi parçalarını değiştirirken sağ elim sıkıştı. Yakınlarda çalışan iş arkadaşım ○○○ olayı gördü.",
           zh: '例：2026年8月10日14:30左右，在更换冲压机零件时右手被夹伤。旁边作业的同事○○○目击了此事。',
           vi: 'Ví dụ: Khoảng 14:30 ngày 10/8/2026, trong lúc thay linh kiện máy ép, tay phải tôi bị kẹt. Đồng nghiệp ○○○ làm việc gần đó đã chứng kiến.',
           uz: "Misol: 2026-yil 10-avgust kuni soat 14:30 atrofida press mashinasi qismlarini almashtirayotganimda oʻng qoʻlim qisilib qoldi. Yaqin atrofda ishlayotgan hamkasbim ○○○ buni koʻrdi.",
@@ -467,6 +511,7 @@ const injuryFields = <FormSection>[
         hint: L10nText(
           ko: '여기 적은 내용은 고치지 않고 그대로 서류에 들어갑니다',
           en: 'What you write here goes into the document exactly as written',
+          tr: "Buraya yazdıklarınız belgeye tam olarak yazıldığı gibi aktarılacaktır",
           zh: '在这里写的内容将原封不动地录入文件',
           vi: 'Nội dung bạn viết ở đây sẽ được đưa nguyên văn vào hồ sơ',
           uz: "Bu yerga yozganlaringiz hujjatga aynan shunday kiritiladi",
@@ -477,6 +522,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '목격자 성명 · 연락처(없으면 공란)',
           en: 'Witness name · contact',
+          tr: "Tanık adı · iletişim",
           zh: '目击者姓名·联系方式（无则留空）',
           vi: 'Tên · liên hệ nhân chứng (nếu có)',
           uz: "Guvohning ismi · aloqa",
@@ -486,6 +532,7 @@ const injuryFields = <FormSection>[
         placeholder: L10nText(
           ko: '없으면 공란',
           en: 'Leave blank if none',
+          tr: "Yoksa boş bırakın",
           zh: '没有可留空',
           vi: 'Để trống nếu không có',
           uz: "Agar yoʻq boʻlsa, boʻsh qoldiring",
@@ -497,6 +544,7 @@ const injuryFields = <FormSection>[
     title: L10nText(
       ko: '4. 부속 서류 자동 판별',
       en: '4. Auto-linked attachments',
+      tr: "4. Otomatik bağlantılı ekler",
       zh: '4. 附属文件自动判别',
       vi: '4. Giấy tờ đính kèm tự động',
       uz: "4. Avtomatik bogʻlangan ilovalar",
@@ -507,6 +555,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '출퇴근재해 여부',
           en: 'Did this happen while commuting?',
+          tr: "Bu işe gidip gelirken mi oldu?",
           zh: '是否为通勤灾害',
           vi: 'Có phải tai nạn khi đi làm không?',
           uz: "Bu ishga borish-kelish paytida sodir boʻldimi?",
@@ -519,6 +568,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '아니오',
               en: 'No',
+              tr: "Hayır",
               zh: '否',
               vi: 'Không',
               uz: "Yoʻq",
@@ -529,6 +579,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '예 — 출퇴근재해 발생신고서 자동 연동',
               en: 'Yes — links the commuting-accident report',
+              tr: "Evet — işe gidiş-geliş kazası raporunu bağlar",
               zh: '是 — 自动联动通勤灾害发生申报书',
               vi: 'Có — tự liên kết báo cáo tai nạn khi đi làm',
               uz: "Ha — ishga borish-kelishdagi baxtsiz hodisa hisobotini bogʻlaydi",
@@ -541,6 +592,7 @@ const injuryFields = <FormSection>[
         label: L10nText(
           ko: '제3자 행위 재해 여부',
           en: 'Third-party involved?',
+          tr: "Üçüncü taraf dahil mi?",
           zh: '是否为第三方行为灾害',
           vi: 'Có liên quan bên thứ ba không?',
           uz: "Uchinchi shaxs ishtirok etganmi?",
@@ -553,6 +605,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '아니오',
               en: 'No',
+              tr: "Hayır",
               zh: '否',
               vi: 'Không',
               uz: "Yoʻq",
@@ -563,6 +616,7 @@ const injuryFields = <FormSection>[
             label: L10nText(
               ko: '예 — 제3자 행위재해신고서 자동 연동',
               en: 'Yes — links the third-party accident report',
+              tr: "Evet — üçüncü taraf kaza raporunu bağlar",
               zh: '是 — 自动联动第三方行为灾害申报书',
               vi: 'Có — tự liên kết báo cáo tai nạn bên thứ ba',
               uz: "Ha — uchinchi shaxs ishtirokidagi baxtsiz hodisa hisobotini bogʻlaydi",

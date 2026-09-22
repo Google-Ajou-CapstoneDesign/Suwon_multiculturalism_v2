@@ -6,14 +6,34 @@ from app.services import worklog_service
 client = TestClient(app)
 
 
-def test_list_days_without_firestore_returns_empty_list():
-    # 테스트 환경엔 Firebase 자격증명이 없으므로(conftest AUTH_DEV_BYPASS만 켜둠)
-    # worklog_service.list_month()가 빈 목록을 돌려주고, 라우터는 200 + 빈
-    # 배열로 응답해야 한다 — 근무기록이 없는 것과 Firestore 미설정을 구분하지
-    # 않는다(둘 다 "표시할 게 없다"로 취급).
+def test_list_days_without_firestore_returns_503(monkeypatch):
+    # 조회 장애를 '증빙 기록 없음'으로 오인하지 않도록 구분한다.
+    monkeypatch.setattr(worklog_service, "_client", lambda: None)
+    response = client.get("/api/worklog/days", params={"year": 2026, "month": 8})
+    assert response.status_code == 503
+
+
+def test_list_days_empty_month_is_success(monkeypatch):
+    monkeypatch.setattr(worklog_service, "list_month", lambda uid, year, month: [])
     response = client.get("/api/worklog/days", params={"year": 2026, "month": 8})
     assert response.status_code == 200
     assert response.json() == {"days": []}
+
+
+def test_list_days_query_failure_is_not_empty_success(monkeypatch):
+    class BrokenClient:
+        def collection(self, name):
+            raise RuntimeError("database unavailable")
+
+    monkeypatch.setattr(worklog_service, "_client", lambda: BrokenClient())
+    response = client.get("/api/worklog/days", params={"year": 2026, "month": 8})
+    assert response.status_code == 503
+
+
+def test_list_days_invalid_year():
+    for year in [0, 9999]:
+        response = client.get("/api/worklog/days", params={"year": year, "month": 12})
+        assert response.status_code == 400
 
 
 def test_list_days_rejects_invalid_month():

@@ -18,6 +18,7 @@ class _S {
   static const title = L10nText(
     ko: '회원가입',
     en: 'Sign up',
+    tr: "Kaydol",
     zh: '注册',
     vi: 'Đăng ký',
     uz: "Roʻyxatdan oʻtish",
@@ -25,6 +26,7 @@ class _S {
   static const googleLabel = L10nText(
     ko: 'Google로 계속 가입하기',
     en: 'Continue signing up with Google',
+    tr: "Google ile kaydolmaya devam et",
     zh: '使用Google继续注册',
     vi: 'Tiếp tục đăng ký bằng Google',
     uz: "Google orqali roʻyxatdan oʻtishni davom ettirish",
@@ -32,6 +34,7 @@ class _S {
   static const googleDoneLabel = L10nText(
     ko: 'Google 계정으로 연결됨',
     en: 'Connected with your Google account',
+    tr: "Google hesabınızla bağlandı",
     zh: '已通过Google账号连接',
     vi: 'Đã liên kết bằng tài khoản Google',
     uz: "Google hisobingiz bilan bogʻlangan",
@@ -39,6 +42,7 @@ class _S {
   static const orDivider = L10nText(
     ko: '또는 이메일로 가입',
     en: 'Or sign up with email',
+    tr: "Veya e-posta ile kaydolun",
     zh: '或使用邮箱注册',
     vi: 'Hoặc đăng ký bằng email',
     uz: "Yoki elektron pochta orqali roʻyxatdan oʻting",
@@ -46,6 +50,7 @@ class _S {
   static const nameLabel = L10nText(
     ko: '성명',
     en: 'Full name',
+    tr: "Tam ad",
     zh: '姓名',
     vi: 'Họ tên',
     uz: "Toʻliq ism",
@@ -53,6 +58,7 @@ class _S {
   static const emailLabel = L10nText(
     ko: '이메일 (아이디)',
     en: 'Email (ID)',
+    tr: "E-posta (Kimlik)",
     zh: '邮箱（账号）',
     vi: 'Email (tài khoản)',
     uz: "Elektron pochta (ID)",
@@ -60,6 +66,7 @@ class _S {
   static const passwordLabel = L10nText(
     ko: '비밀번호',
     en: 'Password',
+    tr: "Şifre",
     zh: '密码',
     vi: 'Mật khẩu',
     uz: "Parol",
@@ -67,6 +74,7 @@ class _S {
   static const passwordConfirmLabel = L10nText(
     ko: '비밀번호 확인',
     en: 'Confirm password',
+    tr: "Şifreyi onayla",
     zh: '确认密码',
     vi: 'Xác nhận mật khẩu',
     uz: "Parolni tasdiqlash",
@@ -74,6 +82,7 @@ class _S {
   static const nationalityLabel = L10nText(
     ko: '국적',
     en: 'Nationality',
+    tr: "Uyruk",
     zh: '国籍',
     vi: 'Quốc tịch',
     uz: "Millat",
@@ -81,6 +90,7 @@ class _S {
   static const nationalityPlaceholder = L10nText(
     ko: '국적을 선택해주세요',
     en: 'Select your nationality',
+    tr: "Uyruğunuzu seçin",
     zh: '请选择国籍',
     vi: 'Chọn quốc tịch của bạn',
     uz: "Millatingizni tanlang",
@@ -88,6 +98,7 @@ class _S {
   static const nextLabel = L10nText(
     ko: '다음',
     en: 'Next',
+    tr: "İleri",
     zh: '下一步',
     vi: 'Tiếp theo',
     uz: "Keyingi",
@@ -96,6 +107,7 @@ class _S {
   static const errorName = L10nText(
     ko: '성명을 입력해주세요',
     en: 'Please enter your name',
+    tr: "Lütfen adınızı girin",
     zh: '请输入姓名',
     vi: 'Vui lòng nhập họ tên',
     uz: "Iltimos, ismingizni kiriting",
@@ -103,6 +115,7 @@ class _S {
   static const errorEmail = L10nText(
     ko: '올바른 이메일을 입력해주세요',
     en: 'Please enter a valid email',
+    tr: "Lütfen geçerli bir e-posta adresi girin",
     zh: '请输入有效的邮箱地址',
     vi: 'Vui lòng nhập email hợp lệ',
     uz: "Iltimos, toʻgʻri elektron pochta manzilini kiriting",
@@ -110,6 +123,7 @@ class _S {
   static const errorPassword = L10nText(
     ko: '비밀번호는 6자 이상이어야 해요',
     en: 'Password must be at least 6 characters',
+    tr: "Şifre en az 6 karakter olmalı",
     zh: '密码至少需要6位',
     vi: 'Mật khẩu phải có ít nhất 6 ký tự',
     uz: "Parol kamida 6 ta belgidan iborat boʻlishi kerak",
@@ -117,6 +131,7 @@ class _S {
   static const errorPasswordMismatch = L10nText(
     ko: '비밀번호가 일치하지 않아요',
     en: 'Passwords do not match',
+    tr: "Şifreler eşleşmiyor",
     zh: '两次输入的密码不一致',
     vi: 'Mật khẩu không khớp',
     uz: "Parollar mos kelmadi",
@@ -124,6 +139,7 @@ class _S {
   static const errorCustomVisa = L10nText(
     ko: '체류자격을 입력해주세요',
     en: 'Please enter your visa status',
+    tr: "Lütfen vize durumunuzu girin",
     zh: '请输入居留资格',
     vi: 'Vui lòng nhập tư cách lưu trú',
     uz: "Iltimos, viza holatingizni kiriting",
@@ -131,6 +147,7 @@ class _S {
   static const errorCountry = L10nText(
     ko: '국적을 선택해주세요',
     en: 'Please select your nationality',
+    tr: "Lütfen uyruğunuzu seçin",
     zh: '请选择国籍',
     vi: 'Vui lòng chọn quốc tịch',
     uz: "Iltimos, millatingizni tanlang",
@@ -138,6 +155,7 @@ class _S {
   static const googleFailed = L10nText(
     ko: 'Google 로그인에 실패했어요. 잠시 후 다시 시도해주세요.',
     en: 'Google sign-in failed. Please try again shortly.',
+    tr: "Google ile giriş başarısız oldu. Lütfen kısa süre içinde tekrar deneyin.",
     zh: 'Google登录失败，请稍后重试。',
     vi: 'Đăng nhập Google thất bại. Vui lòng thử lại sau.',
     uz: "Google orqali kirish amalga oshmadi. Iltimos, birozdan keyin qayta urinib koʻring.",

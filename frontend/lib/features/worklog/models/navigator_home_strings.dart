@@ -10,6 +10,7 @@ class NavigatorHomeStrings {
   static const eyebrow = L10nText(
     ko: 'NAVIGATOR',
     en: 'NAVIGATOR',
+    tr: "NAVİGATÖR",
     zh: 'NAVIGATOR',
     vi: 'NAVIGATOR',
     uz: "NAVIGATOR",
@@ -17,6 +18,7 @@ class NavigatorHomeStrings {
   static const title = L10nText(
     ko: '네비게이터',
     en: 'Navigator',
+    tr: "Rehber",
     zh: '导航',
     vi: 'Điều hướng',
     uz: "Navigator",
@@ -24,6 +26,7 @@ class NavigatorHomeStrings {
   static const subtitle = L10nText(
     ko: '어떤 문제인지 골라주시면 신고·신청까지 단계별로 안내해드려요.',
     en: 'Pick your situation and we’ll guide you step by step, all the way to filing.',
+    tr: "Durumunuzu seçin, dosyalama sürecine kadar adım adım size rehberlik edelim.",
     zh: '选择您的情况，我们将逐步引导您完成申诉或申请。',
     vi: 'Chọn tình huống của bạn, chúng tôi sẽ hướng dẫn từng bước đến khi nộp đơn.',
     uz: "Vaziyatingizni tanlang va biz sizga bosqichma-bosqich, arizani topshirguncha yoʻl koʻrsatamiz.",
@@ -32,6 +35,7 @@ class NavigatorHomeStrings {
   static const wageTitle = L10nText(
     ko: '임금체불 진정 안내',
     en: 'Unpaid wage report guide',
+    tr: "Ödenmemiş ücret raporu rehberi",
     zh: '拖欠工资申诉指南',
     vi: 'Hướng dẫn khiếu nại nợ lương',
     uz: "Toʻlanmagan ish haqi hisoboti boʻyicha qoʻllanma",
@@ -39,6 +43,7 @@ class NavigatorHomeStrings {
   static const wageDesc = L10nText(
     ko: '단계별로 진정서까지 안내해드려요.',
     en: 'Step-by-step guidance all the way to filing a report.',
+    tr: "Raporlama sürecine kadar adım adım rehberlik.",
     zh: '逐步引导您完成申诉书。',
     vi: 'Hướng dẫn từng bước đến khi nộp đơn khiếu nại.',
     uz: "Hisobot berishgacha bosqichma-bosqich yoʻriqnoma.",
@@ -46,6 +51,7 @@ class NavigatorHomeStrings {
   static const injuryTitle = L10nText(
     ko: '산재처리 신청 안내',
     en: 'Workplace injury claim guide',
+    tr: "İş kazası tazminat rehberi",
     zh: '工伤申报指南',
     vi: 'Hướng dẫn yêu cầu bồi thường tai nạn lao động',
     uz: "Ish joyidagi jarohat boʻyicha daʼvo qoʻllanmasi",
@@ -53,6 +59,7 @@ class NavigatorHomeStrings {
   static const injuryDesc = L10nText(
     ko: '단계별로 요양급여 신청까지 안내해드려요.',
     en: 'Step-by-step guidance all the way to your benefit claim.',
+    tr: "Yardım talebinize kadar adım adım rehberlik.",
     zh: '逐步引导您完成疗养补偿申请。',
     vi: 'Hướng dẫn từng bước đến khi yêu cầu trợ cấp.',
     uz: "Nafaqangizni talab qilishgacha bosqichma-bosqich yoʻriqnoma.",

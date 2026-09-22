@@ -13,6 +13,7 @@ import 'flow_content_blocks.dart' show NoticeBox;
 const _calcRunTitle = L10nText(
   ko: '임금계산기 바로 실행하기',
   en: 'Run the precise calculator',
+  tr: "Hassas hesaplayıcıyı çalıştır",
   zh: '立即运行精密工资计算器',
   vi: 'Chạy máy tính lương chính xác',
   uz: "Aniq kalkulyatorni ishga tushirish",
@@ -20,6 +21,7 @@ const _calcRunTitle = L10nText(
 const _calcRunSubtitle = L10nText(
   ko: '계산 안 해보신 분',
   en: "Haven't calculated yet",
+  tr: "Henüz hesaplanmadı",
   zh: '尚未计算过',
   vi: 'Nếu bạn chưa tính',
   uz: "Hali hisoblanmagan",
@@ -27,6 +29,7 @@ const _calcRunSubtitle = L10nText(
 const _calcLoadTitle = L10nText(
   ko: '임금계산기 데이터 불러오기',
   en: 'Load calculator data',
+  tr: "Hesaplayıcı verilerini yükle",
   zh: '导入工资计算器数据',
   vi: 'Tải dữ liệu máy tính lương',
   uz: "Kalkulyator maʼlumotlarini yuklash",
@@ -34,6 +37,7 @@ const _calcLoadTitle = L10nText(
 const _calcLoadSubtitle = L10nText(
   ko: '이미 계산해보신 분',
   en: 'Already calculated',
+  tr: "Zaten hesaplandı",
   zh: '已经计算过',
   vi: 'Nếu bạn đã tính rồi',
   uz: "Allaqaon hisoblangan",
@@ -41,6 +45,7 @@ const _calcLoadSubtitle = L10nText(
 const _calcAlreadyLoadedToast = L10nText(
   ko: '이미 최신 계산 데이터를 사용 중입니다',
   en: 'Already using your latest calculation',
+  tr: "Zaten en son hesaplamanızı kullanıyorsunuz",
   zh: '已在使用最新的计算数据',
   vi: 'Đang dùng dữ liệu tính toán mới nhất',
   uz: "Allaqaon soʻnggi hisob-kitobingizdan foydalanilmoqda",
@@ -48,6 +53,7 @@ const _calcAlreadyLoadedToast = L10nText(
 const _calcNotYetAvailableToast = L10nText(
   ko: '아직 계산한 데이터가 없습니다. 위 버튼으로 정밀 임금계산기를 먼저 실행해주세요.',
   en: 'No calculation yet. Please run the precise calculator with the button above first.',
+  tr: "Henüz hesaplama yapılmadı. Lütfen önce yukarıdaki düğmeyle hassas hesaplayıcıyı çalıştırın.",
   zh: '尚无计算数据，请先用上方按钮运行精密工资计算器。',
   vi: 'Chưa có dữ liệu tính toán. Hãy chạy máy tính lương chính xác bằng nút bên trên trước.',
   uz: "Hali hisob-kitob yoʻq. Iltimos, avval yuqoridagi tugma bilan aniq kalkulyatorni ishga tushiring.",
@@ -55,6 +61,7 @@ const _calcNotYetAvailableToast = L10nText(
 const _reportEmptyText = L10nText(
   ko: '아직 계산 데이터가 없습니다. 위 버튼으로 임금계산기를 실행하거나 데이터를 불러오세요.',
   en: 'No calculation yet. Use the buttons above to run the calculator or load your data.',
+  tr: "Henüz hesaplama yapılmadı. Hesaplayıcıyı çalıştırmak veya verilerinizi yüklemek için yukarıdaki düğmeleri kullanın.",
   zh: '尚无计算数据，请用上方按钮运行计算器或导入数据。',
   vi: 'Chưa có dữ liệu tính toán. Hãy dùng nút bên trên để chạy máy tính hoặc tải dữ liệu.',
   uz: "Hali hisob-kitob yoʻq. Kalkulyatorni ishga tushirish yoki maʼlumotlaringizni yuklash uchun yuqoridagi tugmalardan foydalaning.",
@@ -62,6 +69,7 @@ const _reportEmptyText = L10nText(
 const _expectedLabel = L10nText(
   ko: '법정 예상 실수령액(세후)',
   en: 'Expected legal take-home (after tax)',
+  tr: "Beklenen yasal net gelir (vergi sonrası)",
   zh: '法定预期实收（税后）',
   vi: 'Lương thực nhận dự kiến (sau thuế)',
   uz: "Kutilayotgan qonuniy sof daromad (soliqdan keyin)",
@@ -69,6 +77,7 @@ const _expectedLabel = L10nText(
 const _receivedRowLabel = L10nText(
   ko: '실제 받은 금액',
   en: 'Actual amount received',
+  tr: "Alınan gerçek miktar",
   zh: '实际到账金额',
   vi: 'Số tiền thực nhận',
   uz: "Olingan haqiqiy miqdor",
@@ -76,6 +85,7 @@ const _receivedRowLabel = L10nText(
 const _gapLabel = L10nText(
   ko: '🚨 예상 미지급 체불액',
   en: '🚨 Estimated unpaid amount',
+  tr: "🚨 Tahmini ödenmemiş miktar",
   zh: '🚨 预计未付欠薪额',
   vi: '🚨 Số tiền dự kiến bị nợ',
   uz: "🚨 Taxminiy toʻlanmagan miqdor",
@@ -83,6 +93,7 @@ const _gapLabel = L10nText(
 const _matchLabel = L10nText(
   ko: '✅ 계산 결과와 입금액이 거의 일치합니다',
   en: '✅ This matches what you received',
+  tr: "✅ Bu, aldığınız miktarla eşleşiyor",
   zh: '✅ 计算结果与到账金额基本一致',
   vi: '✅ Kết quả khớp với số tiền đã nhận',
   uz: "✅ Bu siz olgan miqdorga mos keladi",
@@ -90,6 +101,7 @@ const _matchLabel = L10nText(
 const _calcDiffLabel = L10nText(
   ko: 'ℹ️ 계산 방식 차이로 보이는 금액',
   en: 'ℹ️ Likely a calculation-method difference',
+  tr: "ℹ️ Muhtemelen bir hesaplama yöntemi farkı",
   zh: 'ℹ️ 可能是计算方式差异',
   vi: 'ℹ️ Có vẻ là khác biệt cách tính',
   uz: "ℹ️ Hisoblash usuli farqi boʻlishi mumkin",
@@ -97,6 +109,7 @@ const _calcDiffLabel = L10nText(
 const _refEstimateTitle = L10nText(
   ko: '⚠ 이 금액은 참고용 예상액입니다',
   en: '⚠ This is a reference estimate',
+  tr: "⚠ Bu bir referans tahmindir",
   zh: '⚠ 此金额仅供参考',
   vi: '⚠ Số tiền này chỉ để tham khảo',
   uz: "⚠ Bu maʼlumotnoma hisob-kitobi",
@@ -104,6 +117,7 @@ const _refEstimateTitle = L10nText(
 const _refEstimateBody = L10nText(
   ko: '근로기준법 기본 공식을 적용한 추정치이며, 정확한 체불액은 근로감독관 조사에서 산정됩니다. 계산기 결과는 진정서로 자동으로 넘어가지 않습니다.',
   en: "This applies the basic formulas of the Labor Standards Act; the confirmed amount is determined by a labor inspector. The result is not carried into the complaint automatically.",
+  tr: "Bu, İş Kanunu'nun temel formüllerini uygular; onaylanan miktar bir iş müfettişi tarafından belirlenir. Sonuç otomatik olarak şikayete aktarılmaz.",
   zh: '此为适用《劳动基准法》基本公式的推算值，确切欠薪额由劳动监督官调查核定。计算结果不会自动带入申诉书。',
   vi: 'Đây là ước tính theo công thức cơ bản của Luật Tiêu chuẩn Lao động, số chính thức do thanh tra lao động xác định. Kết quả không tự chuyển sang đơn.',
   uz: "Bu Mehnat standartlari qonunining asosiy formulalarini qoʻllaydi; tasdiqlangan miqdor mehnat inspektori tomonidan belgilanadi. Natija shikoyatga avtomatik ravishda kiritilmaydi.",
@@ -111,6 +125,7 @@ const _refEstimateBody = L10nText(
 const _aiReasonLabelPos = L10nText(
   ko: '🔍 AI 체불 원인 분석 · 왜 더 받아야 하는지 근거 보기',
   en: '🔍 AI breakdown · why you may be owed more',
+  tr: "🔍 Yapay zeka analizi · neden daha fazla alacağınız olabilir",
   zh: '🔍 AI原因分析·查看应多收依据',
   vi: '🔍 Phân tích AI · vì sao bạn nên nhận thêm',
   uz: "🔍 AI tahlili · nima uchun sizga koʻproq pul toʻlanishi mumkin",
@@ -118,6 +133,7 @@ const _aiReasonLabelPos = L10nText(
 const _aiReasonLabelOther = L10nText(
   ko: '🔍 금액 차이 원인 보기',
   en: '🔍 See why the amounts differ',
+  tr: "🔍 Miktarların neden farklı olduğunu görün",
   zh: '🔍 查看金额差异原因',
   vi: '🔍 Xem lý do chênh lệch',
   uz: "🔍 Miqdorlar nima uchun farq qilishini koʻring",
@@ -125,6 +141,7 @@ const _aiReasonLabelOther = L10nText(
 const _aiReasonTitle = L10nText(
   ko: 'AI 체불 원인 분석',
   en: 'AI-matched reasons',
+  tr: "Yapay zeka eşleşen nedenler",
   zh: 'AI原因分析',
   vi: 'Phân tích nguyên nhân theo AI',
   uz: "AI mos keladigan sabablar",
@@ -132,6 +149,7 @@ const _aiReasonTitle = L10nText(
 const _talkOptionTitle = L10nText(
   ko: '💬 사업주와 대화해보기',
   en: '💬 Try talking to your employer',
+  tr: "💬 İşvereninizle konuşmayı deneyin",
   zh: '💬 先与雇主沟通',
   vi: '💬 Thử nói chuyện với chủ',
   uz: "💬 Ish beruvchingiz bilan gaplashib koʻring",
@@ -139,6 +157,7 @@ const _talkOptionTitle = L10nText(
 const _talkOptionSubtitle = L10nText(
   ko: '노동청 신고 전 사장님과 대화로 원만히 해결을 시도합니다',
   en: 'Try to resolve it directly with your employer before filing',
+  tr: "Şikayette bulunmadan önce doğrudan işvereninizle çözmeye çalışın",
   zh: '在申诉前先尝试与雇主直接沟通解决',
   vi: 'Thử giải quyết trực tiếp với chủ trước khi khiếu nại',
   uz: "Ariza topshirishdan oldin ish beruvchingiz bilan bevosita hal qilishga harakat qiling",
@@ -146,6 +165,7 @@ const _talkOptionSubtitle = L10nText(
 const _fileOptionTitle = L10nText(
   ko: '📄 진정서 작성 계속하기',
   en: '📄 Continue to the complaint form',
+  tr: "📄 Şikayet formuna devam et",
   zh: '📄 继续填写申诉书',
   vi: '📄 Tiếp tục viết đơn khiếu nại',
   uz: "📄 Shikoyat shakliga oʻtish",
@@ -153,6 +173,7 @@ const _fileOptionTitle = L10nText(
 const _fileOptionSubtitle = L10nText(
   ko: '대화로 해결이 어려울 때 공식 서식을 채웁니다',
   en: "If talking doesn't work, fill in the official form",
+  tr: "Konuşmak işe yaramazsa, resmi formu doldurun",
   zh: '若沟通无效，可填写官方表格',
   vi: 'Nếu nói chuyện không hiệu quả, hãy điền mẫu chính thức',
   uz: "Agar gaplashish ish bermasa, rasmiy shaklni toʻldiring",
@@ -160,6 +181,7 @@ const _fileOptionSubtitle = L10nText(
 const _copyLabel = L10nText(
   ko: '📋 문구 복사하기',
   en: '📋 Copy text',
+  tr: "📋 Metni kopyala",
   zh: '📋 复制文本',
   vi: '📋 Sao chép',
   uz: "📋 Matnni nusxalash",
@@ -167,6 +189,7 @@ const _copyLabel = L10nText(
 const _copiedLabel = L10nText(
   ko: '복사했습니다',
   en: 'Copied',
+  tr: "Kopyalandı",
   zh: '已复制',
   vi: 'Đã sao chép',
   uz: "Nusxa olindi",
@@ -174,6 +197,7 @@ const _copiedLabel = L10nText(
 const _usageInfoLabel = L10nText(
   ko: '💡 이용 안내',
   en: '💡 How to use this',
+  tr: "💡 Nasıl kullanılır",
   zh: '💡 使用说明',
   vi: '💡 Hướng dẫn sử dụng',
   uz: "💡 Qanday foydalanish kerak",
@@ -181,6 +205,7 @@ const _usageInfoLabel = L10nText(
 const _usageInfoBody = L10nText(
   ko: '아래 문장을 복사해 사장님이나 담당자에게 카카오톡·문자로 보내보세요.',
   en: 'Copy the message below and send it to your employer.',
+  tr: "Aşağıdaki mesajı kopyalayıp işvereninize gönderin.",
   zh: '复制以下内容发送给雇主或负责人。',
   vi: 'Sao chép câu bên dưới và gửi cho chủ.',
   uz: "Quyidagi xabarni nusxalang va ish beruvchingizga yuboring.",
@@ -188,6 +213,7 @@ const _usageInfoBody = L10nText(
 const _viewTranslatedLabel = L10nText(
   ko: '🌐 내 언어로 보기',
   en: '🌐 View in my language',
+  tr: "🌐 Kendi dilimde görüntüle",
   zh: '🌐 查看我的语言版',
   vi: '🌐 Xem bằng tiếng của tôi',
   uz: "🌐 Oʻz tilimda koʻrish",
@@ -195,6 +221,7 @@ const _viewTranslatedLabel = L10nText(
 const _viewKoreanLabel = L10nText(
   ko: '🇰🇷 한국어로 보기',
   en: '🇰🇷 View in Korean',
+  tr: "🇰🇷 Korece görüntüle",
   zh: '🇰🇷 查看韩语版',
   vi: '🇰🇷 Xem bằng tiếng Hàn',
   uz: "🇰🇷 Koreys tilida koʻrish",
@@ -202,6 +229,7 @@ const _viewKoreanLabel = L10nText(
 const _amtPlaceholder = L10nText(
   ko: '(임금계산기로 먼저 확인해주세요)',
   en: '(please check with the wage calculator first)',
+  tr: "(lütfen önce ücret hesaplayıcı ile kontrol edin)",
   zh: '（请先用工资计算器确认）',
   vi: '(hãy kiểm tra bằng máy tính lương trước)',
   uz: "(iltimos, avval ish haqi kalkulyatori bilan tekshiring)",
@@ -209,6 +237,7 @@ const _amtPlaceholder = L10nText(
 const _dontSignTitle = L10nText(
   ko: '⚠ 돈을 받기 전에는 서명하지 마세요',
   en: '⚠ Do not sign anything before you are paid',
+  tr: "⚠ Ödeme yapılmadan önce hiçbir şey imzalamayın",
   zh: '⚠ 收到钱之前不要签字',
   vi: '⚠ Đừng ký gì trước khi nhận tiền',
   uz: "⚠ Pul toʻlanmasdan oldin hech narsaga imzo chekmang",
@@ -216,6 +245,7 @@ const _dontSignTitle = L10nText(
 const _dontSignBody = L10nText(
   ko: "통장으로 실제 입금받기 전에는 '합의서'나 '진정 취하서'에 절대 서명하지 마세요.",
   en: 'Never sign a settlement or withdrawal letter before the money actually arrives.',
+  tr: "Para gerçekten elinize geçmeden önce asla bir uzlaşma veya feragatname imzalamayın.",
   zh: '在钱实际入账之前，切勿签署"和解书"或"撤诉书"。',
   vi: "Tuyệt đối đừng ký 'thỏa thuận' hay 'đơn rút' trước khi tiền thực sự vào tài khoản.",
   uz: "Pul kelib tushmasdan oldin hech qachon hisob-kitob yoki pul yechib olish xatiga imzo chekmang.",
@@ -332,6 +362,8 @@ class WageCalcSection extends StatelessWidget {
         "Salom, men oʻz maoshimni qonuniy standart boʻyicha hisobladim va taxminan $gapText miqdorida farq topdim. Iltimos, imkon topganingizda biron bir xato yoki kamchilikni tekshira olasizmi? Rahmat.",
       AppLanguage.en =>
         'Hello, I calculated my pay against the legal standard and found a gap of about $gapText. Could you please check for any error or omission when you have a moment? Thank you.',
+      AppLanguage.tr =>
+        "Merhaba, ücretimi yasal standartlara göre hesapladım ve yaklaşık $gapText kadar bir fark buldum. Müsait olduğunuzda herhangi bir hata veya eksiklik olup olmadığını kontrol edebilir misiniz? Teşekkür ederim.",
       AppLanguage.zh =>
         '老板您好，我按法定标准核算了工资，发现约有$gapText的差额。方便的话请您确认一下是否有遗漏或误差，谢谢。',
       AppLanguage.vi =>

@@ -13,6 +13,7 @@ class _S {
   static const title = L10nText(
     ko: '개인정보 처리방침 동의',
     en: 'Privacy Policy Agreement',
+    tr: "Gizlilik Politikası Sözleşmesi",
     zh: '同意隐私政策',
     vi: 'Đồng ý chính sách bảo mật',
     uz: "Maxfiylik siyosati kelishuvi",
@@ -20,6 +21,7 @@ class _S {
   static const heading = L10nText(
     ko: 'Local Bridge가 수집하는 정보',
     en: 'Information Local Bridge collects',
+    tr: "Local Bridge'in topladığı bilgiler",
     zh: 'Local Bridge收集的信息',
     vi: 'Thông tin Local Bridge thu thập',
     uz: "Local Bridge toʻplaydigan maʼlumotlar",
@@ -40,6 +42,7 @@ class _S {
         'Collected information is used only to provide the service (personalized labor guidance, auto-filled forms, etc.) and is retained '
         'until you withdraw your account or request deletion, after which it is destroyed without delay. You may decline consent, but '
         'signing up will not be possible without it.',
+    tr: "Kaydolduğunuzda adınız, e-posta adresiniz, vize durumunuz, uyruğunuz ve tercih ettiğiniz dil toplanır. Şifreniz yalnızca Firebase Authentication tarafından şifrelenir ve güvenli bir şekilde saklanır; Local Bridge sunucularında asla saklanmaz.\n\nToplanan bilgiler yalnızca hizmeti sağlamak (kişiselleştirilmiş iş rehberliği, otomatik doldurulmuş formlar vb.) için kullanılır ve hesabınızı iptal edene veya silme talebinde bulunana kadar saklanır, sonrasında gecikmeksizin imha edilir. Onay vermeyi reddedebilirsiniz, ancak onaysız kayıt olmak mümkün olmayacaktır.",
     zh:
         '注册时我们会收集您的姓名、邮箱、居留资格、国籍和首选语言。'
         '密码由Firebase Authentication加密安全保管，不会存储在Local Bridge服务器上。\n\n'
@@ -55,6 +58,7 @@ class _S {
   static const agreeLabel = L10nText(
     ko: '위 내용을 확인했으며 개인정보 수집·이용에 동의합니다 (필수)',
     en: 'I have read the above and agree to the collection and use of my personal information (required)',
+    tr: "Yukarıdakileri okudum ve kişisel bilgilerimin toplanmasına ve kullanılmasına onay veriyorum (gerekli)",
     zh: '我已阅读以上内容并同意收集和使用我的个人信息（必填）',
     vi: 'Tôi đã đọc nội dung trên và đồng ý việc thu thập, sử dụng thông tin cá nhân (bắt buộc)',
     uz: "Yuqoridagilarni oʻqidim va shaxsiy maʼlumotlarimni yigʻish va ulardan foydalanishga rozilik beraman (majburiy)",
@@ -62,6 +66,7 @@ class _S {
   static const submitLabel = L10nText(
     ko: '가입 완료',
     en: 'Complete sign-up',
+    tr: "Kaydolmayı tamamla",
     zh: '完成注册',
     vi: 'Hoàn tất đăng ký',
     uz: "Roʻyxatdan oʻtishni yakunlash",
@@ -69,6 +74,7 @@ class _S {
   static const errorConsentRequired = L10nText(
     ko: '동의해야 가입을 완료할 수 있어요',
     en: 'You must agree to continue',
+    tr: "Devam etmek için kabul etmelisiniz",
     zh: '需要同意才能完成注册',
     vi: 'Bạn cần đồng ý để hoàn tất đăng ký',
     uz: "Davom etish uchun rozi boʻlishingiz kerak",
@@ -82,6 +88,8 @@ class _S {
             "Bu elektron pochta allaqachon roʻyxatdan oʻtgan. Iltimos, buning oʻrniga tizimga kiring.",
           AppLanguage.en =>
             'This email is already registered. Please log in instead.',
+          AppLanguage.tr =>
+            "Bu e-posta zaten kayıtlı. Lütfen bunun yerine giriş yapın.",
           AppLanguage.zh => '该邮箱已注册，请登录。',
           AppLanguage.vi => 'Email này đã được đăng ký. Vui lòng đăng nhập.',
         };
@@ -90,6 +98,7 @@ class _S {
           AppLanguage.ko => '이메일 형식이 올바르지 않아요.',
           AppLanguage.uz => "Elektron pochta formati notoʻgʻri.",
           AppLanguage.en => 'The email format is invalid.',
+          AppLanguage.tr => "E-posta biçimi geçersiz.",
           AppLanguage.zh => '邮箱格式不正确。',
           AppLanguage.vi => 'Định dạng email không hợp lệ.',
         };
@@ -98,6 +107,7 @@ class _S {
           AppLanguage.ko => '비밀번호가 너무 간단해요.',
           AppLanguage.uz => "Parol juda zaif.",
           AppLanguage.en => 'The password is too weak.',
+          AppLanguage.tr => "Şifre çok zayıf.",
           AppLanguage.zh => '密码强度太弱。',
           AppLanguage.vi => 'Mật khẩu quá yếu.',
         };
@@ -108,6 +118,8 @@ class _S {
             "Roʻyxatdan oʻtishda nimadir notoʻgʻri ketdi. Iltimos, birozdan keyin qayta urinib koʻring.",
           AppLanguage.en =>
             'Something went wrong while signing up. Please try again shortly.',
+          AppLanguage.tr =>
+            "Kaydolurken bir şeyler ters gitti. Lütfen kısa süre içinde tekrar deneyin.",
           AppLanguage.zh => '注册过程中出现问题，请稍后重试。',
           AppLanguage.vi =>
             'Đã xảy ra sự cố khi đăng ký. Vui lòng thử lại sau.',
@@ -201,6 +213,8 @@ class _ConsentScreenState extends State<ConsentScreen> {
               "Roʻyxatdan oʻtishda nimadir notoʻgʻri ketdi. Iltimos, birozdan keyin qayta urinib koʻring.",
             AppLanguage.en =>
               'Something went wrong while signing up. Please try again shortly.',
+            AppLanguage.tr =>
+              "Kaydolurken bir şeyler ters gitti. Lütfen kısa süre içinde tekrar deneyin.",
             AppLanguage.zh => '注册过程中出现问题，请稍后重试。',
             AppLanguage.vi =>
               'Đã xảy ra sự cố khi đăng ký. Vui lòng thử lại sau.',

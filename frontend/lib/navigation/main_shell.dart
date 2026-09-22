@@ -46,6 +46,7 @@ class _TourStrings {
   static const homeTitle = L10nText(
     ko: '🏠 홈',
     en: '🏠 Home',
+    tr: "🏠 Ana Sayfa",
     zh: '🏠 首页',
     vi: '🏠 Trang chủ',
     uz: "🏠 Bosh sahifa",
@@ -53,6 +54,7 @@ class _TourStrings {
   static const homeBody = L10nText(
     ko: '오늘 날씨, 비자 정보, 출퇴근 상태를 한눈에 볼 수 있어요. 앱을 열면 항상 여기서 시작해요.',
     en: "See today's weather, your visa info, and clock-in status at a glance. This is always where the app starts.",
+    tr: "Bugünün hava durumunu, vize bilgilerinizi ve giriş/çıkış durumunuzu bir bakışta görün. Uygulama her zaman buradan başlar.",
     zh: '在这里可以一目了然地查看今天的天气、签证信息和上下班状态。打开应用后总是从这里开始。',
     vi: 'Xem thời tiết hôm nay, thông tin visa và trạng thái chấm công trong nháy mắt. Ứng dụng luôn bắt đầu từ đây.',
     uz: "Bugungi ob-havo, viza maʼlumotlaringiz va ishga kirish/chiqish holatini bir qarashda koʻring. Ilova har doim shu yerdan boshlanadi.",
@@ -61,6 +63,7 @@ class _TourStrings {
   static const navigatorTitle = L10nText(
     ko: '🧭 네비게이터',
     en: '🧭 Navigator',
+    tr: "🧭 Rehber",
     zh: '🧭 导航',
     vi: '🧭 Điều hướng',
     uz: "🧭 Navigator",
@@ -68,6 +71,7 @@ class _TourStrings {
   static const navigatorBody = L10nText(
     ko: '임금체불·산재 처리 중 무엇이 필요한지 고르면 신고·신청까지 단계별로 안내해드려요.',
     en: 'Choose whether you need help with unpaid wages or a workplace injury, and get step-by-step guidance all the way to filing.',
+    tr: "Ödenmemiş ücretler veya iş kazası konusunda yardıma ihtiyacınız olup olmadığını seçin ve başvuruya kadar adım adım rehberlik alın.",
     zh: '选择您需要处理欠薪还是工伤，我们会逐步引导您完成申诉或申请。',
     vi: 'Chọn bạn cần hỗ trợ về nợ lương hay tai nạn lao động, chúng tôi sẽ hướng dẫn từng bước đến khi nộp đơn.',
     uz: "Toʻlanmagan ish haqi yoki ish joyidagi jarohat boʻyicha yordam kerakligini tanlang va arizani topshirishgacha boʻlgan bosqichma-bosqich koʻrsatmalarni oling.",
@@ -76,6 +80,7 @@ class _TourStrings {
   static const calendarTitle = L10nText(
     ko: '📅 근무기록장(캘린더)',
     en: '📅 Work Log (Calendar)',
+    tr: "📅 Çalışma Kaydı (Takvim)",
     zh: '📅 工作记录本（日历）',
     vi: '📅 Nhật ký làm việc (Lịch)',
     uz: "📅 Ish jurnali (Kalendar)",
@@ -83,6 +88,7 @@ class _TourStrings {
   static const calendarBody = L10nText(
     ko: '출퇴근 시각과 위치 인증을 매일 기록해두는 곳이에요. 로그인하면 서버에 안전하게 저장되고, 로그인 없이도 데모로 먼저 체험할 수 있어요.',
     en: "Record your clock-in/out times and location verification here every day. Logging in saves them safely on the server, but you can also try a demo without logging in.",
+    tr: "Giriş/çıkış saatlerinizi ve konum doğrulamanızı her gün buraya kaydedin. Giriş yapmak, bunları sunucuya güvenli bir şekilde kaydeder, ancak giriş yapmadan da bir demo deneyebilirsiniz.",
     zh: '在这里每天记录上下班时间和位置认证。登录后会安全保存在服务器上，不登录也可以先体验演示版。',
     vi: 'Nơi ghi lại giờ vào/ra ca và xác minh vị trí mỗi ngày. Đăng nhập sẽ lưu an toàn lên máy chủ, hoặc bạn có thể dùng thử bản demo mà không cần đăng nhập.',
     uz: "Har kuni ishga kirish/chiqish vaqtlaringizni va joylashuvni tasdiqlashni shu yerda qayd eting. Kirish ularni serverda xavfsiz saqlaydi, lekin siz tizimga kirmasdan ham demo versiyasini sinab koʻrishingiz mumkin.",
@@ -90,6 +96,7 @@ class _TourStrings {
   static const calendarTip = L10nText(
     ko: '매일의 출퇴근·위치 기록은 나중에 임금체불·산재를 신고할 때 가장 확실한 증거가 됩니다.',
     en: 'Your daily clock-in/out and location records become the strongest evidence if you ever need to file an unpaid-wage or workplace-injury claim.',
+    tr: "Günlük giriş/çıkış ve konum kayıtlarınız, ödenmemiş ücret veya iş kazası talebinde bulunmanız gerektiğinde en güçlü kanıt haline gelir.",
     zh: '每天的上下班和位置记录，日后申诉欠薪或工伤时将成为最确凿的证据。',
     vi: 'Bản ghi giờ vào/ra ca và vị trí hằng ngày sẽ là bằng chứng chắc chắn nhất khi bạn cần khiếu nại nợ lương hoặc tai nạn lao động.',
     uz: "Sizning kundalik ishga kirish/chiqish va joylashuv yozuvlaringiz, agar sizga toʻlanmagan ish haqi yoki ish joyidagi jarohat boʻyicha daʼvo qilish kerak boʻlsa, eng kuchli dalilga aylanadi.",
@@ -98,6 +105,7 @@ class _TourStrings {
   static const wageCalcTitle = L10nText(
     ko: '🧮 임금계산기',
     en: '🧮 Wage Calculator',
+    tr: "🧮 Ücret Hesaplayıcı",
     zh: '🧮 工资计算器',
     vi: '🧮 Máy tính lương',
     uz: "🧮 Ish haqi kalkulyatori",
@@ -105,6 +113,7 @@ class _TourStrings {
   static const wageCalcBody = L10nText(
     ko: '시급과 근무시간을 입력하면 최저임금 위반이나 미지급 여부를 스스로 확인할 수 있어요.',
     en: 'Enter your hourly wage and hours worked to check for minimum-wage violations or unpaid amounts yourself.',
+    tr: "Asgari ücret ihlallerini veya ödenmemiş miktarları kendiniz kontrol etmek için saatlik ücretinizi ve çalıştığınız saatleri girin.",
     zh: '输入时薪和工作时间，即可自行确认是否违反最低工资或存在未付工资。',
     vi: 'Nhập mức lương theo giờ và số giờ làm để tự kiểm tra vi phạm lương tối thiểu hoặc khoản chưa được trả.',
     uz: "Minimal ish haqi buzilishlari yoki toʻlanmagan summalarni oʻzingiz tekshirish uchun soatlik ish haqingizni va ishlagan soatlaringizni kiriting.",
@@ -113,6 +122,7 @@ class _TourStrings {
   static const aiTitle = L10nText(
     ko: '💬 AI 가이드',
     en: '💬 AI Guide',
+    tr: "💬 Yapay Zeka Rehberi",
     zh: '💬 AI 助手',
     vi: '💬 Trợ lý AI',
     uz: "💬 AI Yordamchi",
@@ -120,6 +130,7 @@ class _TourStrings {
   static const aiBody = L10nText(
     ko: '임금체불·산재·근로계약 등 궁금한 점을 언제든 물어보세요. 필요하면 가까운 지원기관도 추천해드려요.',
     en: 'Ask anything about unpaid wages, workplace injuries, employment contracts, and more, any time. It can also recommend nearby support organizations if needed.',
+    tr: "Ödenmemiş ücretler, iş kazaları, iş sözleşmeleri ve daha fazlası hakkında istediğiniz zaman her şeyi sorun. Gerekirse yakındaki destek kuruluşlarını da önerebilir.",
     zh: '随时可以咨询拖欠工资、工伤、劳动合同等问题，需要时还会推荐附近的支援机构。',
     vi: 'Hãy hỏi bất cứ lúc nào về nợ lương, tai nạn lao động, hợp đồng lao động và hơn thế nữa. Khi cần, trợ lý cũng sẽ gợi ý các cơ quan hỗ trợ gần bạn.',
     uz: "Toʻlanmagan ish haqi, ish joyidagi jarohatlar, mehnat shartnomalari va boshqalar haqida istalgan vaqtda soʻrang. Agar kerak boʻlsa, yaqin atrofdagi qoʻllab-quvvatlash tashkilotlarini ham tavsiya qilishi mumkin.",
@@ -234,6 +245,7 @@ class _MainShellState extends State<MainShell> {
       label: L10nText(
         ko: '홈',
         en: 'Home',
+        tr: "Ana Sayfa",
         zh: '首页',
         vi: 'Trang chủ',
         uz: "Bosh sahifa",
@@ -247,6 +259,7 @@ class _MainShellState extends State<MainShell> {
       label: L10nText(
         ko: '네비게이터',
         en: 'Navigator',
+        tr: "Rehber",
         zh: '导航',
         vi: 'Điều hướng',
         uz: "Navigator",
@@ -260,6 +273,7 @@ class _MainShellState extends State<MainShell> {
       label: L10nText(
         ko: '캘린더',
         en: 'Calendar',
+        tr: "Takvim",
         zh: '日历',
         vi: 'Lịch',
         uz: "Kalendar",
@@ -270,6 +284,7 @@ class _MainShellState extends State<MainShell> {
       label: L10nText(
         ko: '임금계산기',
         en: 'Wage calc.',
+        tr: "Ücret hesap.",
         zh: '工资计算',
         vi: 'Tính lương',
         uz: "Ish haqi hisob.",
@@ -283,6 +298,7 @@ class _MainShellState extends State<MainShell> {
       label: L10nText(
         ko: '설정',
         en: 'Settings',
+        tr: "Ayarlar",
         zh: '设置',
         vi: 'Cài đặt',
         uz: "Sozlamalar",
@@ -501,6 +517,7 @@ class _MainShellState extends State<MainShell> {
 const _aiBubbleLabel = L10nText(
   ko: 'AI 가이드',
   en: 'AI Guide',
+  tr: "Yapay Zeka Rehberi",
   zh: 'AI引导',
   vi: 'Trợ lý AI',
   uz: "AI Yordamchi",

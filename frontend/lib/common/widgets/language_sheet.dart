@@ -8,6 +8,7 @@ import '../../theme/app_colors.dart';
 const _title = L10nText(
   ko: '언어 선택',
   en: 'Choose a language',
+  tr: "Bir dil seçin",
   zh: '选择语言',
   vi: 'Chọn ngôn ngữ',
   uz: "Tilni tanlang",
@@ -15,6 +16,7 @@ const _title = L10nText(
 const _subtitle = L10nText(
   ko: '어떤 언어를 골라도 한국어 표기는 함께 보여드립니다.',
   en: 'Whichever language you pick, the Korean term stays below it',
+  tr: "Hangi dili seçerseniz seçin, Korece terim altında yer alır",
   zh: '无论选择哪种语言，都会一并显示韩语原文。',
   vi: 'Dù chọn ngôn ngữ nào, tên tiếng Hàn vẫn hiển thị bên dưới',
   uz: "Qaysi tilni tanlamang, koreyscha atama uning ostida qoladi",

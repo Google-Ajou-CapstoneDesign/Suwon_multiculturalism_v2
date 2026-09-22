@@ -7,14 +7,15 @@ import 'wage_form_widgets.dart';
 import 'wage_help.dart';
 
 class _S {
-  const _S(this.ko, this.en, this.zh, this.vi, this.uz);
+  const _S(this.ko, this.en, this.zh, this.vi, this.uz, this.tr);
   final String ko;
   final String en;
   final String zh;
   final String vi;
   final String uz;
+  final String tr;
 
-  L10nText get t => L10nText(ko: ko, en: en, zh: zh, vi: vi, uz: uz);
+  L10nText get t => L10nText(ko: ko, en: en, zh: zh, vi: vi, uz: uz, tr: tr);
   String of(AppLanguage lang) => t.of(lang);
 }
 
@@ -24,6 +25,7 @@ const _watermark = _S(
   '⚠ 基于输入值的估算值',
   '⚠ Ước tính dựa trên giá trị đã nhập',
   "⚠ Sizning maʼlumotlaringiz asosida taxmin",
+  "⚠ Girdilerinize göre tahmin",
 );
 const _basePay = _S(
   '기본급',
@@ -31,6 +33,7 @@ const _basePay = _S(
   '基本工资',
   'Lương cơ bản',
   "Asosiy ish haqi",
+  "Temel ücret",
 );
 const _weeklyAllowance = _S(
   '주휴수당',
@@ -38,14 +41,23 @@ const _weeklyAllowance = _S(
   '周休津贴',
   'Phụ cấp ngày nghỉ có lương hàng tuần',
   "Haftalik haq toʻlanadigan taʼtil nafaqasi",
+  "Haftalık ücretli tatil ödeneği",
 );
-const _notApplicable = _S('해당없음', 'N/A', '不适用', 'Không áp dụng', "Mavjud emas");
+const _notApplicable = _S(
+  '해당없음',
+  'N/A',
+  '不适用',
+  'Không áp dụng',
+  "Mavjud emas",
+  "Yok",
+);
 const _overtimeAllowance = _S(
   '연장근로수당',
   'Overtime allowance',
   '延长劳动津贴',
   'Phụ cấp làm thêm giờ',
   "Ishdan tashqari vaqt uchun nafaqa",
+  "Fazla mesai ödeneği",
 );
 const _nightAllowance = _S(
   '야간근로수당',
@@ -53,6 +65,7 @@ const _nightAllowance = _S(
   '夜间劳动津贴',
   'Phụ cấp làm việc ban đêm',
   "Tungi ish uchun nafaqa",
+  "Gece çalışması ödeneği",
 );
 const _holidayAllowance = _S(
   '휴일근로수당',
@@ -60,6 +73,7 @@ const _holidayAllowance = _S(
   '假日劳动津贴',
   'Phụ cấp làm việc ngày lễ',
   "Bayram kunlari ishlaganlik uchun nafaqa",
+  "Tatil çalışması ödeneği",
 );
 const _grossTotal = _S(
   '세전 총액',
@@ -67,6 +81,7 @@ const _grossTotal = _S(
   '税前总额',
   'Tổng trước thuế',
   "Soliqdan oldingi jami",
+  "Vergi öncesi toplam",
 );
 const _ifFourInsurance = _S(
   '🛡 4대보험으로 공제된다면',
@@ -74,6 +89,7 @@ const _ifFourInsurance = _S(
   '🛡 如果按四大保险扣除',
   '🛡 Nếu khấu trừ theo 4 loại bảo hiểm',
   "🛡 Agar 4 ta asosiy sugʻurta orqali ushlab qolingan boʻlsa",
+  "🛡 4 büyük sigorta aracılığıyla kesilirse",
 );
 const _roomDeduction = _S(
   '숙식비 공제',
@@ -81,6 +97,7 @@ const _roomDeduction = _S(
   '食宿费扣除',
   'Khấu trừ tiền ăn ở',
   "Yotoqxona va ovqatlanish uchun chegirma",
+  "Oda ve yemek kesintisi",
 );
 const _expectedNet = _S(
   '예상 실수령액',
@@ -88,6 +105,7 @@ const _expectedNet = _S(
   '预计实际到手金额',
   'Số tiền thực nhận dự kiến',
   "Kutilayotgan sof ish haqi",
+  "Beklenen net maaş",
 );
 const _ifBizTax = _S(
   '🧾 3.3% 사업소득으로 공제된다면',
@@ -95,6 +113,7 @@ const _ifBizTax = _S(
   '🧾 如果按3.3%事业所得税扣除',
   '🧾 Nếu khấu trừ 3.3% thuế thu nhập kinh doanh',
   "🧾 Agar 3.3% biznes daromad soligʻi sifatida ushlab qolingan boʻlsa",
+  "🧾 %3,3 işletme gelir vergisi olarak kesilirse",
 );
 const _bizTaxDeduction = _S(
   '세금 공제 (사업소득세 3.3%)',
@@ -102,6 +121,7 @@ const _bizTaxDeduction = _S(
   '税款扣除（事业所得税3.3%）',
   'Khấu trừ thuế (thuế thu nhập kinh doanh 3.3%)',
   "Soliq chegirmasi (3.3% biznes daromad soligʻi)",
+  "Vergi kesintisi (%3,3 işletme gelir vergisi)",
 );
 const _belowMinTitle = _S(
   '⚠ 최저임금보다 낮습니다',
@@ -109,6 +129,7 @@ const _belowMinTitle = _S(
   '⚠ 低于最低工资',
   '⚠ Thấp hơn lương tối thiểu',
   "⚠ Minimal ish haqidan past",
+  "⚠ Asgari ücretin altında",
 );
 const _similarAmount = _S(
   '입금액이 계산 결과와 비슷합니다',
@@ -116,6 +137,7 @@ const _similarAmount = _S(
   '入账金额与计算结果相近',
   'Số tiền nhận được gần giống với kết quả tính toán',
   "Depozitga qoʻyilgan summa hisoblangan natijaga oʻxshash",
+  "Yatan miktar hesaplanan sonuca benzer",
 );
 const _lessThanExpected = _S(
   '받아야 할 금액보다 적게 들어왔습니다',
@@ -123,6 +145,7 @@ const _lessThanExpected = _S(
   '收到的金额少于应得金额',
   'Số tiền nhận được ít hơn số tiền đáng lẽ phải nhận',
   "Siz olishingiz kerak boʻlganidan kamroq oldingiz",
+  "Almanız gerekenden daha az aldınız",
 );
 const _moreThanCalculated = _S(
   '계산 결과보다 많이 들어왔습니다',
@@ -130,14 +153,16 @@ const _moreThanCalculated = _S(
   '收到的金额多于计算结果',
   'Số tiền nhận được nhiều hơn kết quả tính toán',
   "Siz hisoblangan natijadan koʻproq oldingiz",
+  "Hesaplanan sonuçtan daha fazlasını aldınız",
 );
-const _gapLabel = _S('차액', 'Difference', '差额', 'Chênh lệch', "Farq");
+const _gapLabel = _S('차액', 'Difference', '差额', 'Chênh lệch', "Farq", "Fark");
 const _aiDiagnosisPositive = _S(
   '🤖 왜 더 받아야 하는지 진단 보기',
   '🤖 See diagnosis on why you should receive more',
   '🤖 查看诊断：为什么应该多收到',
   '🤖 Xem chẩn đoán về lý do bạn nên nhận nhiều hơn',
   "🤖 Nima uchun koʻproq olishingiz kerakligi haqida diagnostikani koʻring",
+  "🤖 Neden daha fazlasını almanız gerektiğine dair teşhisi görün",
 );
 const _aiDiagnosisNegative = _S(
   '🤖 왜 차이가 나는지 진단 보기',
@@ -145,6 +170,7 @@ const _aiDiagnosisNegative = _S(
   '🤖 查看诊断：为什么会有差异',
   '🤖 Xem chẩn đoán về lý do có sự chênh lệch',
   "🤖 Nima uchun farq borligi haqida diagnostikani koʻring",
+  "🤖 Neden bir fark olduğuna dair teşhisi görün",
 );
 const _aiDiagnosisTitle = _S(
   '🤖 AI 맞춤 진단',
@@ -152,6 +178,7 @@ const _aiDiagnosisTitle = _S(
   '🤖 AI定制诊断',
   '🤖 Chẩn đoán AI tùy chỉnh',
   "🤖 AI Maxsus Diagnostika",
+  "🤖 Yapay Zeka Özel Teşhisi",
 );
 const _autoMapComplaint = _S(
   '📄 진정서에 내 기록 자동 매핑하기',
@@ -159,6 +186,7 @@ const _autoMapComplaint = _S(
   '📄 自动将我的记录映射到申诉书',
   '📄 Tự động điền hồ sơ của tôi vào đơn tố cáo',
   "📄 Shikoyatga yozuvlarimni avtomatik toʻldirish",
+  "📄 Kayıtlarımı şikayete otomatik doldur",
 );
 const _findNearbyOrgs = _S(
   '📍 내 근처 관할 기관 찾기',
@@ -166,6 +194,7 @@ const _findNearbyOrgs = _S(
   '📍 查找我附近的管辖机构',
   '📍 Tìm cơ quan quản lý gần tôi',
   "📍 Yaqin atrofdagi hokimiyatlarni topish",
+  "📍 Yakındaki yetkilileri bul",
 );
 const _severanceHeader = _S(
   '🏆 예상 퇴직금 (별도)',
@@ -173,6 +202,7 @@ const _severanceHeader = _S(
   '🏆 预计退休金（另计）',
   '🏆 Trợ cấp thôi việc dự kiến (tính riêng)',
   "🏆 Taxminiy ishdan boʻshatish nafaqasi (alohida)",
+  "🏆 Tahmini kıdem tazminatı (ayrı)",
 );
 const _daysEmployedSuffix = _S(
   '일 재직',
@@ -180,6 +210,7 @@ const _daysEmployedSuffix = _S(
   '天在职',
   ' ngày làm việc',
   " ish kunlari",
+  " çalışılan gün",
 );
 const _severanceNote = _S(
   '임금과 별개로, 퇴직할 때 한 번 받는 돈입니다.',
@@ -187,6 +218,7 @@ const _severanceNote = _S(
   '与工资无关，是离职时一次性领取的钱。',
   'Đây là khoản tiền nhận một lần khi nghỉ việc, tách biệt với lương.',
   "Bu ishdan boʻshatilganda olinadigan bir martalik toʻlov boʻlib, ish haqidan alohida hisoblanadi.",
+  "Bu, istifa üzerine alınan, ücretten ayrı, tek seferlik bir ödemedir.",
 );
 const _severanceExplainTitle = _S(
   '💬 퇴직금, 왜 그리고 얼마나 받아야 하는지 보기',
@@ -194,6 +226,7 @@ const _severanceExplainTitle = _S(
   '💬 查看为什么以及应获得多少退休金',
   '💬 Xem lý do và số tiền trợ cấp thôi việc bạn nên nhận',
   "💬 Nima uchun va qancha ishdan boʻshatish nafaqasi olishingiz kerakligini koʻring",
+  "💬 Neden ve ne kadar kıdem tazminatı almanız gerektiğini görün",
 );
 const _severanceNotEligibleTitle = _S(
   '예상 퇴직금 (현재는 요건 미충족)',
@@ -201,6 +234,7 @@ const _severanceNotEligibleTitle = _S(
   '预计退休金（目前不符合条件）',
   'Trợ cấp thôi việc dự kiến (hiện chưa đủ điều kiện)',
   "Taxminiy ishdan boʻshatish nafaqasi (talablar hali bajarilmagan)",
+  "Tahmini kıdem tazminatı (gereksinimler henüz karşılanmadı)",
 );
 const _formulaDetailTitle = _S(
   '📐 법률 수식 상세보기',
@@ -208,6 +242,7 @@ const _formulaDetailTitle = _S(
   '📐 查看详细法律公式',
   '📐 Xem chi tiết công thức pháp lý',
   "📐 Batafsil huquqiy formulalarni koʻrish",
+  "📐 Detaylı yasal formülleri görüntüle",
 );
 const _formulaHourly = _S(
   '• 통상시급: (월급/연봉) ÷ 월 유급시간(주 40시간 기준 209시간 등)',
@@ -215,6 +250,7 @@ const _formulaHourly = _S(
   '• 通常时薪：（月薪/年薪）÷ 每月有薪时间（以每周40小时为准约209小时等）',
   '• Lương giờ thông thường: (lương tháng/năm) ÷ số giờ có lương trong tháng (ví dụ 209 giờ với tuần 40 giờ)',
   "• Oddiy soatlik ish haqi: (oylik/yillik ish haqi) ÷ oylik haq toʻlanadigan soatlar (masalan, 40 soatlik hafta uchun 209 soat)",
+  "• Normal saatlik ücret: (aylık/yıllık maaş) ÷ aylık ödenen saatler (örn. 40 saatlik hafta için 209 saat)",
 );
 const _formulaWeekly = _S(
   '• 주휴수당: (주 소정근로시간 ÷ 40) × 8h × 통상시급 × 4.345주',
@@ -222,6 +258,7 @@ const _formulaWeekly = _S(
   '• 周休津贴：（每周约定工作时间 ÷ 40）× 8小时 × 通常时薪 × 4.345周',
   '• Phụ cấp ngày nghỉ có lương hàng tuần: (giờ làm việc theo hợp đồng hàng tuần ÷ 40) × 8h × lương giờ thông thường × 4.345 tuần',
   "• Haftalik haq toʻlanadigan taʼtil nafaqasi: (haftalik shartnoma soatlari ÷ 40) × 8 soat × oddiy soatlik ish haqi × 4.345 hafta",
+  "• Haftalık ücretli tatil ödeneği: (haftalık sözleşmeli saatler ÷ 40) × 8s × normal saatlik ücret × 4.345 hafta",
 );
 const _formulaExtra = _S(
   '• 가산수당: 5인 이상 사업장 연장 1.5배 · 야간 0.5배(가산분) · 휴일 1.5배',
@@ -229,6 +266,7 @@ const _formulaExtra = _S(
   '• 加成津贴：5人以上企业延长劳动1.5倍·夜间0.5倍（加成部分）·假日1.5倍',
   '• Phụ cấp thêm: 1.5 lần làm thêm giờ, 0.5 lần ban đêm (phần thêm), 1.5 lần ngày lễ tại nơi có từ 5 nhân viên trở lên',
   "• Qoʻshimcha toʻlov: 5+ xodimga ega ish joylarida 1.5× ishdan tashqari vaqt, 0.5× tun (qoʻshimcha qism), 1.5× bayram",
+  "• Ek ödeme: 1.5× fazla mesai, 0.5× gece (ek kısım), 5+ çalışanı olan işyerlerinde 1.5× tatil",
 );
 const _formulaSeverance = _S(
   '• 퇴직금: 1일 평균임금 × 30일 × (재직일수 ÷ 365), 평균임금이 통상임금보다 낮으면 통상임금 적용',
@@ -236,6 +274,7 @@ const _formulaSeverance = _S(
   '• 退休金：日平均工资 × 30天 ×（在职天数 ÷ 365），若平均工资低于通常工资则适用通常工资',
   '• Trợ cấp thôi việc: lương bình quân 1 ngày × 30 ngày × (số ngày làm việc ÷ 365); nếu lương bình quân thấp hơn lương thông thường thì áp dụng lương thông thường',
   "• Ishdan boʻshatish nafaqasi: oʻrtacha kunlik ish haqi × 30 kun × (ish kunlari ÷ 365); agar oʻrtacha ish haqi oddiy ish haqidan past boʻlsa, oddiy ish haqi qoʻllaniladi",
+  "• Kıdem tazminatı: ortalama günlük ücret × 30 gün × (çalışılan gün sayısı ÷ 365); eğer ortalama ücret normal ücretten düşükse, normal ücret uygulanır",
 );
 const _legalNoticeTitle = _S(
   '⚠ 이 금액은 참고용 예상액입니다 (법적 고지)',
@@ -243,6 +282,7 @@ const _legalNoticeTitle = _S(
   '⚠ 此金额仅为参考估算值（法律声明）',
   '⚠ Số tiền này chỉ là ước tính tham khảo (thông báo pháp lý)',
   "⚠ Bu summa maʼlumotnoma hisobi (huquqiy ogohlantirish)",
+  "⚠ Bu miktar bir referans tahmindir (yasal uyarı)",
 );
 const _legalNoticeBody = _S(
   '본 계산기는 근로기준법 표준 공식을 적용한 추정치입니다. 사업장의 특수 근로조건에 따라 차이가 발생할 수 있으며, 법적 확정 효력을 갖지 않습니다. 정확한 체불액은 근로감독관 조사에서 산정됩니다.',
@@ -250,6 +290,7 @@ const _legalNoticeBody = _S(
   '本计算器是应用《劳动基准法》标准公式得出的估算值。根据工作场所的特殊劳动条件可能会有所不同，不具有法律确定效力。准确的拖欠金额将在劳动监督官调查中确定。',
   'Máy tính này đưa ra ước tính dựa trên công thức tiêu chuẩn của Luật Tiêu chuẩn Lao động. Số tiền thực tế có thể khác nhau tùy theo điều kiện lao động đặc thù của nơi làm việc và không có hiệu lực pháp lý xác định. Số tiền nợ lương chính xác sẽ được xác định qua điều tra của thanh tra lao động.',
   "Bu kalkulyator Mehnat standartlari toʻgʻrisidagi qonunning standart formulalari asosida hisob-kitobni taqdim etadi. Haqiqiy miqdorlar ish joyining oʻziga xos sharoitlariga qarab farq qilishi mumkin va bu qonuniy kuchga ega emas. Toʻlanmagan aniq miqdor mehnat inspektori tomonidan tekshiruv orqali aniqlanadi.",
+  "Bu hesaplayıcı, standart İş Kanunu formüllerine dayanarak bir tahmin sunar. Gerçek miktarlar, işyerinin özel koşullarına göre farklılık gösterebilir ve bunun yasal bağlayıcılığı yoktur. Tam ödenmemiş miktar, bir iş müfettişi tarafından yapılan soruşturma ile belirlenir.",
 );
 
 String _formatWonOrText(num value, _S zeroText, AppLanguage lang) =>
@@ -782,6 +823,7 @@ class WageResultCard extends StatelessWidget {
     AppLanguage.ko => '계산 결과',
     AppLanguage.uz => "Hisoblash natijasi",
     AppLanguage.en => 'Calculation result',
+    AppLanguage.tr => "Hesaplama sonucu",
     AppLanguage.zh => '计算结果',
     AppLanguage.vi => 'Kết quả tính toán',
   };
@@ -790,6 +832,7 @@ class WageResultCard extends StatelessWidget {
     AppLanguage.ko => '$wageCalcYear년 고시',
     AppLanguage.uz => "$wageCalcYear eslatma",
     AppLanguage.en => '$wageCalcYear notice',
+    AppLanguage.tr => "$wageCalcYear bildirimi",
     AppLanguage.zh => '$wageCalcYear年公告',
     AppLanguage.vi => 'Công bố năm $wageCalcYear',
   };
@@ -803,6 +846,8 @@ class WageResultCard extends StatelessWidget {
         "Qoʻllanilgan oddiy soatlik ish haqi $hourly, $wageCalcYear minimal ish haqi $mw dan past.",
       AppLanguage.en =>
         'The applied ordinary hourly wage of $hourly is below the $wageCalcYear minimum wage of $mw.',
+      AppLanguage.tr =>
+        "Uygulanan normal saatlik ücret olan $hourly, $wageCalcYear asgari ücreti olan $mw'nin altındadır.",
       AppLanguage.zh => '适用的通常时薪 $hourly 低于 $wageCalcYear 年最低工资 $mw。',
       AppLanguage.vi =>
         'Lương giờ thông thường áp dụng $hourly thấp hơn lương tối thiểu năm $wageCalcYear là $mw.',
@@ -817,6 +862,8 @@ class WageResultCard extends StatelessWidget {
         "• Soliq: 4 ta asosiy sugʻurtaning xodim ulushining taxminan $pct%i yoki 3,3% biznes daromad soligʻi",
       AppLanguage.en =>
         '• Tax: about $pct% employee share of the 4 major insurances, or 3.3% business income tax',
+      AppLanguage.tr =>
+        "• Vergi: 4 büyük sigortanın yaklaşık %$pct çalışan payı veya %3,3 işletme gelir vergisi",
       AppLanguage.zh => '• 税款：四大保险员工负担约$pct%，或事业所得税3.3%',
       AppLanguage.vi =>
         '• Thuế: khoảng $pct% phần người lao động đóng trong 4 loại bảo hiểm, hoặc thuế thu nhập kinh doanh 3.3%',

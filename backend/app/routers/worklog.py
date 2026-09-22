@@ -17,7 +17,14 @@ def list_days(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="month는 1~12 사이여야 합니다."
         )
-    return WorklogMonthResponse(days=worklog_service.list_month(user.uid, year, month))
+    if not 1 <= year <= 9998:
+        raise HTTPException(status_code=400, detail="year는 1~9998 사이여야 합니다.")
+    try:
+        return WorklogMonthResponse(days=worklog_service.list_month(user.uid, year, month))
+    except worklog_service.WorklogReadError as exc:
+        raise HTTPException(
+            status_code=503, detail="근무기록을 불러올 수 없습니다. 잠시 후 다시 시도하세요."
+        ) from exc
 
 
 @router.put("/days/{day}", response_model=WorklogDay)

@@ -13,6 +13,7 @@ class WageNavigatorScreen extends StatelessWidget {
       title: L10nText(
         ko: '임금체불 진정',
         en: 'Wage Theft Complaint',
+        tr: "Ücret Hırsızlığı Şikayeti",
         zh: '欠薪申诉',
         vi: 'Tố cáo nợ lương',
         uz: "Ish haqi oʻgʻirligi boʻyicha shikoyat",

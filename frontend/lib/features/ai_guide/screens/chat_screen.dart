@@ -19,6 +19,7 @@ class _ChatStrings {
   static const title = L10nText(
     ko: 'AI 가이드',
     en: 'AI Guide',
+    tr: "Yapay Zeka Rehberi",
     zh: 'AI引导',
     vi: 'Trợ lý AI',
     uz: "AI Yordamchi",
@@ -26,6 +27,7 @@ class _ChatStrings {
   static const close = L10nText(
     ko: '닫기',
     en: 'Close',
+    tr: "Kapat",
     zh: '关闭',
     vi: 'Đóng',
     uz: "Yopish",
@@ -33,6 +35,7 @@ class _ChatStrings {
   static const emptyTitle = L10nText(
     ko: '무엇이든 물어보세요',
     en: 'Ask me anything',
+    tr: "Bana her şeyi sor",
     zh: '请随时提问',
     vi: 'Hỏi bất cứ điều gì',
     uz: "Mendan istalgan narsani soʻrang",
@@ -40,6 +43,7 @@ class _ChatStrings {
   static const emptySubtitle = L10nText(
     ko: '임금·체불, 산업재해, 근로계약서 등 노동 관련 궁금한 점을 편하게 물어보세요.',
     en: 'Feel free to ask about wages, unpaid pay, workplace injuries, employment contracts, and other labor topics.',
+    tr: "Ücretler, ödenmemiş maaşlar, iş kazaları, iş sözleşmeleri ve diğer işçilik konuları hakkında soru sormaktan çekinmeyin.",
     zh: '关于工资、欠薪、工伤、劳动合同等劳动相关问题，请随时提问。',
     vi: 'Hãy thoải mái hỏi về lương, nợ lương, tai nạn lao động, hợp đồng lao động và các vấn đề lao động khác.',
     uz: "Ish haqi, toʻlanmagan ish haqi, ish joyidagi jarohatlar, mehnat shartnomalari va boshqa mehnat mavzulari haqida bemalol soʻrang.",
@@ -47,6 +51,7 @@ class _ChatStrings {
   static const inputHint = L10nText(
     ko: '메시지를 입력하세요',
     en: 'Type a message',
+    tr: "Bir mesaj yazın",
     zh: '请输入消息',
     vi: 'Nhập tin nhắn',
     uz: "Xabar yozing",
@@ -57,6 +62,7 @@ class _ChatStrings {
   static const suggestWage = L10nText(
     ko: '임금체불 진정과정 알려줘',
     en: 'How do I file an unpaid wage complaint?',
+    tr: "Ödenmemiş ücret şikayetini nasıl yaparım?",
     zh: '欠薪申诉的流程是怎样的？',
     vi: 'Quy trình khiếu nại nợ lương như thế nào?',
     uz: "Toʻlanmagan ish haqi boʻyicha shikoyat qanday beriladi?",
@@ -64,6 +70,7 @@ class _ChatStrings {
   static const suggestInjury = L10nText(
     ko: '산재처리 신청과정 알려줘',
     en: 'How do I file a workplace injury claim?',
+    tr: "İş kazası talebini nasıl yaparım?",
     zh: '工伤认定的申请流程是怎样的？',
     vi: 'Quy trình yêu cầu bồi thường tai nạn lao động ra sao?',
     uz: "Ish joyidagi jarohat boʻyicha ariza qanday topshiriladi?",
@@ -71,6 +78,7 @@ class _ChatStrings {
   static const suggestOrg = L10nText(
     ko: '근처에 상담 가능한 기관 알려줘',
     en: 'Which support centers near me can help?',
+    tr: "Yakınımdaki hangi destek merkezleri yardımcı olabilir?",
     zh: '附近有哪些可以咨询的机构？',
     vi: 'Gần đây có cơ quan nào có thể tư vấn?',
     uz: "Yaqin atrofda qaysi maslahat markazlari yordam bera oladi?",
@@ -78,6 +86,7 @@ class _ChatStrings {
   static const serverError = L10nText(
     ko: '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.',
     en: 'Could not connect to the server. Please try again shortly.',
+    tr: "Sunucuya bağlanılamadı. Lütfen kısa süre sonra tekrar deneyin.",
     zh: '无法连接服务器，请稍后重试。',
     vi: 'Không thể kết nối máy chủ. Vui lòng thử lại sau.',
     uz: "Serverga ulanib boʻlmadi. Iltimos, birozdan keyin qayta urinib koʻring.",
@@ -85,6 +94,7 @@ class _ChatStrings {
   static const wait = L10nText(
     ko: '{seconds}초 후 다시 전송할 수 있어요.',
     en: 'You can send again in {seconds} seconds.',
+    tr: "{seconds} saniye içinde tekrar gönderebilirsiniz.",
     zh: '{seconds}秒后可以再次发送。',
     vi: 'Bạn có thể gửi lại sau {seconds} giây.',
     uz: '{seconds} soniyadan keyin yana yuborishingiz mumkin.',
@@ -92,6 +102,7 @@ class _ChatStrings {
   static const daily = L10nText(
     ko: '오늘의 AI 이용 한도에 도달했어요. 한국 시간 자정에 초기화됩니다.',
     en: 'You have reached your daily AI limit. It resets at midnight in Korea.',
+    tr: "Günlük yapay zeka limitinize ulaştınız. Kore saatiyle gece yarısı sıfırlanacaktır.",
     zh: '已达到今日AI使用上限，将在韩国时间午夜重置。',
     vi: 'Bạn đã đạt giới hạn AI hôm nay. Giới hạn đặt lại lúc nửa đêm giờ Hàn Quốc.',
     uz: 'Bugungi AI limitiga yetdingiz. Limit Koreya vaqti bilan yarim tunda yangilanadi.',
@@ -99,6 +110,7 @@ class _ChatStrings {
   static const tooLong = L10nText(
     ko: '메시지는 2,000자 이내로 입력해 주세요.',
     en: 'Please keep your message within 2,000 characters.',
+    tr: "Lütfen mesajınızı 2.000 karakterle sınırlayın.",
     zh: '消息请勿超过2,000个字符。',
     vi: 'Vui lòng nhập tin nhắn không quá 2.000 ký tự.',
     uz: 'Xabaringiz 2 000 belgidan oshmasin.',

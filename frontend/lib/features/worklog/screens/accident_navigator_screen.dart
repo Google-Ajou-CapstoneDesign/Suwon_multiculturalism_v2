@@ -13,6 +13,7 @@ class AccidentNavigatorScreen extends StatelessWidget {
       title: L10nText(
         ko: '산재처리 신청',
         en: 'Workplace Injury Claim',
+        tr: "İşyeri Yaralanması Talebi",
         zh: '工伤处理申请',
         vi: 'Yêu cầu xử lý tai nạn lao động',
         uz: "Ish joyidagi jarohat boʻyicha daʼvo",

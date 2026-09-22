@@ -55,6 +55,7 @@ class _S {
   static const skip = L10nText(
     ko: '가이드 종료',
     en: 'Skip guide',
+    tr: "Kılavuzu atla",
     zh: '结束引导',
     vi: 'Bỏ qua hướng dẫn',
     uz: "Qoʻllanmani oʻtkazib yuborish",
@@ -62,6 +63,7 @@ class _S {
   static const next = L10nText(
     ko: '다음',
     en: 'Next',
+    tr: "İleri",
     zh: '下一步',
     vi: 'Tiếp',
     uz: "Keyingi",
@@ -69,6 +71,7 @@ class _S {
   static const prev = L10nText(
     ko: '이전',
     en: 'Back',
+    tr: "Geri",
     zh: '上一步',
     vi: 'Trước',
     uz: "Orqaga",
@@ -76,6 +79,7 @@ class _S {
   static const done = L10nText(
     ko: '시작하기',
     en: 'Got it',
+    tr: "Anladım",
     zh: '开始使用',
     vi: 'Bắt đầu',
     uz: "Tushundim",

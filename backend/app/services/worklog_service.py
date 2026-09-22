@@ -1,7 +1,7 @@
 """Firestore worklogs/{worklogId} 근무기록 저장·조회.
 
-user_service.py/history_service.py와 동일한 폴백 원칙: Firebase 자격증명이
-없으면(로컬 개발, CI) 조용히 None/빈 값으로 동작한다.
+개별 저장·조회는 Firebase 미설정 시 None으로 반환한다.
+월별 조회는 증빙 출력에 사용되므로 조회 실패를 빈 기록으로 반환하지 않는다.
 
 문서 ID는 auto-id 대신 `{uid}_{date}`로 결정론적으로 만든다 — 같은 날짜를
 여러 번 PUT해도 문서가 중복 생성되지 않고 그대로 갱신된다. DB/firestore.rules의
@@ -20,6 +20,11 @@ from ..schemas.worklog import WorklogDay, WorklogDayUpsert
 logger = logging.getLogger(__name__)
 
 _COLLECTION = "worklogs"
+
+
+class WorklogReadError(RuntimeError):
+    """조회 실패를 실제 기록 없음과 구분한다(증빙 문서 출력 포함)."""
+
 
 # 근로기준법상 1일 법정근로 8시간 초과분을 연장근로로 본다 — 이 판정은
 # 사실(근무 시각) 그대로에서 나오는 산수이지 LLM/서버가 임의로 내리는
@@ -129,10 +134,10 @@ def get_day(uid: str, day: date) -> Optional[WorklogDay]:
 
 
 def list_month(uid: str, year: int, month: int) -> List[WorklogDay]:
-    db = _client()
-    if db is None:
-        return []
     try:
+        db = _client()
+        if db is None:
+            raise WorklogReadError("Firestore is unavailable")
         start = datetime(year, month, 1, tzinfo=timezone.utc)
         end = (
             datetime(year + 1, 1, 1, tzinfo=timezone.utc)
@@ -151,7 +156,7 @@ def list_month(uid: str, year: int, month: int) -> List[WorklogDay]:
     except Exception as exc:
         log_exception_summary(logger, "근무기록 월별 조회 실패", exc)
         logger.exception("근무기록 월별 조회 전체 트레이스백")
-        return []
+        raise WorklogReadError("Could not read worklogs") from exc
 
 
 def append_evidence_file(uid: str, day: date, file_id: str) -> None:

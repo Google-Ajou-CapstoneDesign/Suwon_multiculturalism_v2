@@ -11,11 +11,13 @@ import '../widgets/flow_tracker.dart';
 import '../widgets/form_editor.dart';
 import '../widgets/injury_guide_section.dart';
 import '../widgets/pdf_actions_section.dart';
+import '../widgets/work_log_export_section.dart';
 import '../widgets/wage_calc_section.dart';
 
 const _stepLabel = L10nText(
   ko: '이 단계는',
   en: 'This stage',
+  tr: "Bu aşama",
   zh: '这个阶段',
   vi: 'Giai đoạn này',
   uz: "Ushbu bosqich",
@@ -23,6 +25,7 @@ const _stepLabel = L10nText(
 const _documentsLabel = L10nText(
   ko: '필요한 서류',
   en: 'Documents needed',
+  tr: "Gerekli belgeler",
   zh: '所需文件',
   vi: 'Giấy tờ cần thiết',
   uz: "Kerakli hujjatlar",
@@ -30,6 +33,7 @@ const _documentsLabel = L10nText(
 const _watchOutLabel = L10nText(
   ko: '주의할 점',
   en: 'Things to watch out for',
+  tr: "Dikkat edilmesi gerekenler",
   zh: '注意事项',
   vi: 'Điều cần lưu ý',
   uz: "Eʼtibor berish kerak boʻlgan narsalar",
@@ -37,6 +41,7 @@ const _watchOutLabel = L10nText(
 const _homeLabel = L10nText(
   ko: '홈으로 돌아가기',
   en: 'Back to home',
+  tr: "Ana sayfaya dön",
   zh: '返回首页',
   vi: 'Quay về trang chủ',
   uz: "Bosh sahifaga qaytish",
@@ -44,6 +49,7 @@ const _homeLabel = L10nText(
 const _nextLabel = L10nText(
   ko: '다음',
   en: 'Next',
+  tr: "İleri",
   zh: '下一步',
   vi: 'Tiếp theo',
   uz: "Keyingi",
@@ -51,6 +57,7 @@ const _nextLabel = L10nText(
 const _prevLabel = L10nText(
   ko: '이전',
   en: 'Previous',
+  tr: "Önceki",
   zh: '上一步',
   vi: 'Quay lại',
   uz: "Oldingi",
@@ -58,6 +65,7 @@ const _prevLabel = L10nText(
 const _markCompleteLabel = L10nText(
   ko: '✓ 이 단계 완료로 표시',
   en: '✓ Mark this stage complete',
+  tr: "✓ Bu aşamayı tamamlandı olarak işaretle",
   zh: '✓ 标记此阶段完成',
   vi: '✓ Đánh dấu hoàn thành giai đoạn này',
   uz: "✓ Ushbu bosqichni yakunlangan deb belgilash",
@@ -65,6 +73,7 @@ const _markCompleteLabel = L10nText(
 const _undoCompleteLabel = L10nText(
   ko: '완료 표시를 취소합니다',
   en: 'Undo complete',
+  tr: "Tamamlandı işaretini kaldır",
   zh: '取消完成标记',
   vi: 'Bỏ đánh dấu hoàn thành',
   uz: "Yakunlanganlikni bekor qilish",
@@ -497,6 +506,7 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
             lang: lang,
             filePrefix: widget.title.ko,
           ),
+        WorkLogExportBlock() => const WorkLogExportSection(),
         WageCalcBlock() => WageCalcSection(
           scratch: _wageScratch,
           lang: lang,
@@ -555,6 +565,7 @@ class _NavigatorFlowScreenState extends State<NavigatorFlowScreen> {
 const _attachWorkLogLabel = L10nText(
   ko: '근무기록장',
   en: 'Work log',
+  tr: "İş günlüğü",
   zh: '工作记录',
   vi: 'Nhật ký làm việc',
   uz: "Ish jurnali",
@@ -562,6 +573,7 @@ const _attachWorkLogLabel = L10nText(
 const _attachPayslipLabel = L10nText(
   ko: '임금명세서',
   en: 'Payslip',
+  tr: "Maaş bordrosu",
   zh: '工资单',
   vi: 'Phiếu lương',
   uz: "Ish haqi varagʻi",
@@ -569,6 +581,7 @@ const _attachPayslipLabel = L10nText(
 const _attachCalcLabel = L10nText(
   ko: '계산기 데이터',
   en: 'Calculator data',
+  tr: "Hesaplayıcı verileri",
   zh: '计算器数据',
   vi: 'Dữ liệu máy tính lương',
   uz: "Kalkulyator maʼlumotlari",
@@ -576,6 +589,7 @@ const _attachCalcLabel = L10nText(
 const _attachProfileLabel = L10nText(
   ko: '프로필 정보',
   en: 'Profile info',
+  tr: "Profil bilgileri",
   zh: '个人资料',
   vi: 'Thông tin hồ sơ',
   uz: "Profil maʼlumotlari",

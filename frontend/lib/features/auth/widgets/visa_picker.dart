@@ -10,6 +10,7 @@ class _S {
   static const label = L10nText(
     ko: '체류자격(비자)',
     en: 'Visa status',
+    tr: "Vize durumu",
     zh: '居留资格（签证）',
     vi: 'Tư cách lưu trú (visa)',
     uz: "Viza holati",
@@ -17,6 +18,7 @@ class _S {
   static const customPlaceholder = L10nText(
     ko: '체류자격을 직접 입력해주세요',
     en: 'Enter your visa status',
+    tr: "Vize durumunuzu girin",
     zh: '请输入居留资格',
     vi: 'Nhập tư cách lưu trú của bạn',
     uz: "Viza holatingizni kiriting",

@@ -63,6 +63,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '등록증',
       en: 'ARC',
+      tr: "ARC",
       zh: '外国人登录证',
       vi: 'Thẻ đăng ký',
       uz: "ARC",
@@ -74,7 +75,14 @@ const Map<int, CategoryItem> categoryById = {
     id: 2,
     icon: Icons.assignment_ind_outlined,
     group: CategoryGroupId.a,
-    name: L10nText(ko: '비자', en: 'Visa', zh: '签证', vi: 'Visa', uz: "Viza"),
+    name: L10nText(
+      ko: '비자',
+      en: 'Visa',
+      tr: "Vize",
+      zh: '签证',
+      vi: 'Visa',
+      uz: "Viza",
+    ),
     source:
         '출입국관리법 제25조(체류기간 연장)·제24조(체류자격 변경), 하이코리아(hikorea.go.kr), 법무부(moj.go.kr)',
   ),
@@ -85,6 +93,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '취업수속',
       en: 'Employment procedures',
+      tr: "İstihdam prosedürleri",
       zh: '就业手续',
       vi: 'Thủ tục việc làm',
       uz: "Ishga joylashish tartib-qoidalari",
@@ -99,6 +108,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '체류신고',
       en: 'Residence reporting',
+      tr: "İkamet bildirimi",
       zh: '居留申报',
       vi: 'Khai báo cư trú',
       uz: "Yashash joyi haqida hisobot",
@@ -115,6 +125,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '병원',
       en: 'Hospitals',
+      tr: "Hastaneler",
       zh: '医院',
       vi: 'Bệnh viện',
       uz: "Shifoxonalar",
@@ -129,6 +140,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '보험',
       en: 'Insurance',
+      tr: "Sigorta",
       zh: '保险',
       vi: 'Bảo hiểm',
       uz: "Sugʻurta",
@@ -143,6 +155,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '주거',
       en: 'Housing',
+      tr: "Konut",
       zh: '住房',
       vi: 'Nhà ở',
       uz: "Uy-joy",
@@ -157,6 +170,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '교통',
       en: 'Transportation',
+      tr: "Ulaşım",
       zh: '交通',
       vi: 'Giao thông',
       uz: "Transport",
@@ -173,6 +187,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '근로계약서',
       en: 'Employment contract',
+      tr: "İş sözleşmesi",
       zh: '劳动合同',
       vi: 'Hợp đồng lao động',
       uz: "Mehnat shartnomasi",
@@ -187,6 +202,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '임금체불',
       en: 'Unpaid wages',
+      tr: "Ödenmemiş ücretler",
       zh: '拖欠工资',
       vi: 'Nợ lương',
       uz: "Toʻlanmagan ish haqi",
@@ -201,6 +217,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '산업재해',
       en: 'Workplace injury',
+      tr: "İş kazası",
       zh: '工伤',
       vi: 'Tai nạn lao động',
       uz: "Ish joyidagi jarohat",
@@ -214,6 +231,7 @@ const Map<int, CategoryItem> categoryById = {
     name: L10nText(
       ko: '상담기관',
       en: 'Support organizations',
+      tr: "Destek kuruluşları",
       zh: '咨询机构',
       vi: 'Cơ quan tư vấn',
       uz: "Qoʻllab-quvvatlash tashkilotlari",
@@ -231,6 +249,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     markLabel: L10nText(
       ko: '필수행정',
       en: 'ADMIN',
+      tr: "YÖNETİM",
       zh: '必办手续',
       vi: 'THỦ TỤC',
       uz: "ADMIN",
@@ -238,6 +257,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     name: L10nText(
       ko: '그룹 A',
       en: 'Group A ',
+      tr: "Grup A ",
       zh: 'A组',
       vi: 'Nhóm A',
       uz: "A guruhi ",
@@ -245,6 +265,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     title: L10nText(
       ko: '필수 행정',
       en: 'Essential admin',
+      tr: "Temel yönetim",
       zh: '必办行政',
       vi: 'Thủ tục bắt buộc',
       uz: "Muhim maʼmuriyat",
@@ -258,6 +279,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     markLabel: L10nText(
       ko: '생활정착',
       en: 'LIVING',
+      tr: "YAŞAM",
       zh: '生活安顿',
       vi: 'SINH HOẠT',
       uz: "YASHASH",
@@ -265,6 +287,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     name: L10nText(
       ko: '그룹 B',
       en: 'Group B',
+      tr: "Grup B",
       zh: 'B组',
       vi: 'Nhóm B',
       uz: "B guruhi",
@@ -272,6 +295,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     title: L10nText(
       ko: '생활 정착',
       en: 'Settling in',
+      tr: "Yerleşme",
       zh: '生活安顿',
       vi: 'Ổn định cuộc sống',
       uz: "Joylashish",
@@ -285,6 +309,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     markLabel: L10nText(
       ko: '노동권익',
       en: 'RIGHTS',
+      tr: "HAKLAR",
       zh: '劳动权益',
       vi: 'QUYỀN LỢI',
       uz: "HUQUQLAR",
@@ -292,6 +317,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     name: L10nText(
       ko: '그룹 C',
       en: 'Group C',
+      tr: "Grup C",
       zh: 'C组',
       vi: 'Nhóm C',
       uz: "C guruhi",
@@ -299,6 +325,7 @@ const Map<CategoryGroupId, CategoryGroupData> categoryGroups = {
     title: L10nText(
       ko: '노동 권익',
       en: 'Labor rights',
+      tr: "İşçi hakları",
       zh: '劳动权益',
       vi: 'Quyền lợi lao động',
       uz: "Mehnat huquqlari",
@@ -315,6 +342,7 @@ const quickAccessChips = [
     L10nText(
       ko: '계약서\n체크',
       en: 'Contract\ncheck',
+      tr: "Sözleşme\nkontrolü",
       zh: '合同\n检查',
       vi: 'Kiểm tra\nhợp đồng',
       uz: "Shartnomani\ntekshirish",
@@ -325,6 +353,7 @@ const quickAccessChips = [
     L10nText(
       ko: 'ARC\n발급',
       en: 'ARC\nissuance',
+      tr: "ARC\ndüzenleme",
       zh: 'ARC\n办理',
       vi: 'Cấp thẻ\nARC',
       uz: "ARC\nberish",
@@ -335,6 +364,7 @@ const quickAccessChips = [
     L10nText(
       ko: '임금체불\n대응',
       en: 'Unpaid wage\nresponse',
+      tr: "Ödenmemiş ücret\nyanıtı",
       zh: '拖欠工资\n应对',
       vi: 'Ứng phó\nnợ lương',
       uz: "Toʻlanmagan ish haqiga\njavob",

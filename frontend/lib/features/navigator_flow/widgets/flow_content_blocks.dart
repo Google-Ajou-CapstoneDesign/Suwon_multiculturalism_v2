@@ -496,6 +496,7 @@ class OrgCardView extends StatelessWidget {
 const _legendLabelAuto = L10nText(
   ko: '자동채움',
   en: 'Auto-filled',
+  tr: "Otomatik dolduruldu",
   zh: '自动填充',
   vi: 'Tự điền',
   uz: "Avtomatik toʻldirilgan",
@@ -503,6 +504,7 @@ const _legendLabelAuto = L10nText(
 const _legendLabelRaw = L10nText(
   ko: '원문 그대로',
   en: 'As you wrote it',
+  tr: "Yazdığınız gibi",
   zh: '原文照录',
   vi: 'Nguyên văn',
   uz: "Siz yozganingizdek",
@@ -510,6 +512,7 @@ const _legendLabelRaw = L10nText(
 const _legendLabelBlank = L10nText(
   ko: '공란 유지',
   en: 'Left blank',
+  tr: "Boş bırakıldı",
   zh: '保持空白',
   vi: 'Để trống',
   uz: "Boʻsh qoldirilgan",

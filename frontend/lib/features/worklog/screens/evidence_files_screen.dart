@@ -12,6 +12,7 @@ class _S {
   static const add = L10nText(
     ko: '파일 추가',
     en: 'Add file',
+    tr: "Dosya ekle",
     zh: '添加文件',
     vi: 'Thêm tệp',
     uz: "Fayl qoʻshish",
@@ -19,6 +20,7 @@ class _S {
   static const login = L10nText(
     ko: '로그인 후 자료를 보관할 수 있습니다.',
     en: 'Log in to store files.',
+    tr: "Dosyaları depolamak için giriş yapın.",
     zh: '登录后可保存文件。',
     vi: 'Đăng nhập để lưu tệp.',
     uz: "Fayllarni saqlash uchun tizimga kiring.",
@@ -26,6 +28,7 @@ class _S {
   static const loginButton = L10nText(
     ko: '로그인',
     en: 'Log in',
+    tr: "Giriş yap",
     zh: '登录',
     vi: 'Đăng nhập',
     uz: "Kirish",
@@ -33,6 +36,7 @@ class _S {
   static const empty = L10nText(
     ko: '등록된 파일이 없습니다.',
     en: 'No files yet.',
+    tr: "Henüz dosya yok.",
     zh: '暂无文件。',
     vi: 'Chưa có tệp.',
     uz: "Hali fayllar yoʻq.",
@@ -40,6 +44,7 @@ class _S {
   static const failed = L10nText(
     ko: '처리하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도해주세요.',
     en: 'Could not complete the request. Check your connection and try again.',
+    tr: "İstek tamamlanamadı. Bağlantınızı kontrol edin ve tekrar deneyin.",
     zh: '操作失败，请检查网络后重试。',
     vi: 'Không thể hoàn tất. Kiểm tra kết nối và thử lại.',
     uz: "Soʻrovni bajarib boʻlmadi. Ulanishingizni tekshiring va qayta urinib koʻring.",
@@ -47,6 +52,7 @@ class _S {
   static const uncertain = L10nText(
     ko: '업로드 결과를 확인하지 못했습니다. 새로고침으로 목록을 확인해주세요.',
     en: 'Could not confirm the upload. Refresh the file list.',
+    tr: "Yükleme onaylanamadı. Dosya listesini yenileyin.",
     zh: '无法确认上传结果，请刷新列表。',
     vi: 'Chưa xác nhận được tải lên. Hãy làm mới danh sách.',
     uz: "Yuklashni tasdiqlab boʻlmadi. Fayllar roʻyxatini yangilang.",
@@ -54,6 +60,7 @@ class _S {
   static const limit = L10nText(
     ko: '빈 파일은 올릴 수 없으며, 파일당 최대 20MB까지 가능합니다.',
     en: 'Choose a non-empty file up to 20 MB.',
+    tr: "20 MB'a kadar boş olmayan bir dosya seçin.",
     zh: '请选择不为空且不超过20MB的文件。',
     vi: 'Chọn tệp không rỗng, tối đa 20 MB.',
     uz: "20 MB gacha boʻlgan boʻsh boʻlmagan faylni tanlang.",
@@ -61,6 +68,7 @@ class _S {
   static const success = L10nText(
     ko: '파일을 보관했습니다.',
     en: 'File saved.',
+    tr: "Dosya kaydedildi.",
     zh: '文件已保存。',
     vi: 'Đã lưu tệp.',
     uz: "Fayl saqlandi.",
@@ -68,6 +76,7 @@ class _S {
   static const refresh = L10nText(
     ko: '새로고침',
     en: 'Refresh',
+    tr: "Yenile",
     zh: '刷新',
     vi: 'Làm mới',
     uz: "Yangilash",
@@ -75,6 +84,7 @@ class _S {
   static const uploading = L10nText(
     ko: '업로드 중…',
     en: 'Uploading…',
+    tr: "Yükleniyor…",
     zh: '上传中…',
     vi: 'Đang tải lên…',
     uz: "Yuklanmoqda…",
@@ -82,6 +92,7 @@ class _S {
   static const statusFailed = L10nText(
     ko: '파일은 저장됐지만 홈의 보관 상태를 갱신하지 못했습니다.',
     en: 'File saved, but the home vault status could not be updated.',
+    tr: "Dosya kaydedildi, ancak ana kasa durumu güncellenemedi.",
     zh: '文件已保存，但主页状态更新失败。',
     vi: 'Đã lưu tệp nhưng chưa cập nhật trạng thái trang chủ.',
     uz: "Fayl saqlandi, ammo asosiy ombor holatini yangilab boʻlmadi.",

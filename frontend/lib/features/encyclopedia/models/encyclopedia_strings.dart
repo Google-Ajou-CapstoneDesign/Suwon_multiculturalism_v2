@@ -8,6 +8,7 @@ class EncyclopediaStrings {
   static const coverTitle = L10nText(
     ko: '한국 생활\n백과사전',
     en: 'Living in\nKorea',
+    tr: "Kore'de\nyaşam",
     zh: '韩国生活\n指南',
     vi: 'Cẩm nang\nsống ở Hàn Quốc',
     uz: "Koreyada\nyashash",
@@ -15,6 +16,7 @@ class EncyclopediaStrings {
   static const coverSubtitle = L10nText(
     ko: '한국에서 일하고 살아가는 데 필요한 절차를 정리했습니다',
     en: "We've organized the steps you need to work and live in Korea",
+    tr: "Kore'de çalışmak ve yaşamak için ihtiyacınız olan adımları düzenledik",
     zh: '我们整理了在韩国工作生活所需的各项手续',
     vi: 'Chúng tôi đã tổng hợp các thủ tục cần thiết để làm việc và sinh sống tại Hàn Quốc',
     uz: "Koreyada ishlash va yashash uchun zarur boʻlgan qadamlarni tartibga soldik",
@@ -22,6 +24,7 @@ class EncyclopediaStrings {
   static const visaLabel = L10nText(
     ko: 'MY VISA',
     en: 'MY VISA',
+    tr: "VİZEM",
     zh: 'MY VISA',
     vi: 'MY VISA',
     uz: "VIZAM",
@@ -29,6 +32,7 @@ class EncyclopediaStrings {
   static const visaValue = L10nText(
     ko: 'E-9 비전문취업',
     en: 'E-9 Non-professional',
+    tr: "E-9 Niteliksiz",
     zh: 'E-9 非专业就业',
     vi: 'E-9 Lao động phổ thông',
     uz: "E-9 Malakasiz ishchi",
@@ -36,6 +40,7 @@ class EncyclopediaStrings {
   static const visaNotSet = L10nText(
     ko: '체류자격 미설정',
     en: 'Visa status not set',
+    tr: "Vize durumu ayarlanmadı",
     zh: '未设置居留资格',
     vi: 'Chưa đặt tư cách lưu trú',
     uz: "Viza holati oʻrnatilmagan",
@@ -43,6 +48,7 @@ class EncyclopediaStrings {
   static const visaNote = L10nText(
     ko: '연장 절차 확인하기 →',
     en: 'Check renewal steps →',
+    tr: "Yenileme adımlarını kontrol et →",
     zh: '查看延长手续 →',
     vi: 'Xem thủ tục gia hạn →',
     uz: "Yangilash bosqichlarini tekshirish →",
@@ -50,6 +56,7 @@ class EncyclopediaStrings {
   static const visaNoteNotSet = L10nText(
     ko: '설정에서 등록하세요 →',
     en: 'Register it in Settings →',
+    tr: "Ayarlar → bölümünden kaydedin",
     zh: '请在设置中登记 →',
     vi: 'Đăng ký trong Cài đặt →',
     uz: "Sozlamalarda roʻyxatdan oʻtkazish →",
@@ -57,6 +64,7 @@ class EncyclopediaStrings {
   static const quickAccessLabel = L10nText(
     ko: '자주 보는 항목',
     en: 'WHAT YOU OPEN MOST',
+    tr: "EN ÇOK AÇTIKLARINIZ",
     zh: '常用项目',
     vi: 'MỤC BẠN HAY MỞ',
     uz: "ENG KOʻP OCHGANINGIZ",
@@ -64,6 +72,7 @@ class EncyclopediaStrings {
   static const searchHint = L10nText(
     ko: '필요한 정보를 검색하세요',
     en: 'Search for what you need',
+    tr: "İhtiyacınız olanı arayın",
     zh: '搜索您需要的信息',
     vi: 'Tìm thông tin bạn cần',
     uz: "Kerakli narsani qidirish",
@@ -71,6 +80,7 @@ class EncyclopediaStrings {
   static const searchNoResults = L10nText(
     ko: '검색 결과가 없습니다.\n다른 단어로 검색해 보세요.',
     en: 'No results found.\nTry a different search term.',
+    tr: "Sonuç bulunamadı.\nFarklı bir arama terimi deneyin.",
     zh: '没有搜索结果。\n请尝试其他关键词。',
     vi: 'Không có kết quả.\nHãy thử từ khóa khác.',
     uz: "Hech qanday natija topilmadi.\nBoshqa qidiruv soʻzini sinab koʻring.",
@@ -78,6 +88,7 @@ class EncyclopediaStrings {
   static const searchEmptyPrompt = L10nText(
     ko: '카테고리 이름으로 검색해 보세요',
     en: 'Try searching by category name',
+    tr: "Kategori adına göre aramayı deneyin",
     zh: '请尝试用分类名称搜索',
     vi: 'Hãy thử tìm theo tên danh mục',
     uz: "Kategoriya nomi boʻyicha qidirib koʻring",
@@ -85,6 +96,7 @@ class EncyclopediaStrings {
   static const soonBadge = L10nText(
     ko: '준비 중',
     en: 'Coming soon',
+    tr: "Çok yakında",
     zh: '准备中',
     vi: 'Sắp có',
     uz: "Tez orada",
@@ -92,6 +104,7 @@ class EncyclopediaStrings {
   static const notReady = L10nText(
     ko: '이 항목은 2차 단계에서 채웁니다.',
     en: 'This item will be added in the next phase.',
+    tr: "Bu öğe bir sonraki aşamada eklenecektir.",
     zh: '该项目将在第二阶段补充。',
     vi: 'Mục này sẽ được bổ sung ở giai đoạn sau.',
     uz: "Bu element keyingi bosqichda qoʻshiladi.",
@@ -99,6 +112,7 @@ class EncyclopediaStrings {
   static const favoritesTitle = L10nText(
     ko: '★ 즐겨찾기',
     en: '★ Favorites',
+    tr: "★ Favoriler",
     zh: '★ 收藏',
     vi: '★ Mục yêu thích',
     uz: "★ Sevimlilar",
@@ -106,6 +120,7 @@ class EncyclopediaStrings {
   static const favoritesSubtitle = L10nText(
     ko: '그룹·카테고리 어디서든 별표로 담을 수 있습니다',
     en: 'Star any group or item to keep it here',
+    tr: "Burada tutmak için herhangi bir grubu veya öğeyi yıldızlayın",
     zh: '在任意分组或分类中点击星标即可收藏',
     vi: 'Nhấn dấu sao ở bất kỳ nhóm hay mục nào để lưu tại đây',
     uz: "Har qanday guruh yoki elementni bu yerda saqlash uchun yulduzcha bosing",
@@ -113,6 +128,7 @@ class EncyclopediaStrings {
   static const favoritesItemsLabel = L10nText(
     ko: '저장한 항목',
     en: 'Saved items',
+    tr: "Kaydedilen öğeler",
     zh: '已收藏项目',
     vi: 'Mục đã lưu',
     uz: "Saqlangan elementlar",
@@ -120,6 +136,7 @@ class EncyclopediaStrings {
   static const favoritesGroupsLabel = L10nText(
     ko: '저장한 그룹',
     en: 'Saved groups',
+    tr: "Kaydedilen gruplar",
     zh: '已收藏分组',
     vi: 'Nhóm đã lưu',
     uz: "Saqlangan guruhlar",
@@ -127,6 +144,7 @@ class EncyclopediaStrings {
   static const favoritesEmpty = L10nText(
     ko: '아직 담은 항목이 없습니다.\n목록에서 ☆를 눌러 자주 쓰는 항목을 담아두세요.',
     en: 'Nothing saved yet.\nTap ☆ on any item to keep it here.',
+    tr: "Henüz hiçbir şey kaydedilmedi.\nBurada tutmak için herhangi bir öğedeki ☆ simgesine dokunun.",
     zh: '还没有收藏的项目。\n请在列表中点击☆收藏常用项目。',
     vi: 'Chưa lưu mục nào.\nNhấn ☆ ở mục bất kỳ để lưu tại đây.',
     uz: "Hali hech narsa saqlanmagan.\nBu yerda saqlash uchun har qanday elementdagi ☆ tugmasini bosing.",
@@ -134,6 +152,7 @@ class EncyclopediaStrings {
   static const formTagAuto = L10nText(
     ko: '자동입력',
     en: 'Auto-filled',
+    tr: "Otomatik dolduruldu",
     zh: '自动填写',
     vi: 'Tự động điền',
     uz: "Avtomatik toʻldirilgan",
@@ -141,6 +160,7 @@ class EncyclopediaStrings {
   static const formTagBlank = L10nText(
     ko: '직접입력',
     en: 'You fill in',
+    tr: "Siz doldurun",
     zh: '需自行填写',
     vi: 'Tự nhập',
     uz: "Siz toʻldirasiz",
@@ -148,6 +168,7 @@ class EncyclopediaStrings {
   static const formTagRaw = L10nText(
     ko: '그대로 옮김',
     en: 'Copied as-is',
+    tr: "Olduğu gibi kopyalandı",
     zh: '原样填写',
     vi: 'Chép nguyên văn',
     uz: "Oʻzgarishsiz nusxalandi",
@@ -155,6 +176,7 @@ class EncyclopediaStrings {
   static const previousPage = L10nText(
     ko: '이전',
     en: 'Previous',
+    tr: "Önceki",
     zh: '上一页',
     vi: 'Trước',
     uz: "Oldingi",
@@ -162,6 +184,7 @@ class EncyclopediaStrings {
   static const nextPage = L10nText(
     ko: '다음',
     en: 'Next',
+    tr: "İleri",
     zh: '下一页',
     vi: 'Tiếp',
     uz: "Keyingi",
@@ -169,6 +192,7 @@ class EncyclopediaStrings {
   static const sourceLabel = L10nText(
     ko: '출처',
     en: 'Source',
+    tr: "Kaynak",
     zh: '来源',
     vi: 'Nguồn',
     uz: "Manba",
@@ -181,6 +205,8 @@ class EncyclopediaStrings {
         return "$n elementlar";
       case AppLanguage.en:
         return '$n items';
+      case AppLanguage.tr:
+        return "$n öğe";
       case AppLanguage.zh:
         return '$n个项目';
       case AppLanguage.vi:

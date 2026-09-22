@@ -70,9 +70,9 @@ class IntentClassification(BaseModel):
     intent: Intent
 
 
-Language = Literal["ko", "en", "zh", "vi", "uz"]
+Language = Literal["ko", "en", "zh", "vi", "uz", "tr"]
 
-# 프론트엔드(AppLanguage)와 동일한 5개 언어. 에이전트 호출이 실패했을 때 나가는
+# 프론트엔드(AppLanguage)와 동일한 6개 언어. 에이전트 호출이 실패했을 때 나가는
 # 기본 안내 문구를 언어별로 제공한다 —
 # 에이전트 정상 경로는 pipeline.run_agent()에 넘긴 language로 처리된다.
 _L = Dict[Language, str]
@@ -92,6 +92,7 @@ def _pick(text: Optional[_L], language: Language) -> Optional[str]:
 
 
 _META_FALLBACK_ANSWER: _L = {
+    "tr": "Yabancılar, göçmen işçiler ve uluslararası öğrenciler için bir yapay zekâ asistanıyım. Çalışma hayatı, Kore'de yaşam veya destek kuruluşlarını bulma konusunda soru sorabilirsiniz.",
     "ko": "저는 외국인·이주노동자·유학생을 위한 AI 도우미예요. 노동 상담, 한국 생활 정보, 도움받을 기관 찾기 등 궁금한 점을 편하게 물어보세요.",
     "en": "I'm an AI assistant for foreign residents, migrant workers, and international students. Ask me about labor issues, life in Korea, or finding support organizations.",
     "zh": "我是为外籍居民、外籍劳动者和留学生提供帮助的AI助手。欢迎咨询劳动问题、韩国生活信息或查找相关机构。",
@@ -99,6 +100,7 @@ _META_FALLBACK_ANSWER: _L = {
     "vi": "Tôi là trợ lý AI dành cho người nước ngoài, lao động nhập cư và du học sinh. Bạn có thể hỏi về lao động, cuộc sống ở Hàn Quốc hoặc tìm cơ quan hỗ trợ.",
 }
 _OFF_TOPIC_ANSWER: _L = {
+    "tr": "Bu hizmet yabancılara çalışma hayatı, Kore'de yaşam ve ilgili kuruluşları bulma konusunda yardımcı olur. İsteğiniz yardımcı olabileceğim kapsamın dışındadır.",
     "ko": "이 서비스는 외국인의 노동 상담, 한국 생활 정보, 관련 기관 찾기를 도와드려요. 요청하신 내용은 안내 범위를 벗어나 도움드리기 어려워요.",
     "en": "This service helps foreign residents with labor issues, life in Korea, and finding relevant organizations. Your request is outside the scope I can help with.",
     "zh": "本服务帮助外籍居民咨询劳动问题、了解韩国生活信息及查找相关机构。您的请求超出了我能提供帮助的范围。",
@@ -112,6 +114,7 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
                      "support center", "support centre", "咨询中心", "trung tâm hỗ trợ", "yordam markazi"],
         "fact_answer": {
             "ko": "지금은 기관 정보를 확인하기 어려워요. 잠시 후 필요한 도움과 지역을 함께 알려주시면 관련 기관을 찾아드릴게요.",
+            "tr": "Şu anda kuruluş bilgilerini doğrulayamıyorum. Biraz sonra ihtiyacınız olan desteği ve bulunduğunuz bölgeyi belirtirseniz uygun kuruluşları bulmanıza yardımcı olabilirim.",
             "en": "I can't check organization details right now. Please try again shortly with the help you need and your area so I can look for a suitable organization.",
             "zh": "暂时无法确认机构信息。请稍后告知您需要的帮助和所在地区，我会帮您查找相关机构。",
             "vi": "Hiện tôi chưa thể kiểm tra thông tin cơ quan. Vui lòng thử lại sau và cho biết bạn cần hỗ trợ gì, ở khu vực nào để tôi tìm cơ quan phù hợp.",
@@ -124,6 +127,7 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
         "keywords": ["임금", "체불", "월급", "급여"],
         "fact_answer": {
             "ko": "근로기준법상 사용자는 퇴직·지급일로부터 14일 이내에 임금을 지급해야 해요. 이미 기간이 지났다면 진정 제기가 가능해요.",
+            "tr": "İş Standartları Kanunu uyarınca işverenler, işten ayrılma veya ödeme tarihinden itibaren 14 gün içinde ücretleri ödemelidir. Bu süre geçtiyse şikâyette bulunabilirsiniz.",
             "en": "Under the Labor Standards Act, employers must pay wages within 14 days of resignation or the payment date. If that period has already passed, you can file a complaint.",
             "zh": "根据《劳动基准法》，雇主须在离职或发薪日起14天内支付工资。如果已超过该期限，您可以提出申诉。",
             "uz": "Mehnat standartlari toʻgʻrisidagi qonunga koʻra, ish beruvchi ishdan ketish yoki toʻlov kunidan boshlab 14 kun ichida ish haqini toʻlashi kerak. Ushbu muddat oʻtgan boʻlsa, shikoyat berishingiz mumkin.",
@@ -131,6 +135,7 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
         },
         "risk_notice": {
             "ko": "즉시 대응이 필요한 사안으로 보여요. 정확한 판단은 AI가 아닌 아래 네비게이터·전문가를 통해 확인해 주세요.",
+            "tr": "Bu durum acil müdahale gerektiriyor olabilir. Ayrıntıları aşağıdaki rehber veya bir uzman aracılığıyla doğrulayın.",
             "en": "This looks like it needs immediate attention. Please confirm the details with the navigator/expert below rather than relying only on AI.",
             "zh": "这似乎是需要立即处理的事项。请通过下方的导航工具或专家进行确认，而非仅依赖AI判断。",
             "uz": "Bu masala zudlik bilan chora koʻrishni talab qilishi mumkin. Tafsilotlarni quyidagi yoʻriqnoma yoki mutaxassis yordamida aniqlashtiring.",
@@ -142,6 +147,7 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
         "keywords": ["산재", "다쳤", "부상", "사고"],
         "fact_answer": {
             "ko": "업무 중 다쳤다면 산재보험으로 치료비를 처리할 수 있어요. 사업주의 공상 처리 요구는 거절할 수 있어요.",
+            "tr": "İş sırasında yaralandıysanız tedavi masrafları iş kazası sigortası kapsamında karşılanabilir. İşverenin olayı özel bir anlaşmayla çözme talebini reddedebilirsiniz.",
             "en": "If you were injured at work, medical costs can be covered by industrial accident insurance. You can refuse an employer's request to handle it as a private injury instead.",
             "zh": "如果在工作中受伤，可以通过工伤保险处理治疗费用。您可以拒绝雇主要求以私伤方式处理的要求。",
             "uz": "Ish vaqtida jarohat olgan boʻlsangiz, davolanish xarajatlari ishlab chiqarishdagi baxtsiz hodisalar sugʻurtasi orqali qoplanishi mumkin. Ish beruvchining hodisani xususiy tartibda hal qilish talabini rad etishingiz mumkin.",
@@ -149,6 +155,7 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
         },
         "risk_notice": {
             "ko": "사고 사실관계 정리가 필요해 보여요. 산재 대응 네비게이터에서 증빙을 정리해 드릴게요.",
+            "tr": "Kazaya ilişkin bilgileri düzenlemek gerekiyor. İş kazası rehberi kanıtları toplamanıza yardımcı olabilir.",
             "en": "It looks like the facts of the accident need to be organized. The workplace-injury navigator can help you put together the evidence.",
             "zh": "看起来需要整理事故的事实经过。工伤应对导航工具可以帮助您整理相关证据。",
             "uz": "Hodisa tafsilotlarini tartibga solish kerak. Ishlab chiqarishdagi jarohatlar boʻyicha yoʻriqnoma dalillarni jamlashga yordam beradi.",
@@ -160,6 +167,7 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
         "keywords": ["계약서", "근로계약"],
         "fact_answer": {
             "ko": "근로계약서에는 임금·근무시간·휴게시간 등 11개 필수 확인 항목이 있어요. 백과사전 탭의 체크리스트에서 확인할 수 있어요.",
+            "tr": "İş sözleşmesinde ücret, çalışma saatleri ve dinlenme süreleri dâhil kontrol edilmesi gereken 11 temel madde bulunur. Bunları ansiklopedi sekmesindeki kontrol listesinden inceleyebilirsiniz.",
             "en": "An employment contract has 11 required items to check, including wages, working hours, and break time. You can review them in the checklist under the Encyclopedia tab.",
             "zh": "劳动合同中有工资、工作时间、休息时间等11项必须确认的内容。您可以在百科全书标签的检查清单中查看。",
             "uz": "Mehnat shartnomasida ish haqi, ish vaqti va tanaffus kabi tekshirilishi kerak boʻlgan 11 ta asosiy band bor. Ularni ensiklopediya boʻlimidagi tekshiruv roʻyxatidan koʻrishingiz mumkin.",
@@ -174,6 +182,7 @@ _CONTENT: Dict[Intent, _ContentEntry] = {
                      "life in korea", "visa", "韩国生活", "cuộc sống ở hàn quốc", "koreyada yashash"],
         "fact_answer": {
             "ko": "한국 생활 정보를 안내해 드릴 수 있어요. 지금은 자세한 정보를 확인하기 어려우니 잠시 후 궁금한 주제와 상황을 알려주세요.",
+            "tr": "Kore'de yaşam hakkında bilgi verebilirim. Şu anda ayrıntıları doğrulayamıyorum; lütfen biraz sonra merak ettiğiniz konuyu ve durumunuzu belirtin.",
             "en": "I can help with information about life in Korea. I can't verify the details right now; please try again shortly with your topic and situation.",
             "zh": "我可以提供韩国生活信息。目前暂时无法核实详细信息，请稍后告知您关心的主题和具体情况。",
             "vi": "Tôi có thể cung cấp thông tin về cuộc sống ở Hàn Quốc. Hiện chưa thể xác minh chi tiết; vui lòng thử lại sau và cho biết chủ đề, hoàn cảnh của bạn.",
