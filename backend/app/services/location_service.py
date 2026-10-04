@@ -30,6 +30,20 @@ _NOMINATIM_LANGUAGE = {
     "vi": "vi",
     "uz": "uz",
     "tr": "tr",
+    "ne": "ne",
+    "tet": "tet",
+    "lo": "lo",
+    "mn": "mn",
+    "my": "my",
+    "bn": "bn",
+    "si": "si",
+    "id": "id",
+    "km": "km",
+    "ky": "ky",
+    "th": "th",
+    "ur": "ur",
+    "fil": "fil",
+    "tg": "tg",
 }
 
 

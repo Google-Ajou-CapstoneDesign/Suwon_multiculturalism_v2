@@ -13,16 +13,55 @@ enum AppLanguage {
   zh('CHN', '中文', '중국어'),
   vi('VIE', 'Tiếng Việt', '베트남어'),
   uz('UZB', 'Oʻzbekcha', '우즈베크어'),
-  tr('TUR', 'Türkçe', '터키어');
+  tr('TUR', 'Türkçe', '터키어'),
+  ne('NEP', 'नेपाली', '네팔어'),
+  tet('TET', 'Tetun', '테툼어 · 동티모르'),
+  lo('LAO', 'ລາວ', '라오스어'),
+  mn('MON', 'Монгол', '몽골어'),
+  my('MYA', 'မြန်မာ', '미얀마어'),
+  bn('BEN', 'বাংলা', '벵골어 · 방글라데시'),
+  si('SIN', 'සිංහල', '싱할라어 · 스리랑카'),
+  id('IND', 'Bahasa Indonesia', '인도네시아어'),
+  km('KHM', 'ខ្មែរ', '크메르어 · 캄보디아'),
+  ky('KYR', 'Кыргызча', '키르기스어'),
+  th('THA', 'ไทย', '태국어'),
+  ur('URD', 'اردو', '우르두어 · 파키스탄'),
+  fil('FIL', 'Filipino', '필리핀어'),
+  tg('TGK', 'Тоҷикӣ', '타지크어');
 
   const AppLanguage(this.code, this.nativeName, this.subLabel);
 
   final String code;
   final String nativeName;
   final String subLabel;
+
+  bool get isRtl => this == AppLanguage.ur;
+
+  String get fontFamily => switch (this) {
+    AppLanguage.ne => 'NotoSansDevanagari',
+    AppLanguage.lo => 'NotoSansLao',
+    AppLanguage.my => 'NotoSansMyanmar',
+    AppLanguage.bn => 'NotoSansBengali',
+    AppLanguage.si => 'NotoSansSinhala',
+    AppLanguage.km => 'NotoSansKhmer',
+    AppLanguage.th => 'NotoSansThai',
+    AppLanguage.ur => 'NotoSansArabic',
+    _ => 'NotoSans',
+  };
+
+  bool get requiresPdfShaping => const {
+    AppLanguage.ne,
+    AppLanguage.lo,
+    AppLanguage.my,
+    AppLanguage.bn,
+    AppLanguage.si,
+    AppLanguage.km,
+    AppLanguage.th,
+    AppLanguage.ur,
+  }.contains(this);
 }
 
-/// ko/en/zh/vi/uz/tr 6개 언어 문자열 묶음. 앞으로 화면에 보여줄 텍스트는 하드코딩
+/// 총 20개 언어 문자열 묶음. 앞으로 화면에 보여줄 텍스트는 하드코딩
 /// 대신 이 타입으로 작성한다 — UI 문구(칩)는 기능별 *_strings.dart에,
 /// 콘텐츠(법·제도 설명)는 해당 모델 파일에 둔다.
 class L10nText {
@@ -33,6 +72,20 @@ class L10nText {
     required this.vi,
     required this.uz,
     required this.tr,
+    required this.ne,
+    required this.tet,
+    required this.lo,
+    required this.mn,
+    required this.my,
+    required this.bn,
+    required this.si,
+    required this.id,
+    required this.km,
+    required this.ky,
+    required this.th,
+    required this.ur,
+    required this.fil,
+    required this.tg,
   });
 
   final String ko;
@@ -41,6 +94,20 @@ class L10nText {
   final String vi;
   final String uz;
   final String tr;
+  final String ne;
+  final String tet;
+  final String lo;
+  final String mn;
+  final String my;
+  final String bn;
+  final String si;
+  final String id;
+  final String km;
+  final String ky;
+  final String th;
+  final String ur;
+  final String fil;
+  final String tg;
 
   String of(AppLanguage lang) {
     switch (lang) {
@@ -56,6 +123,34 @@ class L10nText {
         return uz;
       case AppLanguage.tr:
         return tr;
+      case AppLanguage.ne:
+        return ne;
+      case AppLanguage.tet:
+        return tet;
+      case AppLanguage.lo:
+        return lo;
+      case AppLanguage.mn:
+        return mn;
+      case AppLanguage.my:
+        return my;
+      case AppLanguage.bn:
+        return bn;
+      case AppLanguage.si:
+        return si;
+      case AppLanguage.id:
+        return id;
+      case AppLanguage.km:
+        return km;
+      case AppLanguage.ky:
+        return ky;
+      case AppLanguage.th:
+        return th;
+      case AppLanguage.ur:
+        return ur;
+      case AppLanguage.fil:
+        return fil;
+      case AppLanguage.tg:
+        return tg;
     }
   }
 }

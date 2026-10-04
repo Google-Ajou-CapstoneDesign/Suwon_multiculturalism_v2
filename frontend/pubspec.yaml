@@ -73,3 +73,52 @@ flutter:
     - family: NotoSans
       fonts:
         - asset: assets/fonts/NotoSans.ttf
+    - family: NotoSansDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari-400.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansDevanagari-700.ttf
+          weight: 700
+
+    - family: NotoSansLao
+      fonts:
+        - asset: assets/fonts/NotoSansLao-400.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansLao-700.ttf
+          weight: 700
+    - family: NotoSansMyanmar
+      fonts:
+        - asset: assets/fonts/NotoSansMyanmar-400.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansMyanmar-700.ttf
+          weight: 700
+    - family: NotoSansBengali
+      fonts:
+        - asset: assets/fonts/NotoSansBengali-400.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansBengali-700.ttf
+          weight: 700
+    - family: NotoSansSinhala
+      fonts:
+        - asset: assets/fonts/NotoSansSinhala-400.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansSinhala-700.ttf
+          weight: 700
+    - family: NotoSansKhmer
+      fonts:
+        - asset: assets/fonts/NotoSansKhmer-400.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansKhmer-700.ttf
+          weight: 700
+    - family: NotoSansThai
+      fonts:
+        - asset: assets/fonts/NotoSansThai-400.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansThai-700.ttf
+          weight: 700
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/NotoSansArabic-400.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansArabic-700.ttf
+          weight: 700

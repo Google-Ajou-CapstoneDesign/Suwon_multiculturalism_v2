@@ -9,7 +9,19 @@ class AppTheme {
   /// NotoSansKR/NotoSans는 LB KR이 못 그리는 글자(베트남어 발음부호 등)의
   /// 폴백이다 — fontFamily를 명시하지 않은 모든 TextStyle에 기본 상속된다.
   static const _fontFamily = 'LB KR';
-  static const _fontFamilyFallback = ['LB SC', 'NotoSansKR', 'NotoSans'];
+  static const _fontFamilyFallback = [
+    'LB SC',
+    'NotoSansKR',
+    'NotoSans',
+    'NotoSansDevanagari',
+    'NotoSansLao',
+    'NotoSansMyanmar',
+    'NotoSansBengali',
+    'NotoSansSinhala',
+    'NotoSansKhmer',
+    'NotoSansThai',
+    'NotoSansArabic',
+  ];
 
   static ThemeData get light {
     final base = ThemeData(
@@ -84,7 +96,12 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          textStyle: const TextStyle(
+            fontFamily: _fontFamily,
+            fontFamilyFallback: _fontFamilyFallback,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -103,7 +120,12 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          textStyle: const TextStyle(
+            fontFamily: _fontFamily,
+            fontFamilyFallback: _fontFamilyFallback,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

@@ -186,9 +186,11 @@ class SettingsHomeScreen extends StatelessWidget {
                           horizontal: 16,
                           vertical: 9,
                         ),
-                        textStyle: const TextStyle(fontSize: 12.5),
                       ),
-                      child: Text(SettingsStrings.loginButton.of(lang)),
+                      child: Text(
+                        SettingsStrings.loginButton.of(lang),
+                        style: const TextStyle(fontSize: 12.5),
+                      ),
                     ),
                 ],
               ),

@@ -6,6 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import '../../../core/app_language.dart';
 import '../../worklog/models/work_log_report.dart';
 import '../../worklog/models/work_log_report_strings.dart';
+import 'shaped_pdf_text.dart';
 
 typedef S = WorkLogReportStrings;
 
@@ -18,6 +19,16 @@ Future<Uint8List> buildWorkLogPdf({
   required AppLanguage lang,
   PdfPageFormat format = PdfPageFormat.a4,
 }) async {
+  final hasShapedInput =
+      ShapedPdfText.needsShaping(report.ownerName) ||
+      report.records.values.any(
+        (record) => ShapedPdfText.needsShaping(
+          '${record.memo} ${record.verifiedAddress ?? ''}',
+        ),
+      );
+  if (lang.requiresPdfShaping || hasShapedInput) {
+    return _buildShapedWorkLogPdf(report: report, lang: lang, format: format);
+  }
   // 선택 언어와 무관하게 한국어 주소와 다국어 메모를 원문 그대로 출력한다.
   final fonts = <pw.Font>[];
   for (final asset in ['NotoSans', 'NotoSansKR', 'NotoSansSC']) {
@@ -134,6 +145,135 @@ Future<Uint8List> buildWorkLogPdf({
               text(chunk),
           ],
       ],
+    ),
+  );
+  return doc.save();
+}
+
+Future<Uint8List> _buildShapedWorkLogPdf({
+  required WorkLogReport report,
+  required AppLanguage lang,
+  required PdfPageFormat format,
+}) async {
+  final renderer = ShapedPdfText(language: lang);
+  final width = format.width - 64;
+  final title = await renderer.lines(
+    '${report.isDemo ? '[DEMO] ' : ''}${S.title.of(lang)}',
+    width: width,
+    size: 17,
+  );
+  final content = <pw.Widget>[];
+  Future<void> add(String value, {double size = 9}) async {
+    content.addAll(await renderer.lines(value, width: width, size: size));
+  }
+
+  if (report.isDemo) await add(S.demo.of(lang));
+  await add(
+    '${S.owner.of(lang)}: ${report.isDemo ? 'DEMO' : report.ownerName}',
+  );
+  if (!report.isDemo && report.userId != null) {
+    await add('UID: ${report.userId}');
+  }
+  await add('${S.period.of(lang)}: ${report.period}');
+  final generated =
+      '${reportDate(report.generatedAt)} ${report.generatedAt.hour.toString().padLeft(2, '0')}:${report.generatedAt.minute.toString().padLeft(2, '0')}';
+  await add('${S.generated.of(lang)}: $generated');
+  await add('${S.savedDays.of(lang)}: ${report.records.length}');
+  content.add(pw.SizedBox(height: 8));
+  await add(S.note.of(lang), size: 8);
+  content.add(pw.SizedBox(height: 12));
+  const columnWeights = [1.3, 1.0, 1.0, 1.0, 2.0];
+  final rows = <pw.TableRow>[];
+  Future<void> addRow(List<String> cells, {bool header = false}) async {
+    final widgets = <pw.Widget>[];
+    for (var i = 0; i < cells.length; i++) {
+      widgets.add(
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(5),
+          child: pw.Column(
+            children: await renderer.lines(
+              cells[i],
+              width: width * columnWeights[i] / 6.3 - 10,
+              size: header ? 9 : 8,
+            ),
+          ),
+        ),
+      );
+    }
+    rows.add(
+      pw.TableRow(
+        repeat: header,
+        decoration: header
+            ? const pw.BoxDecoration(color: PdfColors.grey200)
+            : null,
+        children: widgets,
+      ),
+    );
+  }
+
+  await addRow([
+    S.date.of(lang),
+    S.clockIn.of(lang),
+    S.clockOut.of(lang),
+    S.breaks.of(lang),
+    S.location.of(lang),
+  ], header: true);
+  for (final day in report.dates) {
+    final record = report.records[day];
+    await addRow([
+      reportDate(day),
+      reportTime(record?.clockIn, lang),
+      reportTime(record?.clockOut, lang),
+      record == null ? '-' : '${record.breakMinutes}',
+      record == null
+          ? S.missing.of(lang)
+          : (record.gpsVerified ? S.verified : S.unverified).of(lang),
+    ]);
+  }
+  content.add(
+    pw.Table(
+      border: pw.TableBorder.all(color: PdfColors.grey, width: 0.5),
+      columnWidths: {
+        for (var i = 0; i < columnWeights.length; i++)
+          i: pw.FlexColumnWidth(columnWeights[i]),
+      },
+      children: rows,
+    ),
+  );
+  content.add(pw.SizedBox(height: 16));
+  await add(S.details.of(lang), size: 13);
+  for (final day in report.dates) {
+    final record = report.records[day];
+    if (record == null) continue;
+    content.add(pw.SizedBox(height: 10));
+    await add(reportDate(day), size: 11);
+    await add(
+      '${S.location.of(lang)}: ${(record.gpsVerified ? S.verified : S.unverified).of(lang)}',
+    );
+    await add(
+      '${S.address.of(lang)}: ${record.verifiedAddress ?? S.missing.of(lang)}',
+    );
+    await add(
+      '${S.coordinates.of(lang)}: ${record.verifiedLatitude ?? '-'}, ${record.verifiedLongitude ?? '-'}',
+    );
+    await add('${S.memo.of(lang)}:');
+    await add(record.memo.isEmpty ? S.missing.of(lang) : record.memo);
+  }
+  final doc = pw.Document();
+  doc.addPage(
+    pw.MultiPage(
+      pageFormat: format,
+      margin: const pw.EdgeInsets.all(32),
+      maxPages: 200,
+      header: (_) => pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [...title, pw.SizedBox(height: 8)],
+      ),
+      footer: (context) => pw.Text(
+        'Local Bridge | ${report.period} | ${report.isDemo ? 'DEMO | ' : ''}${context.pageNumber}/${context.pagesCount}',
+        style: const pw.TextStyle(fontSize: 8),
+      ),
+      build: (_) => content,
     ),
   );
   return doc.save();

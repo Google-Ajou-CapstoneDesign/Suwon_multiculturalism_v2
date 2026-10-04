@@ -149,6 +149,20 @@ _LANGUAGE_NAMES = {
     "vi": "Tiếng Việt",
     "uz": "Oʻzbekcha (Uzbek, Latin alphabet)",
     "tr": "Türkçe (Turkish)",
+    "ne": "नेपाली (Nepali, Devanagari script)",
+    "tet": "Tetun (Tetum, Timor-Leste, Latin script)",
+    "lo": "Lao, in Lao script",
+    "mn": "Mongolian, in modern Mongolian Cyrillic script",
+    "my": "Burmese (Myanmar), in Myanmar Unicode script, not Zawgyi",
+    "bn": "Bengali (Bangla, Bangladesh), in Bengali script",
+    "si": "Sinhala (Sri Lanka), in Sinhala script",
+    "id": "Indonesian (Bahasa Indonesia), in Latin script",
+    "km": "Khmer (Cambodia), in Khmer script",
+    "ky": "Kyrgyz, in Kyrgyz Cyrillic script",
+    "th": "Thai, in Thai script",
+    "ur": "Urdu (Pakistan), in Arabic-derived Urdu script",
+    "fil": "Filipino (Tagalog, Philippines), in Latin script",
+    "tg": "Tajik, in Tajik Cyrillic script",
 }
 
 
