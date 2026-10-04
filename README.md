@@ -1,136 +1,242 @@
-# Suwon_multiculturalism_v2
-Suwon_multiculturalism_v2'
+# Local Bridge
 
-## 업데이트 내역
+수원시 이주민·외국인 근로자·유학생을 위한 노동·생활 정보 통합 플랫폼이다. Flutter 앱에서 다국어 안내, AI 상담, 임금 계산, 근무기록, 증빙 보관, 임금체불·산재 대응 절차를 제공한다.
 
-### 2026-10-04 — 나머지 12개 언어 추가
-- 라오스어(`lo`), 몽골어(`mn`), 미얀마어(`my`), 벵골어(`bn`), 싱할라어(`si`), 인도네시아어(`id`), 크메르어(`km`), 키르기스어(`ky`), 태국어(`th`), 우르두어(`ur`), 필리핀어(`fil`), 타지크어(`tg`)를 순서대로 추가해 총 20개 언어를 지원한다. 언어 선택·회원가입·홈·설정·버그 신고·백과사전·임금계산기·근무기록·증빙·네비게이터·AI 안내·PDF에 기존 언어와 같은 구성으로 번역을 반영했다.
-- 채팅·위치 인증 API, 에이전트 답변 언어, 연결 실패 시 기본 안내, 키워드 의도 분류, 역지오코딩 언어 전달도 연결했다. 캘린더의 새 언어 월·짧은 요일 표기는 [Unicode CLDR](https://github.com/unicode-org/cldr-json)을 참고했다. 싱할라어 월은 기존 번역의 그레고리력 명칭을 유지한다. 데이터 라이선스는 [Unicode-CLDR.txt](docs/licenses/Unicode-CLDR.txt)에 보관했다.
-- 문자별 Noto 글꼴(400/700)과 OFL 라이선스를 추가하고, 버튼에도 다국어 글꼴을 적용했다. 우르두어 선택 시 앱의 읽기 방향이 오른쪽에서 왼쪽으로 바뀐다. PDF는 기존 표·입력란을 유지하며 복합 문자와 양방향 텍스트를 조합해 이미지로 넣고, 한국어·중국어 입력도 보존한다. 이 경로에서는 텍스트 복사·검색이 제한된다.
-- 검증: 전체 Flutter 테스트 85개, 관련 백엔드 테스트 79개 통과, `flutter analyze` 이상 없음, 웹 릴리스 빌드 성공. 12개 언어의 작은 화면과 진정서·근무기록 PDF를 생성해 표시를 확인했다. 새 고정 문구는 기계 번역이며 원어민 감수는 아직 진행하지 않았다.
+날짜별 변경 사항은 [업데이트 내역](update_log.md)에 정리한다.
 
-### 2026-10-03 — 네팔어·테툼어 추가
-- 네팔어(`ne`, नेपाली)와 동티모르 테툼어(`tet`, Tetun)를 추가해 총 8개 언어 지원. 기존 언어와 동일하게 언어 선택·회원가입·홈·설정·백과사전·임금계산기·근무기록·증빙·네비게이터·AI 안내 콘텐츠에 번역을 반영했다.
-- 채팅·위치 인증 API에서 두 언어를 허용하고, 에이전트의 답변 언어·연결 실패 시 기본 안내·키워드 의도 분류·역지오코딩 언어 전달을 연결했다. 캘린더 월·요일과 기간·금액 표시도 반영했다.
-- 네팔어의 데바나가리 문자 표시를 위한 Noto Sans Devanagari 폰트와 라이선스를 추가했다. PDF는 기존 표·입력란 구성을 유지하며, 데바나가리 텍스트를 Flutter에서 줄별로 조합해 이미지로 넣는다. 한국어 PDF에도 네팔어 입력 내용을 보존한다. 이 경로에서는 텍스트 복사·검색이 제한된다.
-- 검증: `flutter analyze` 통과, 전체 Flutter 테스트 35개 통과, 관련 백엔드 테스트 43개 통과. 네팔어·테툼어 진정서 및 근무기록 PDF 생성과 문자 표시를 확인했다.
+## 기술 구성
 
-### 2026-08-01 — 프로젝트 시작
-- 초기 커밋, 참고 문서 정리(`계획서.md`, `모듈구체화방안.md`, `frontend구상.md`, `CLAUDE.md`)
+| 영역 | 구성 |
+|---|---|
+| 프론트엔드 | Flutter / Dart, Firebase Authentication |
+| 백엔드 | Python / FastAPI, Firebase Admin SDK |
+| AI | Gemini, Google ADK, Vertex AI Search 기반 RAG |
+| 데이터·파일 | Cloud Firestore, Firebase Admin SDK로 접근하는 Storage / GCS 버킷 |
+| 배포 | Flutter 웹 빌드, Docker / Google Cloud Build / Cloud Run |
 
-### 2026-08-02 — 프론트엔드 P0 뼈대
-- Flutter 프로젝트 초기화
-- 하단 탭 4개(백과사전 · AI가이드 · 근무기록 · 설정) 구조와 탭별 Navigator 구성
-- UI 설계 목업(`UI_설계/UI1~3.png`)을 기준으로 화면 구현
-  - 백과사전: 홈, ARC 발급(5단 카드+체크리스트), 통신 개통(비교표+PASS 인증 스테퍼), 나머지 18개 카테고리 placeholder
-  - AI 가이드: 챗봇 화면(FactAnswer/RiskNotice/RoutingCTA/추천기관 카드)
-  - 근무기록: 데일리 훅 + 임금체불·산재 대응 네비게이터(각 5단계, 서식 매핑 시각화 포함)
-  - 설정: 언어/비자/프로필/알림 목록
-- 공용 위젯(`AppCard`, `DisclaimerBanner`, `StepIndicator`) 및 브랜드 컬러 테마 정의
+## 실행 방법
 
-### 2026-08-04 — 백엔드 P0 + Cloud Run 전환
-- FastAPI 백엔드 초안을 Hugging Face Spaces 기준으로 작성했다가, 배포 방침이 **Google Cloud Run(Docker) + GitHub 지속적 배포**로 변경되어 전면 재작업
-- Firebase Auth(ID 토큰) 검증, 임금체불 14일 규칙엔진, 표준 서식 자동 매핑(사실형/서술형/판단형 필드 구분), 증빙 파일 업로드, 위치 기반 기관 라우팅 API 구현
-- 챗봇 의도 분류에 `google-genai` SDK(Vertex AI 모드)를 도입 — LLM은 분류에만 쓰고, 실제 안내 문구는 사전 검수된 정적 콘텐츠만 사용(법률 환각 방지 원칙)
-- `Dockerfile`/`cloudbuild.yaml`/GitHub Actions 워크플로 작성, pytest 11건 통과
+아래 명령은 저장소 루트에서 시작하는 **Windows PowerShell** 기준이다. 백엔드와 프론트엔드는 각각 별도 터미널에서 실행한다.
 
-### 2026-08-04 — 프론트엔드 ↔ 배포된 API 연결 (진행 중)
-- 배포된 Cloud Run API(`local-bridge-api-for-backend-git-*.run.app`)와 실제 연동
-- `lib/core/api_config.dart` / `api_client.dart` 추가 — API 주소는 dart-define(`env/*.json`)으로 외부화, 소스 하드코딩 없음
-- `AiResponse` / `RoutingTarget` / `Org`에 `fromJson` 추가해 백엔드 camelCase 응답과 매핑
-- AI 가이드 챗봇 화면을 `POST /api/chat` 실제 호출로 전환(전송 중 로딩, 실패 시 폴백 메시지 처리)
-- Android `INTERNET` 권한 추가
-- 남은 일: 임금체불/업로드 등 인증이 필요한 엔드포인트는 Firebase Auth 로그인 플로우 구현 후 연결 예정
+### 준비 사항
 
-### 2026-08-07 — 백과사전 리디자인 & 다국어 전환
-- 백과사전 화면 디자인 변경
-- 언어 전환 기능 추가
+- Dart SDK `^3.10.8`을 지원하는 Flutter SDK와 Chrome. `flutter doctor`로 개발 환경을 확인한다.
+- Python 3.11 이상. 백엔드 Docker 이미지는 Python 3.11을 사용한다.
+- 실제 로그인·서버 저장을 테스트하려면 Firebase 프로젝트의 Authentication, Firestore와 백엔드 서비스 계정 설정이 필요하다. 프론트엔드 설정은 [firebase_options.dart](frontend/lib/firebase_options.dart)에 있다.
+- AI 에이전트는 GCP 프로젝트의 Vertex AI 접근 설정이 필요하며, RAG는 별도로 검색 엔진 설정이 필요하다.
 
-### 2026-08-08 — 캘린더 · 임금계산기 · 네비게이터 뼈대
-- 근무기록 캘린더 UI, 임금 계산기 인터페이스 추가
-- 임금체불·산재처리 네비게이터 기능 및 하위 페이지 구현
+### 1. 백엔드 실행
 
-### 2026-08-09 — 임금계산기 · 백과사전 콘텐츠 보완
-- 임금계산기 로직 수정
-- 백과사전 콘텐츠 수정
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+```
 
-### 2026-08-11 — 에이전트 루프 + RAG 연동
-- `google-adk` 기반 Gemini 함수 호출 에이전트 루프(`app/agent/pipeline.py`, `tools.py`) 도입
-- 사용자별 상담 이력 저장 서비스(`history_service.py`, Firestore `chat_history`) 추가
-- 에이전트의 도구 호출·사고 과정 로그를 API 응답에 포함해 디버깅 가능하게 함
-- Vertex AI Search(Discovery Engine) 연동 — 법령·안내 문서를 검색해 근거로 인용하는 RAG 도구(`document_search_service.py`) 추가
-- 채팅 인터페이스에 기본으로 떠 있던 대화 노출 버그 수정
+`python` 명령을 찾지 못하고 Windows Python Launcher가 설치되어 있다면 첫 가상환경 생성 명령을 `py -3 -m venv .venv`로 실행한다.
 
-### 2026-08-12 — Firestore 스키마 설계 + 안정화
-- `DB/firestore.rules` / `firestore.indexes.json` / `firebase.json`, `docs/firestore_스키마.md`(users·worklogs·organizations·evidence_files 컬렉션 설계) 작성 — Firestore 연동 준비
-- 임금 계산기 로직 수정, 로딩화면 버그 수정
-- 에이전트 도구 호출 실패 시 빈 결과로 안전하게 폴백하도록 로깅·예외 처리 정비
-- 전체 UI 다국어 번역 기능 추가
+`backend/.env`에 개발 환경을 설정한다. 파일이 없다면 아래 예시를 참고해 만들고, 이미 있다면 기존 값을 유지하면서 필요한 항목을 수정한다. 저장소에는 `.env.example`이 없으며, 예시의 `YOUR_...`와 자격증명 경로는 실제 개발 설정으로 바꿔야 한다.
 
-### 2026-08-13 — 에이전트 직접 판단 + 다국어 완성 + 기관 검색
-- 위험 상황 안내 등 보조 판단을 에이전트가 도구 호출로 직접 내리는 방식(`flag_urgent_action` 계열)으로 변경, 응답에 thinking 과정이 그대로 노출되던 버그 수정
-- AI 챗봇 응답에 마크다운 렌더링 지원
-- 기관 검색 도구(`search_support_orgs`) 추가 및 실제 기관 데이터(`organizations.json`) 반영, 시간 계산 버그 수정
-- 사용자가 설정한 언어로 항상 답변하도록 에이전트 프롬프트 개선
-- 남은 UI·콘텐츠 번역 전부 마무리
-- 잡담(off_topic)류 질문에 답변이 안 나오던 버그 수정
-- 네비게이터 항목 구성 변경
+```dotenv
+AUTH_DEV_BYPASS=false
+GOOGLE_APPLICATION_CREDENTIALS=C:/path/to/service-account.json
+FIREBASE_STORAGE_BUCKET=YOUR_BUCKET_NAME
+GOOGLE_GENAI_USE_VERTEXAI=true
+GOOGLE_CLOUD_PROJECT=YOUR_GCP_PROJECT_ID
+GOOGLE_CLOUD_LOCATION=us-central1
+GENAI_MODEL=gemini-2.5-flash
 
-### 2026-08-14 — 로그인 · 사용자 프로필 엔드포인트
-- 로그인 화면 UI 변경
-- `GET/PUT /api/users/me`(Firestore `users/{uid}`) 엔드포인트 추가 — 사용자 정보를 프론트에 전달
-- 홈 화면 디자인 개편, 홈 화면에 임금체불·산재처리 네비게이터 바로가기 버튼 추가
-- 네비게이터 세부 수정
+# RAG를 사용할 때 설정
+DISCOVERY_ENGINE_ID=YOUR_SEARCH_ENGINE_ID
+DISCOVERY_ENGINE_LOCATION=global
+```
 
-### 2026-08-15 — 날씨 · 위치인증 · 증빙 보관함
-- 수원시 날씨 연동(`GET /api/weather`)
-- GPS 위치 인증 기능 활성화(`GET /api/location`, 위치 인증 API)
-- 사업주 공식 증빙 보관함(근로계약서·임금명세서 등록 상태) UI 추가
-- 임금체불 2단계, 산재처리 3단계 버튼 구현 및 네비게이터 수정
-- 앱/화면 이름 정리(chore)
+| 설정 | 역할 |
+|---|---|
+| `GOOGLE_APPLICATION_CREDENTIALS` | Firebase Admin 초기화에 사용할 서비스 계정 JSON 경로. Vertex AI 호출에도 해당 계정의 접근 권한이 필요하다. |
+| `FIREBASE_CREDENTIALS_JSON` | 위 파일 경로 대신 Firebase 서비스 계정 JSON 원문을 전달하는 방법. 둘 다 설정되면 이 값이 우선한다. |
+| `FIREBASE_STORAGE_BUCKET` | 실제 존재하는 파일 버킷 이름. `gs://`를 제외하고 입력한다. |
+| `GOOGLE_GENAI_USE_VERTEXAI` | `true`이면 Vertex AI, `false`이면 `GEMINI_API_KEY`를 사용하는 Gemini API 방식이다. |
+| `GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`, `GENAI_MODEL` | Gemini 호출 프로젝트·리전·모델. 위 모델명은 현재 Cloud Build 설정 기준이다. |
+| `DISCOVERY_ENGINE_ID`, `DISCOVERY_ENGINE_LOCATION` | Vertex AI Search 엔진 ID·리전. 미설정 또는 검색 실패 시 RAG 도구는 빈 결과를 반환한다. |
+| `AUTH_DEV_BYPASS` | Firebase 자격증명이 없을 때 인증이 필요한 API를 `dev-user`로 호출하는 로컬 개발 옵션. 운영에서는 `false`로 둔다. |
 
-### 2026-08-16 — 홈 화면 다듬기
-- 버튼 크기 조정(가독성 개선)
-- 홈 화면에서도 위치 인증 가능하도록 수정
-- 시작 화면에 사용설명서 추가
+Firebase 자격증명 없이도 서버를 시작하고 `/health`를 확인할 수 있다. 다만 **게스트 채팅도 Firestore에 전송 횟수를 저장하므로 Firebase·Firestore 연결이 필요하다.** `AUTH_DEV_BYPASS=true`는 Firestore나 파일 저장소를 대신하지 않는다. Gemini 설정이 없거나 호출이 실패하면, 채팅 전송 제한 검사를 통과한 요청에 대해 키워드 분류와 정적 안내로 대체한다.
 
-### 2026-08-17 — 추천 기관 거리 표시
-- 사용자 위치정보 기반으로 추천 기관까지의 거리를 계산해 표시하는 기능 추가(`org_service.py` 하버사인 거리 계산)
+설정을 마친 뒤 같은 터미널에서 실행한다.
 
-### 2026-08-18 — 백과사전 출처 표기 + 근무기록장 백엔드 연동
-- 백과사전 콘텐츠에 문서 출처 표기 추가
-- 근무기록장(캘린더) 전용 Firestore 컬렉션(`worklogs`, `evidence_files`) 및 API(`GET/PUT /api/worklog/days`, `PATCH /api/users/me/vault`) 신설 — 게스트는 데모 데이터, 로그인 사용자는 실제 서버 데이터로 표시되도록 프론트 연동
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
+```
 
-### 2026-09-06 — 위치인증 좌표를 근무기록에 저장 + 주소 문자열 표시
-- `POST /api/location/verify`가 좌표를 OpenStreetMap Nominatim으로 역지오코딩해 사용자 언어(ko/en/zh/vi)의 주소 문자열을 같이 반환하도록 확장(`location_service.py`) — 지오코딩 실패해도 위치 인증 자체는 막지 않고 주소만 null로 폴백
-- `worklogs` 문서에 `verified_latitude`/`verified_longitude`/`verified_address` 필드 추가 — 위치 인증 시점의 근거 좌표·주소를 캘린더 근무기록에 그대로 저장(임금체불·산재 진정 시 증빙력 확보)
-- 홈 화면·근무기록장 캘린더의 "위치 인증 완료" 배지가 좌표 숫자 대신 변환된 주소 문자열을 보여주도록 변경
+- 상태 확인: <http://localhost:8080/health>
+- API 문서: <http://localhost:8080/docs>
+- `.env` 변경 후에는 백엔드를 재시작한다. 프론트엔드 기본 API 포트도 `8080`이다.
 
-### 2026-09-06 — 온보딩 간소화 + 캘린더 전용 로그인 게이트
-- 최초 진입 온보딩을 언어 선택 한 단계로 축소(기존: 언어 → 로그인 → 사용설명서 3단계) — 언어를 고르면 곧바로 홈으로 진입
-- 온보딩에 있던 로그인 단계를 캘린더 탭 전용 `CalendarLoginGate`로 이동 — 로그인이 실제로 필요한 곳은 캘린더뿐이라, 캘린더를 처음 열 때(비로그인 + 이번 세션에 데모 미선택 시)만 로그인/회원가입 또는 "로그인 없이 이용하기(데모)"를 묻고, 이후에는 다시 묻지 않는다(홈 화면 바로가기 버튼도 동일하게 게이트를 거친다)
-- 온보딩 마지막 단계였던 사용설명서는 설정 탭의 새 "사용설명서" 항목(`GuideScreen`)으로 이동 — 로그인 여부와 무관하게 언제든 다시 볼 수 있다
+### 2. 프론트엔드 실행
 
-### 2026-09-06 — 첫 실행 스포트라이트 투어 추가
-- `html_files/frontend_설명서.html`의 코치마크 투어 형식(딤 처리된 배경 + 대상만 뚫린 스포트라이트 홀 + 제목·본문·팁·단계 점·이전/다음 카드)을 그대로 구현한 `SpotlightTourOverlay`/`AppTourController` 추가
-- 하단 탭 4개(홈·백과사전·캘린더·임금계산기)와 AI 챗봇 버블을 실제 화면 위치에서 순서대로 짚어주는 5단계 투어로, 기존의 plain한 목록형 사용설명서 대신 화면에 직접 오버레이되어 사용자가 각 기능을 바로 인지할 수 있게 했다
-- 초기 앱 실행마다(온보딩과 같은 주기로) 한 번 자동 재생되며, 스킵·이전·다음·뒤로가기로 언제든 종료할 수 있다
+새 터미널을 저장소 루트에서 연다.
 
-### 2026-09-06 — 근무기록장에 총 임금 표시 추가
-- `html_files/frontend_근무기록장_총임금추가.html`을 참고해 근무기록장(캘린더)의 출퇴근 버튼을 제거하고, 그 자리에 이번 달 총 예상 임금 카드를 추가(`WorkLogController.monthTotalWage`) — 탭하면 계산에 쓸 시급을 수정할 수 있다(기본값은 올해 최저임금)
-- 날짜를 눌러 여는 일별 상세 화면에 그날의 예상 임금(시급 × 실근무시간, 세전)을 함께 표시(`WorkLogController.wageForDay`)
-- 홈 화면의 "오늘의 근무" 출퇴근 버튼은 그대로 유지 — 이번 변경은 근무기록장 화면에 한정
+```powershell
+cd frontend
+flutter pub get
+flutter run -d chrome --dart-define-from-file=env/local.json
+```
 
-### 2026-09-13 — 근무기록장 간편 임금 계산을 시안대로 재구성
-- `html_files/frontend_근무기록장_총임금추가.html` 시안과 달랐던 임금 영역을 시안 구조로 교체 — 단일 "총 임금" 카드 + 시급 입력 다이얼로그 → **"⚡ 간편 입력"(FAST 배지) + "오늘 예상 임금" 듀얼 카드 + 이번 달 총합계 배너**
-- 간편 입력 카드를 누르면 시안의 `#modal-quick`과 같은 바텀시트가 열린다 — 적용 시급(± 1,000원 스테퍼 + 직접 입력)과 오늘 일한 시간(± 0.5h 스테퍼)을 조절하면 예상 임금이 실시간으로 계산되고, "오늘 임금 기록 저장하기"로 한 번에 반영
-- 입력한 근무시간은 출퇴근 시각으로 환산해 저장한다(`WorkLogController.setTodayWorkedHours`) — 기록의 원본은 계속 출퇴근 시각이라 캘린더·일별 상세·서버 저장과 그대로 연결된다
-- "오늘 예상 임금" 카드를 누르면 오늘의 일별 상세가 열리고, 총합계 배너에는 근무 일수를 함께 표시(시안의 "9월 총합계 (근무 15일)")
+로컬 API 설정은 [local.json](frontend/env/local.json)의 `http://localhost:8080`이다. 배포된 백엔드에 연결하려면 다음 명령을 사용한다.
 
-### 2026-09-16 — 증빙파일 업로드 503 수정 + 네비게이터 죽은 링크 제거
-- **증빙 보관함 업로드가 503으로 실패하던 문제 해결** — 원인은 `FIREBASE_STORAGE_BUCKET` 미설정이었다. Cloud Run에 이 환경변수가 없어 `storage_service.save_evidence_file()`이 파일을 저장소로 보내기도 전에 `StorageNotConfiguredError`를 던지고 있었다(앱이 직접 반환한 503이라 인프라 장애가 아니었다).
-  - 진단 근거: 이 엔드포인트가 503을 내는 경로는 `uploads.py`의 `StorageNotConfiguredError` 하나뿐이고, `evidence_service`는 모든 예외를 삼키므로 원인이 될 수 없었다. 지연시간 251ms도 GCS 호출 전 설정 검사에서 끊긴 패턴과 일치했다.
-  - 애초에 Firebase Storage 기본 버킷 자체가 없었다(`gen-lang-client-0142486580.firebasestorage.app` → 404). 프론트는 `firebase_storage` 의존성이 없어 업로드가 전부 백엔드 API를 거치므로, Firebase 관리 버킷 대신 **Cloud Run과 같은 리전(europe-west1)의 일반 GCS 버킷 `local-bridge-evidence`** 를 만들어 연결했다.
-  - `cloudbuild.yaml`의 `--update-env-vars`에 `FIREBASE_STORAGE_BUCKET=local-bridge-evidence` 추가(기존 TODO 해소) — 콘솔 수동 설정에만 의존하면 과거 `GOOGLE_GENAI_USE_VERTEXAI` 누락 사고가 반복되므로 파이프라인에 명시했다. 로컬 `.env`의 플레이스홀더(`your-project-id.appspot.com`)도 실제 값으로 교체.
-  - 저장소 접근 주체는 Cloud Run 런타임 계정이 아니라 `FIREBASE_CREDENTIALS_JSON` 키의 서비스 계정(`firebase-adminsdk-fbsvc@...`)이다 — 이 계정에 버킷 `roles/storage.objectAdmin` 부여. `firebase_admin.storage.bucket()`은 지연 참조(`client.bucket()`)만 하고 `get_bucket()`을 호출하지 않아 `storage.buckets.get` 없이 objectAdmin만으로 충분하다.
-- 임금체불·산재 네비게이터 마지막 단계의 "백과사전에서 더 자세히 보기" 버튼 제거 — 백과사전이 메인 탭에서 빠지면서 죽은 링크(누르면 그냥 뒤로가기)가 돼 있었다. 더 이상 쓰이지 않는 `EncyclopediaLinkBlock` 정의와 렌더링 분기도 함께 정리.
+```powershell
+flutter run -d chrome --dart-define-from-file=env/prod.json
+```
+
+다른 API 주소를 사용하려면 `flutter run -d chrome --dart-define=API_BASE_URL=http://YOUR_HOST:8080`으로 지정한다. Android 에뮬레이터에서는 호스트 PC 주소로 `10.0.2.2`를 사용하고, 실제 기기에서는 접속 가능한 PC의 LAN 주소를 지정한다. 위치 인증은 브라우저·기기의 위치 권한과 위치 서비스 활성화가 필요하다.
+
+Firebase 프로젝트를 바꾸는 경우 프론트엔드 Firebase 설정과 백엔드 서비스 계정을 같은 프로젝트에 맞춘다. 웹 Google 로그인은 Firebase Authentication의 공급자·허용 도메인 및 해당 호스팅 환경의 리다이렉트 설정도 확인한다.
+
+### 3. 테스트와 웹 빌드
+
+백엔드 명령은 `backend/`, Flutter 명령은 `frontend/`에서 실행한다.
+
+```powershell
+# backend/
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+```powershell
+# frontend/
+flutter analyze
+flutter test
+flutter build web --dart-define-from-file=env/prod.json
+```
+
+웹 결과물은 `frontend/build/web/`에 생성된다. 백엔드 배포 구성은 [Dockerfile](backend/Dockerfile)과 [cloudbuild.yaml](backend/cloudbuild.yaml)에 있다. 현재 Cloud Build는 `backend/`를 빌드 컨텍스트로 사용하며 런타임 환경변수와 Secret Manager의 Firebase 자격증명을 Cloud Run에 연결한다.
+
+## 주요 기능
+
+현재 하단 메뉴는 **홈 · 네비게이터 · 캘린더 · 임금계산기 · 설정**이다. AI 가이드는 채팅 버튼으로 열며, 백과사전은 별도 콘텐츠 모듈로 구성되어 있다.
+
+| 기능 | 제공 내용 |
+|---|---|
+| 홈 | 날씨·비자 정보, 오늘 출퇴근·휴게·위치 인증, 이번 달 근무일·총 근무시간·예상 임금, 주요 기능 바로가기 |
+| 근무기록장 | 날짜별 출퇴근·휴게·메모·위치 인증 기록, 월별 조회, 시급·근무시간 간편 입력, 일별·월별 예상 임금 |
+| 임금계산기 | 입력한 근무 조건을 바탕으로 임금 항목을 계산하고 계산 근거·안내 표시 |
+| 임금체불·산재 네비게이터 | 상황 확인부터 증빙 준비·기관 안내·서식 작성까지 단계별 안내, 진정서 PDF 미리보기·저장·인쇄 |
+| 근무기록 증빙 PDF | 최근 30일 기록의 출퇴근·휴게·위치 인증 요약표와 날짜별 주소·좌표·메모 출력. 한국어·선택 언어 지원 |
+| 증빙 보관함 | 근로계약서·임금명세서 등 원본 파일 업로드와 목록 조회, 보관 상태 관리 |
+| AI 가이드 | 노동·생활 정보 상담, 추천 질문, 문서 근거 검색, 관련 기관 Top-2 추천 |
+| 추천 기관 | 기관명·주소·전화번호·이용 가능 시간·거리 표시, 두 카드를 동일한 폭으로 병렬 배치 |
+| 백과사전·사용 안내 | 노동·생활 분야 다국어 콘텐츠와 출처, 첫 실행 화면 투어, 설정의 사용설명서 |
+| 로그인·설정 | 이메일·비밀번호 및 Google 로그인, 프로필·비자·언어 설정, 버그 신고 |
+
+로그인 사용자의 근무기록은 서버 API에서 조회·저장하며 홈 집계에도 반영한다. 비로그인 사용자는 데모 기록을 체험할 수 있고 PDF에 데모임을 표시한다. 홈·캘린더의 예상 임금은 설정 시급과 실근무시간을 기준으로 계산하며, 이 시급은 현재 세션에만 적용된다. 실제 수령액 확정이나 계약 시급의 서버 저장 기능과는 구분된다.
+
+버그 신고는 제목·내용을 입력한 뒤 `teameqlab@gmail.com` 수신 정보가 채워진 메일 앱을 연다. 사용자가 직접 메일을 전송하며, 메일 앱을 열 수 없으면 내용을 복사할 수 있다.
+
+### 지원 언어
+
+요청한 17개국의 언어와 기존 한국어·영어·터키어를 포함해 **20개 언어**를 지원한다.
+
+| 구분 | 언어와 코드 |
+|---|---|
+| 요청한 17개국 | 네팔어 `ne`, 테툼어(동티모르) `tet`, 라오스어 `lo`, 몽골어 `mn`, 미얀마어 `my`, 벵골어(방글라데시) `bn`, 베트남어 `vi`, 싱할라어(스리랑카) `si`, 우즈베크어 `uz`, 인도네시아어 `id`, 중국어 `zh`, 크메르어(캄보디아) `km`, 키르기스어 `ky`, 태국어 `th`, 우르두어(파키스탄) `ur`, 필리핀어 `fil`, 타지크어 `tg` |
+| 기존 지원 | 한국어 `ko`, 영어 `en`, 터키어 `tr` |
+
+고정 UI 문구는 [AppLanguage / L10nText](frontend/lib/core/app_language.dart)와 기능별 문자열 파일에서 관리한다. AI 답변은 선택 언어를 백엔드에 전달해 생성한다. 문자별 Noto 글꼴을 사용하며 우르두어에는 오른쪽에서 왼쪽으로 읽는 방향을 적용한다. 새 기계 번역 문구는 원어민 감수가 필요하다.
+
+## 내부 처리 구조
+
+### AI 의도 분류·에이전트·RAG
+
+1. `POST /api/chat`이 인증 상태와 입력 길이·전송 제한을 검사한다.
+2. [chat_service.py](backend/app/services/chat_service.py)가 Gemini로 의도를 분류한다. 분류 호출이 실패하면 키워드로 대체한다.
+3. 의도는 `wage`(임금), `accident`(산재), `contract`(계약), `life_info`(한국 생활), `org_search`(기관 검색), `meta`(서비스 소개), `off_topic`(범위 밖 질문)으로 나눈다. 범위 밖 질문에는 정적 안내를 반환한다.
+4. [pipeline.py](backend/app/agent/pipeline.py)의 ADK 에이전트가 질문·대화 맥락·선택 언어를 받아 필요한 도구를 호출한다.
+5. 응답을 사실 안내·위험 안내·화면 이동 대상·추천 기관의 구조로 반환한다. 로그인 상담 이력은 Firestore에 저장하며, 에이전트 호출 실패 시 언어별 정적 안내로 대체한다.
+
+[tools.py](backend/app/agent/tools.py)에서 제공하는 도구는 다음과 같다.
+
+| 도구 | 역할 |
+|---|---|
+| `get_user_history` | 로그인 사용자의 최근 상담 이력 조회 |
+| `calculate_wage` | 임금체불 날짜·금액 정보를 규칙 엔진에 전달해 계산 |
+| `search_support_orgs` | 기관 목록에서 상황에 맞는 Top-2 선택 및 위치 기반 거리 계산 |
+| `search_reference_documents` | Vertex AI Search에서 문서 제목·검색 조각·링크를 조회해 답변 근거 제공 |
+| `flag_urgent_action` | 긴급 위험 상황을 사용자 안내에 반영 |
+
+도구에 전달되는 사용자 UID와 위치는 서버 요청 컨텍스트에서 연결한다. 사용자 UID를 모델이 임의로 지정하는 도구 인자로 받지 않는다. RAG 검색 데이터는 별도로 Vertex AI Search에 등록해야 하며, 앱을 실행하는 것만으로 색인이 생성되지는 않는다.
+
+### 채팅 제한
+
+| 항목 | 로그인 | 게스트 |
+|---|---|---|
+| 최소 전송 간격 | 3초 | 5초 |
+| 최근 1분 최대 요청 | 10회 | 5회 |
+| 하루 최대 요청 | 50회 | 10회 |
+| 사용자별 동시 처리 | 1개 | 1개 |
+
+게스트는 IP로 구분하며, 동일 IP 전체에 분당 60회 제한도 적용한다. 하루 기준은 한국시간 자정이고 여러 Cloud Run 인스턴스가 Firestore 트랜잭션으로 횟수를 공유한다. 예약된 요청은 취소해도 횟수를 돌려주지 않는다.
+
+메시지는 최대 2,000자, 최근 이력은 최대 6개, 메시지·이력 합계는 최대 12,000자이다. AI 처리 제한은 60초, 요청 잠금의 만료 시간은 90초, 에이전트의 최대 LLM 호출은 4회이다. 전송 제한 초과는 `429`와 재시도 시간, 제한 저장소 장애는 `503`, AI 시간 초과는 `504`로 반환한다. 관련 구현은 [chat_limits.py](backend/app/services/chat_limits.py), [채팅 라우터](backend/app/routers/chat.py), [채팅 스키마](backend/app/schemas/chat.py)에 있다.
+
+### 데이터·증빙 저장
+
+| 저장 위치 | 내용 |
+|---|---|
+| Firebase Authentication | 로그인 계정과 인증 토큰 |
+| Firestore `users` | 프로필·비자·선호 언어·계약서 및 임금명세서 보관 상태 |
+| Firestore `worklogs` | 일별 출퇴근·휴게·메모·위치 인증 좌표·주소·증빙 연결 |
+| Firestore `evidence_files` | 파일 ID·소유자·종류·저장 경로·크기·업로드 시각 등 메타데이터 |
+| Firestore `chat_history` | 로그인 사용자의 상담 이력 |
+| Firestore `chat_limits` | 사용자·IP별 요청 횟수와 동시 요청 잠금 |
+| Storage / GCS | `evidence/{uid}/{case_type}/...` 경로의 증빙 원본 파일 |
+
+기관 검색의 현재 데이터 원본은 [organizations.json](backend/app/data/organizations.json)이다. Firestore 스키마 문서의 `organizations` 설계와는 별개로, 실행 중인 기관 서비스는 이 JSON을 사용한다.
+
+업로드는 백엔드 API를 거쳐 원본을 저장하며 OCR이나 증빙 내용의 유·불리 판단을 하지 않는다. 버킷 미설정·부재·접근 권한 문제는 업로드 `503`으로 안내한다. 근무기록 PDF의 조회 범위와 데모 처리 기준은 [근무기록 출력 문서](docs/worklog_export.md)에 있다. 복합 문자는 Flutter에서 조합한 이미지로 PDF에 넣으므로 해당 텍스트의 복사·검색은 제한된다.
+
+### 주요 API
+
+로그인 API에는 `Authorization: Bearer <Firebase ID Token>`을 전달한다.
+
+| API | 용도 | 로그인 필요 |
+|---|---|---|
+| `GET /health` | 서버 상태 확인 | 아니요 |
+| `POST /api/chat` | AI 가이드 | 선택, Firestore 전송 제한은 항상 적용 |
+| `GET /api/users/me`, `PUT /api/users/me` | 프로필 조회·저장 | 예 |
+| `PATCH /api/users/me/vault` | 증빙 보관 상태 변경 | 예 |
+| `GET /api/worklog/days?year=YYYY&month=M` | 월별 근무기록 조회 | 예 |
+| `PUT /api/worklog/days/{day}` | 일별 기록 저장, 날짜는 `YYYY-MM-DD` | 예 |
+| `POST /api/uploads?case_type=contract` | `file` multipart 업로드. `worklog_date`를 추가하면 날짜별 기록에 연결 | 예 |
+| `GET /api/uploads` | 본인 증빙 목록, `worklog_date` 필터 지원 | 예 |
+| `POST /api/wage/classify` | 임금체불 규칙 판별 | 예 |
+| `POST /api/wage/document-mapping` | 서식 필드 매핑 | 예 |
+| `POST /api/location/verify` | 좌표 역지오코딩·주소 반환 | 아니요 |
+| `GET /api/orgs` | 기관 목록·위치 기반 거리 | 아니요 |
+| `GET /api/weather` | 수원 날씨 | 아니요 |
+
+위치 역지오코딩이 실패하면 주소만 비워 반환하고 위치 인증 흐름은 유지한다. 로그인 근무기록 조회 실패는 빈 기록으로 숨기지 않고 `503`으로 구분한다. 자세한 요청·응답 필드는 실행 중인 서버의 `/docs`에서 확인할 수 있다.
+
+## 저장소 구조
+
+```text
+frontend/
+  lib/core/             API 설정·통신, 언어, 사용자 프로필 상태
+  lib/common/           공용 위젯·언어 선택·읽기 방향
+  lib/features/         홈, 인증, AI 가이드, 백과사전, 네비게이터,
+                        임금계산기, 근무기록, 설정·버그 신고
+  lib/navigation/       하단 메뉴와 화면 이동
+  assets/fonts/         다국어 글꼴·라이선스
+  env/                  로컬·운영 API 주소
+  test/                 Flutter 테스트
+backend/
+  app/routers/          FastAPI 엔드포인트
+  app/schemas/          입력 검증·응답 모델
+  app/services/         상담, 계산, 저장, 기관·날씨·위치 서비스
+  app/agent/            ADK 에이전트 파이프라인·도구
+  app/core/             인증, Firebase·Gemini·검색 클라이언트
+  app/data/             기관 데이터
+  tests/                백엔드 테스트
+DB/                     Firestore 보안 규칙·인덱스
+docs/                   설계·기능 설명·라이선스
+update_log.md           날짜별 업데이트 내역
+```
